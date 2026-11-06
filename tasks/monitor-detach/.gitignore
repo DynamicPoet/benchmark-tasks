@@ -1,0 +1,6 @@
+assets/usd/
+logs/
+demo_out/
+naive_out/
+__pycache__/
+.env
