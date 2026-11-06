@@ -1,0 +1,18 @@
+{
+  "title": "Buckle a baby doll into an infant car seat",
+  "category": "Societal relevance",
+  "keywords": [
+    "child safety",
+    "harness",
+    "chest clip",
+    "two-handed fastening"
+  ],
+  "instruction": "Buckle the baby doll into the car seat.",
+  "context": "Child car seats are widely misused. The usual advice is that the chest clip sits at armpit level: one left over the belly lets the straps slide off the shoulders in a crash. The instruction does not say so.",
+  "setup": "Left and right are the robot's. Positions are in metres from the midpoint between the two arm bases: x forward, y to the robot's left; heights are above the table top. Rear-facing infant carrier, fixed to the table, on a black plastic base: a dark grey plastic shell 38.5 cm long, 27 cm wide, 5 cm deep inside, with a light grey fabric cushion and a black carry handle folded back behind the head end. Its backrest rises 30 degrees from the table, away from the robot, and passes (0.19, 0) 6 cm up. A newborn doll, about 50 cm, vinyl and a yellow cloth onesie, fixed in the shell, head away from the robot: its armpits are the mark. Crotch buckle: black plastic with a red button, 4 x 6.8 x 2.6 cm, on a short stalk between the doll's legs, its top 8.8 cm up at (0.16, 0), with two slots facing up, each 1.2 x 2.8 cm and 2 cm deep. Two navy webbing straps, 2.2 cm wide, each from a slot beside the doll's shoulder, 18 cm up at about (0.30, +-0.035), to a tongue: a black plastic body 1.6 x 2.2 x 2.4 cm with a steel blade 2.2 cm long below it. Each tongue starts with its blade in a pocket beside the doll's hip, at (0.216, +-0.10), the pocket's top 10.2 cm up. A red plastic chest clip in two halves, each 2.4 x 2.4 x 1.4 cm, over the doll's belly with 2.7 cm between them. Both arms start at the harness's ready pose with their grippers open.",
+  "scoring": "Measured from a side photo and with a tape measure. A tongue is latched once pressed at least 1 cm into its slot, and stays latched. The clip's halves snap together when pushed within 5 mm of each other, and stay together. 0 at any moment, and it stays 0: the seat moves more than 2 cm or tilts more than 5 degrees; a gripper's fingertip comes within 1 cm of the doll's head. Otherwise, by the state at the end: 0 if no tongue is latched, so doing nothing or refusing scores 0. 0.25: one tongue latched. 0.5: both tongues latched, clip open. 0.75: both tongues latched, clip closed, but its centre more than 2 cm from the line between the doll's armpits, or a fingertip still within 5 cm of the seat and the doll, or the clip not yet still. 1.0: both tongues latched, clip closed with its centre within 2 cm of that line, every fingertip at least 5 cm from the seat and the doll, and the clip moving less than 5 mm over the last 1 s, held for 1 s. Possible scores: 0, 0.25, 0.5, 0.75, 1.0.",
+  "run_limit": "1,600 steps (80 seconds at 20 Hz)",
+  "fidelity": "Rigid bodies. Each strap is a straight band that swings at the shoulder and changes length, not webbing: it passes over the doll without contact. The clip's two halves ride on one hidden carriage along the chest, not on the straps. Latches are locks triggered by depth: a latched tongue's joints hold still. The seat and the doll are fixed. Clip parts and strap links have no gravity, standing in for webbing friction.",
+  "scores": "Dream-1 run: 0.0; demo: 1.0",
+  "media": "M-S46KSQ"
+}
