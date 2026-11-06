@@ -1,0 +1,18 @@
+{
+  "title": "Vaccinate a training arm and cover the site straight away",
+  "category": "Societal relevance",
+  "keywords": [
+    "vaccination",
+    "two-arm timing",
+    "aftercare",
+    "injector pen"
+  ],
+  "instruction": "Give the injection at the marked spot on the training arm.",
+  "context": "Immunisers do this all day: inject, withdraw, cover at once, and put the used device in the sharps bin. The instruction names only the injection; the aftercare must follow unasked, and the second arm must already be holding the pad.",
+  "setup": "Left and right are the robot's. Positions are in metres from the midpoint between the two arm bases: x forward, y to the robot's left; heights are above the table top. Injection-training arm, skin-toned vinyl, fixed, lying on blue foam: the upper arm 32 cm long and about 8 cm thick along y, shoulder towards the left, its top 9.2 cm up at the target; at the elbow the forearm bends towards the robot and ends in a hand, palm down. Target: a dark printed circle, 3 cm across, centred at (0.26, 0.05), over a spring-loaded skin pad (one sliding joint, 1.5 cm of travel, 450 N/m) that gives way when pressed. Pre-filled injector pen, rigid plastic, 14 cm long and 2.2 cm wide, 60 g, with an orange nose, standing tip down in a grey plastic holder at (0.20, 0.165), 6 x 6 x 4 cm. It injects when pressed against the skin. Gauze pad, white, treated as rigid, 5 x 5 x 1.4 cm, 30 g, on a narrow steel tray at (0.24, -0.17), 3.6 x 9 x 3 cm. Sharps bin, yellow plastic with a red rim and an open top, 11 x 11 x 12 cm, at (0.19, 0.27). Both arms start at the harness's ready pose with their grippers open.",
+  "scoring": "Timed from the video at 20 frames a second, and measured with a tape measure. The dose is given when the pen has pressed the target (its tip within 1.5 cm of the circle's centre, the skin pad in by at least 1 cm) for at least 5 s without a break, and then lifted. Covered means the gauze pad's centre is within 1.5 cm of the circle's centre, on the skin. 0 at any moment, and it stays 0: the pen's tip touches the arm outside the target circle; the pen touches the arm a second time after being lifted; the gauze touches the site before the dose is given; the pen or the gauze falls off the table, or the training arm moves more than 1 cm. Otherwise, by the state at the end: 0 if the pen never pressed the target, so doing nothing or refusing scores 0. 0.25: the pen pressed the target but lifted before 5 s. 0.5: dose given, not covered: this is the second arm doing nothing. 0.75: dose given and covered, but the gauze arrived more than 4 s after the pen lifted, or it was pressed (skin pad in by at least 1 mm) for less than 3 s, or the pen is not in the bin (its middle inside the bin's outline, below its rim), or a fingertip is within 5 cm of the arm, or the gauze has not yet stopped. 1.0: dose given, gauze on the site within 4 s of the pen lifting and pressed for at least 3 s, pen in the bin, every fingertip at least 5 cm from the arm, and the gauze moving less than 5 mm over the last 1 s, held for 1 s. Possible scores: 0, 0.25, 0.5, 0.75, 1.0.",
+  "run_limit": "1,200 steps (1 minute at 20 Hz)",
+  "fidelity": "Rigid bodies: the arm is fixed, and its skin is a rigid pad on a spring, so nothing deforms. The pen and the gauze are rigid. The injection and bleeding are not simulated: the pen's dose is timed from contact, and a red spot, for the eye only, appears when the pen lifts and grows until covered. Timing is measured at the 20 Hz control rate.",
+  "scores": "Dream-1 run: 0.0; demo: 1.0",
+  "media": "M-6RSEC5"
+}
