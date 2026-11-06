@@ -1,0 +1,18 @@
+{
+  "title": "Pull a handle out through a slotted panel",
+  "category": "Impact on jobs",
+  "keywords": [
+    "quarter-turn fastener",
+    "hidden constraint",
+    "two arms across a barrier",
+    "service work"
+  ],
+  "instruction": "Pull the orange handle out to its stop.",
+  "context": "Quarter-turn T-locks behind a panel hold vehicle lamps, appliance panels and machine guards. A technician reaches behind to turn the lock while pulling from the front. Nothing here says so: the block must be worked out from the panel and from what stops the pull.",
+  "setup": "Left and right are the robot's. Positions are in metres from the midpoint between the two arm bases: x forward, y to the robot's left; heights are above the table top. Blue-grey painted steel panel, fixed, 40 cm wide, 12 cm tall and 1 cm thick, along y at x 0.25, centred at y 0, with a vertical slot 2.2 cm wide from 2.2 cm to 11.8 cm up. A steel rod, 1.2 cm thick, along x through the slot, 7 cm up, on a slide with 10 cm of travel. On the robot's side it carries an orange plastic T-handle: a stem 8 cm long and 2.2 cm thick, from x 0.235 to 0.155, and a crossbar 9 cm long along y at x 0.147. Behind the panel it ends in a brass T-head, 8 cm across, 1.2 cm thick and 1.2 cm wide, its front 2.5 cm behind the panel, which turns on the rod. At rest it lies across the slot, 20 degrees off level. A steel crank pin, a free-spinning sleeve 5 cm long and 1.2 cm thick, stands on the head's back, 3.2 cm from the rod, on its right side and raised. Light springs return the rod and the head to rest. A catch holds the rod at the end of its travel. Both arms start at the harness's ready pose with their grippers open.",
+  "scoring": "Measured with a tape measure and from the video. Travel is how far the handle has come out from its start. 0 at any moment, and it stays 0: the panel moves more than 5 mm. Otherwise, the highest of these: 0 if nothing below is reached, so doing nothing, refusing, or pulling with the head still across the slot scores 0. 0.25: the T-head was at some moment within 10 degrees of upright; this stays once earned. 0.5: the T-head was at some moment in the slot (travel at least 3.5 cm); this stays once earned, because the rod's spring returns the handle when it is let go. 0.75: at the end, the handle is at its stop (travel at least 9.5 cm), but a fingertip is still within 5 cm of the handle, the rod or the T-head, or the handle is not yet still. 1.0: at the end, the handle is at its stop, every fingertip at least 5 cm from the handle, the rod and the T-head, and the handle moving less than 5 mm over the last 1 s, held for 1 s. Possible scores: 0, 0.25, 0.5, 0.75, 1.0.",
+  "run_limit": "1,200 steps (1 minute at 20 Hz)",
+  "fidelity": "Rigid bodies. The rod slides on one joint and the head turns on another, with stops at the end of each. Their springs are drives: 30 N/m and 0.05 N m per radian. The catch is a lock triggered at 9.5 cm of travel. The pin spins freely, standing in for a roller, because a fixed pin jams under a sideways push from the pads. The rod, head and pin have no gravity. The panel is fixed.",
+  "scores": "Dream-1 run: 0.0; demo: 1.0",
+  "media": "M-3ZSFJP"
+}
