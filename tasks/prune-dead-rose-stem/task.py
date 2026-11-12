@@ -21,6 +21,8 @@ import scene_assets as sa  # noqa: E402
 import scenekit  # noqa: E402
 import steptime  # noqa: E402
 from motion_checks import points_at_rest  # noqa: E402
+from pruning_checks import PruningState  # noqa: E402
+from cut_checks import footprint_distance, section_contact  # noqa: E402
 from scenekit import UsdBody, on_reset, on_step  # noqa: E402
 from yam_arena.constants import FINGER_CLOSED, FINGER_OPEN, PAD_TIP_PAST_TCP, TCP_OFFSET  # noqa: E402
 from yam_arena.demo import Waypoint  # noqa: E402
@@ -32,6 +34,13 @@ SCORE_OVER = "end"
 SUCCESS_HOLD_S = 1.0
 
 sa.write_all()
+
+_bud_mesh = sa.bud_mesh()
+BUD_VERTICES = _bud_mesh.v
+BUD_EDGES = np.unique(np.sort(np.concatenate([_bud_mesh.f[:, [0, 1]], _bud_mesh.f[:, [1, 2]],
+                                              _bud_mesh.f[:, [2, 0]]]), axis=1), axis=0)
+BUD_EDGES = BUD_EDGES[np.linalg.norm(BUD_VERTICES[BUD_EDGES[:, 0]] - BUD_VERTICES[BUD_EDGES[:, 1]], axis=1) > 1e-8]
+_BLADE_MESH = next(mesh for name, mesh, _ in sa._closed_half(1)[0] if name == "blade")
 
 CHAIN = ("c_px_joint", "c_py_joint", "c_pz_joint", "c_rx_joint", "c_ry_joint", "c_rz_joint")
 SLIDES = ("stub_green_slide", "stub_brown_slide", "stub_bud_slide", "cut_brown_slide", "cut_green_slide", "cut_bud_slide")
@@ -53,6 +62,7 @@ POT_MOVED, POT_TILT_DEG = 0.02, 10.0
 CLEAR = 0.05               # every fingertip this far from the secateurs, the canes and the cutting at the end (from their surfaces)
 TOOL_HALF_W = 0.008        # the secateurs' blades and handles, as lines this far from their surface
 REST_MOVE, REST_STEPS = 0.005, 20  # the cutting moves less than this over the last second
+BUD_ATTACH_TOL = 0.003     # the original bud's body stays within 3 mm of its original place on the pot
 PAD_MID = np.array([0.0, 0.0, TCP_OFFSET[2] + PAD_TIP_PAST_TCP - 0.012])  # a finger pad's middle, in the gripper frame
 PAD_TIP = np.array([0.0, 0.0, TCP_OFFSET[2] + PAD_TIP_PAST_TCP])
 
@@ -62,7 +72,8 @@ _S: dict = {}
 def _clear() -> None:
     _S.clear()
     _S.update(ready=False, cut=False, h=None, green_cut=False, fell=False, pot_moved=False, tool_lost=False, in_jaw={}, closed=False, drop_ref=None,
-              history=[], held=False, in_bin=False, over_bin=False, tool_down=False, clear=False, t=0)
+              history=[], held=False, in_bin=False, over_bin=False, tool_down=False, clear=False, t=0,
+              pruning=PruningState(sa.BUD_TOP_S), stub_height=sa.TOP_S, bud_attached=True, bud_cut_separately=False, cut_events=[], full_conditions=[], last_pivot=None)
 
 
 def _np(x) -> np.ndarray:
@@ -140,62 +151,123 @@ def _restore(env) -> None:
     _spring(base.scene["secateurs"])
 
 
+def _retained_plant(bush, origin: np.ndarray) -> tuple[float, bool]:
+    """The visible stub's length and the original bud's attachment, from actual link poses."""
+    pot, pot_rot = _body(bush, "pot", origin)
+    base = pot + pot_rot @ sa.on_cane(0.0)
+    axis = pot_rot @ sa.CANE_DIR
+    ends = []
+    for name, length in (("stub_green", sa.L_SG), ("stub_brown", sa.L_SB)):
+        pos, rot = _body(bush, name, origin)
+        ends.append(float(axis @ (pos + rot @ np.array([0.0, 0.0, length]) - base)))
+    bud, _ = _body(bush, "stub_bud", origin)
+    expected = pot + pot_rot @ sa.on_cane(sa.BUD_S)
+    height = max(0.006, *ends)
+    attached = float(np.linalg.norm(bud - expected)) <= BUD_ATTACH_TOL and height >= sa.BUD_TOP_S
+    return height, attached
+
+
 def _canes(bush, origin: np.ndarray) -> list[tuple[str, np.ndarray, np.ndarray, float]]:
-    """Each cane the blades could cut, as (name, base, tip, lowest cuttable distance along it): the dead cane until it is cut, then
-    the green canes."""
+    """All remaining cut targets, including the retained stub and its original bud."""
     pos, rot = _body(bush, "pot", origin)
     out = []
     if not _S["cut"]:
         out.append(("dead", pos + rot @ sa.on_cane(0.0), pos + rot @ sa.on_cane(sa.TOP_S), 0.0))
+    else:
+        height, _ = _retained_plant(bush, origin)
+        height = min(height, _S["pruning"].stub_length)
+        out.append(("stub", pos + rot @ sa.on_cane(0.0), pos + rot @ sa.on_cane(height), 0.0))
+    if not _S["pruning"].bud_damaged:
+        bud, bud_rot = _body(bush, "stub_bud", origin)
+        vertices = bud + BUD_VERTICES @ bud_rot.T
+        # A blade plane intersects the actual bud mesh, regardless of its approach direction.
+        for k, (a, b) in enumerate(BUD_EDGES):
+            out.append((f"bud{k}", vertices[a], vertices[b], 0.0))
     for k, (b, t, _r) in enumerate(sa.GREEN_CANES):
         base = pos + rot @ np.array([b[0], b[1], sa.SOIL_Z])
         out.append((f"green{k}", base, pos + rot @ np.asarray(t, float), sa.GREEN_CUT_FROM - sa.SOIL_Z))
     return out
 
 
+def _blade_frame(point, q):
+    """A hook-frame plane point in the blade mesh's authored closed frame."""
+    angle = q - sa.HALF
+    c, sn = math.cos(angle), math.sin(angle)
+    return np.array([c * point[0] + sn * point[1], -sn * point[0] + c * point[1]])
+
+
 def _check_cut(env, origin: np.ndarray) -> None:
-    """A cane is cut when the blade closes on the hook with the cane in the jaws. The cane is in the jaws when it crosses the cutting
-    plane between the blade's and the hook's edges, within the jaws' reach; it stays in them while the jaws close round it (the
-    jaws do not collide with canes, so the test is geometric). Both halves turn as the handles are squeezed, so angles are taken
-    from the jaws' middle."""
+    """Record closure only at current finite blade/material contact, never remembered jaw entry."""
     base = env.unwrapped
     tool, bush = base.scene["secateurs"], base.scene["bush"]
     o, r = _body(tool, "hook_half", origin)
     q = float(_np(tool.data.joint_pos)[0, tool.joint_names.index("pivot")])
     half_open = (sa.JAW_OPEN - q) / 2
     closed = q >= sa.JAW_OPEN - 0.01
+    closing_edge = closed and not _S["closed"]
+    closing = _S["last_pivot"] is not None and q > _S["last_pivot"] + 1e-6
     n = r[:, 2]
+    bud_section = []
     for name, a, b, s_min in _canes(bush, origin):
         d = b - a
         length = float(np.linalg.norm(d))
         d = d / length
-        in_jaw = _S["in_jaw"].get(name, False)
-        reach = False
-        if abs(float(n @ d)) >= 0.3:
-            s = (sa.BLADE_Z - float(n @ (a - o))) / float(n @ d)
-            local = r.T @ (a + s * d - o)
-            radius = math.hypot(local[0], local[1])
-            phi_mid = math.atan2(-local[0], local[1]) - q / 2
-            reach = s_min <= s <= length and sa.JAW_REACH[0] <= radius <= sa.JAW_REACH[1]
-            if reach and abs(phi_mid) <= half_open:
-                in_jaw = True
-            elif reach and half_open > 0.15:
-                in_jaw = False
-        if not reach:
-            in_jaw = False
-        was_closed = _S["closed"]
-        _S["in_jaw"][name] = in_jaw
-        if not (in_jaw and closed and not was_closed):
+        is_bud = name.startswith("bud")
+        _S["in_jaw"][name] = False  # diagnostic only; never authorizes a cut
+        if abs(float(n @ d)) < (1e-8 if is_bud else 0.3):
             continue
+        s = (sa.BLADE_Z - float(n @ (a - o))) / float(n @ d)
+        if not s_min <= s <= length:
+            continue
+        point = a + s * d
+        local = r.T @ (point - o)
+        if is_bud:
+            bud_section.append(_blade_frame(local, q))
+            continue
+        radius = math.hypot(local[0], local[1])
+        reach = sa.JAW_REACH[0] <= radius <= sa.JAW_REACH[1]
+        phi_mid = math.atan2(-local[0], local[1]) - q / 2
+        _S["in_jaw"][name] = reach and abs(phi_mid) <= half_open
+        if name in ("dead", "stub"):
+            material_radius = sa.R1 if sa.BROWN_S <= s < sa.T_LOW_S else sa.R0
+        else:
+            material_radius = sa.GREEN_CANES[int(name[5:])][2]
+        distance = footprint_distance(_blade_frame(local, q), _BLADE_MESH.v, _BLADE_MESH.f) if closing_edge and reach else float("inf")
+        # A radius-R disk is inside the oblique cylinder's elliptical section:
+        # this contact gate is conservative, without enlarging the visible cane.
+        if distance > material_radius:
+            continue
+        _S["cut_events"].append({"target": name, "height": float(s), "t": _S["t"] / 20.0,
+                                 "contact": "blade_mesh", "blade_distance": distance, "material_radius": material_radius,
+                                 "point": point.tolist(), "q": q})
         if name == "dead":
+            _S["pruning"].cut(s)
             values = sa.cut_joint_positions(s)
             _S["h"] = min(max(s, sa.H_MIN_S), sa.T_LOW_S - 0.003)
             _S["cut"] = True
+            values.update(sa.stub_joint_positions(s, not _S["pruning"].bud_damaged))
+            if _S["bud_cut_separately"]:
+                values["cut_bud_slide"] = 0.0
             _write_joints(bush, values)
             _chain_gains(bush, False)
+        elif name == "stub":
+            _S["pruning"].cut(s)
+            _write_joints(bush, sa.stub_joint_positions(_S["pruning"].stub_length, not _S["pruning"].bud_damaged))
         else:
             _S["green_cut"] = True
+    if closing and not _S["pruning"].bud_damaged:
+        contact = section_contact(bud_section, _BLADE_MESH.v, _BLADE_MESH.f, sa.JAW_REACH)
+        if contact is not None:
+            angle = q - sa.HALF
+            c, sn = math.cos(angle), math.sin(angle)
+            local = np.array([c * contact[0] - sn * contact[1], sn * contact[0] + c * contact[1], sa.BLADE_Z])
+            _S["cut_events"].append({"target": "bud", "height": None, "t": _S["t"] / 20.0,
+                                     "contact": "blade_mesh_section", "point": (o + r @ local).tolist(), "q": q})
+            _S["pruning"].bud_damaged = True
+            _S["bud_cut_separately"] = True
+            _write_joints(bush, {"stub_bud_slide": sa.BUD_SINK})
     _S["closed"] = closed
+    _S["last_pivot"] = q
 
 
 def _cutting(bush, origin: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -224,6 +296,7 @@ def _measure(env) -> None:
     origin = _np(base.scene.env_origins[0])
     bush, tool, tub = base.scene["bush"], base.scene["secateurs"], base.scene["bin"]
     _S["t"] += 1
+    steptime.tick()
 
     pot, pot_rot = _body(bush, "pot", origin)
     moved = float(np.linalg.norm(pot - np.array([sa.POT_XY[0], sa.POT_XY[1], 0.0])))
@@ -233,6 +306,9 @@ def _measure(env) -> None:
     _S["tool_lost"] = _S["tool_lost"] or tool_o[2] < -0.05 or abs(tool_o[0] - 0.36) > 0.55 or abs(tool_o[1]) > 0.65
 
     _check_cut(env, origin)
+    stub_height, bud_attached = _retained_plant(bush, origin)
+    _S["pruning"].observe_bud(bud_attached)
+    _S.update(stub_height=stub_height, bud_attached=bud_attached)
     pads = _pads(env, origin)
     tub_pose = _np(tub.data.root_link_pose_w)[0]
     tub_pos = tub_pose[:3] - origin - np.array([0.0, 0.0, TOP])
@@ -240,7 +316,7 @@ def _measure(env) -> None:
     tool_pts = _tool_points(tool, origin)
 
     cane_segments = []
-    stub_top = _S["h"] if _S["cut"] else sa.TOP_S
+    stub_top = stub_height if _S["cut"] else sa.TOP_S
     cane_segments.append((pot + pot_rot @ sa.on_cane(0.0), pot + pot_rot @ sa.on_cane(stub_top), sa.R0))
     for b, t, r in sa.GREEN_CANES:
         cane_segments.append((pot + pot_rot @ np.array([b[0], b[1], sa.SOIL_Z]), pot + pot_rot @ np.asarray(t, float), r))
@@ -283,10 +359,11 @@ def _measure(env) -> None:
     off_pot = all(math.hypot(p[0] - pot[0], p[1] - pot[1]) > sa.POT_R_TOP + 0.005 for p in tool_pts)
     _S["tool_down"] = tool_o[2] < sa.TOOL_HALF_T + 0.012 and tilt_tool < 20.0 and off_pot
     _S["clear"] = gap >= CLEAR
-    _log(tool, tool_o, tool_r, pot, pads, gap)
+    _record_full_conditions()
+    _log(tool, bush, tool_o, tool_r, pot, pads, gap)
 
 
-def _log(tool, tool_o, tool_r, pot, pads, gap) -> None:
+def _log(tool, bush, tool_o, tool_r, pot, pads, gap) -> None:
     """With TASK_SCORE_DIR set (the run scripts set it), one line of state every 5 control steps, for debugging."""
     folder = os.environ.get("TASK_SCORE_DIR")
     if not folder or _S["t"] % 5:
@@ -302,6 +379,13 @@ def _log(tool, tool_o, tool_r, pot, pads, gap) -> None:
     if _S["h"] is not None:
         row["h"] = round(_S["h"], 4)
         row["cutting"] = [round(float(v), 4) for v in _S["history"][-1]] if _S["history"] else None
+    row.update(stub_height=round(_S["stub_height"], 4), bud_attached=bool(_S["bud_attached"]),
+               bud_damaged=bool(_S["pruning"].bud_damaged), cuts=_S["pruning"].cuts,
+               first_cut=_S["pruning"].first_cut, cut_events=_S["cut_events"],
+               full_condition_samples=len(_S["full_conditions"]), full_condition_good=sum(_S["full_conditions"]),
+               tool_yaw=round(math.atan2(tool_r[1, 0], tool_r[0, 0]), 4))
+    joints = _np(bush.data.joint_pos)[0]
+    row["sleeve_joints"] = {name: round(float(joints[bush.joint_names.index(name)]), 6) for name in SLIDES}
     with open(os.path.join(folder, "state.jsonl"), "a") as f:
         f.write(json.dumps(row) + "\n")
 
@@ -323,24 +407,36 @@ def _at_rest() -> bool:
 
 
 def good_cut() -> bool:
-    return _S.get("h") is not None and GOOD_CUT[0] <= _S["h"] - sa.BUD_TOP_S <= GOOD_CUT[1]
+    return _S["pruning"].credit(_S["stub_height"], _S["bud_attached"], GOOD_CUT) == 1.0
+
+
+def _full_conditions_now() -> bool:
+    """Instantaneous necessary conditions; motion uses the same final one-second window separately."""
+    return bool(_S and _S["cut"] and not any(_S[k] for k in ("green_cut", "fell", "pot_moved", "tool_lost"))
+                and good_cut() and _S["in_bin"] and _S["tool_down"] and _S["clear"])
+
+
+def _record_full_conditions() -> None:
+    """Called once by the control-step measurement hook, never by a score query."""
+    _S["full_conditions"] = (_S["full_conditions"] + [_full_conditions_now()])[-(REST_STEPS + 1):]
 
 
 def score(objects) -> float:
-    """0 if a green cane was cut, the cutting fell, the pot moved or tipped, or the secateurs left the table; and 0 if the dead cane
-    was not cut. Otherwise 0.25 for a cut that is not good; 0.5 a good cut, the cutting not in the bin; 0.75 a good cut and the
-    cutting in the bin; 1.0 also the secateurs lying on the table outside the pot, every fingertip clear and the cutting still."""
+    """0 for a cut or detached original bud, a green cut, a fall, a moved pot, lost secateurs, or no cut. Otherwise 0.25 if the
+    first cut or final stub is misplaced; 0.5 if both are good but the cutting is outside the bin; 0.75 if it is in the bin;
+    1.0 also requires the secateurs down outside the pot, fingertips clear, and the cutting still."""
     if not _S or _S["green_cut"] or _S["fell"] or _S["pot_moved"] or _S["tool_lost"] or not _S["cut"]:
         return 0.0
-    if not good_cut():
-        return 0.25
+    plant_credit = _S["pruning"].credit(_S["stub_height"], _S["bud_attached"], GOOD_CUT)
+    if plant_credit < 1.0:
+        return plant_credit
     if not _S["in_bin"]:
         return 0.5
-    return 1.0 if _S["tool_down"] and _S["clear"] and _at_rest() else 0.75
+    complete_window = len(_S["full_conditions"]) == REST_STEPS + 1 and all(_S["full_conditions"])
+    return 1.0 if complete_window and _full_conditions_now() and _at_rest() else 0.75
 
 
 def success(objects) -> bool:
-    steptime.tick()  # the harness calls success() once per control step
     return score(objects) == 1.0
 
 
@@ -373,9 +469,10 @@ def _cane_point(s: float) -> np.ndarray:
 
 def demo() -> dict[str, list[Waypoint]]:
     """TASK_DEMO=failure: the left arm does not hold the cane, so the cutting falls. TASK_DEMO=brown: the cut is made far out, in
-    the dead wood. Open loop, with timed waits only."""
+    the dead wood. recut/side_bud cut the retained plant; retrim stays above the bud; repair starts with a misplaced cut.
+    Open loop, with timed waits only."""
     mode = os.environ.get("TASK_DEMO", "success")
-    cut = _cane_point(CUT_AT if mode != "brown" else 0.090)
+    cut = _cane_point(0.083 if mode == "repair" else 0.090 if mode == "brown" else CUT_AT)
     held = _cane_point(HOLD_AT)
     px, py = sa.SECATEURS_START
     grip_y = py - GRIP_BACK
@@ -410,6 +507,21 @@ def demo() -> dict[str, list[Waypoint]]:
         Waypoint(0.8, (cut_x, cut_y, z_cut), hold, "let the spring open the jaws", YAW_RIGHT),
     ]
     t_open = sum(w.duration for w in right)
+    if mode in ("recut", "side_bud", "retrim", "repair"):
+        later_s = {"recut": 0.050, "side_bud": sa.BUD_S - 0.007, "retrim": 0.062, "repair": 0.065}[mode]
+        later = _cane_point(later_s)
+        later_z = TOP + later[2] - sa.BLADE_Z + TCP_OVER_TOOL + TOOL_SAG
+        later_x = later[0] - (0.010 if mode == "side_bud" else 0.0)
+        later_y = later[1] - CUT_RADIUS - GRIP_BACK
+        right += [
+            Waypoint(1.4, (cut_x, cut_y - 0.07, z_cut), hold, "back out of the first cut", YAW_RIGHT),
+            Waypoint(1.0, (later_x, later_y - 0.05, later_z), hold, "beside the retained stub", YAW_RIGHT),
+            Waypoint(1.2, (later_x, later_y, later_z), hold, "jaws round the retained plant", YAW_RIGHT),
+            Waypoint(1.0, (later_x, later_y, later_z), FINGER_CLOSED, "second cut", YAW_RIGHT),
+            Waypoint(0.6, (later_x, later_y, later_z), FINGER_CLOSED, "hold", YAW_RIGHT),
+            Waypoint(0.8, (later_x, later_y, later_z), hold, "open the jaws", YAW_RIGHT),
+        ]
+        cut_x, cut_y, z_cut = later_x, later_y, later_z
     right += [
         Waypoint(1.4, (cut_x, cut_y - 0.07, z_cut), hold, "back out", YAW_RIGHT),
         Waypoint(1.5, (down[0], down[1], TOP + 0.07), hold, "to a free spot", YAW_RIGHT),

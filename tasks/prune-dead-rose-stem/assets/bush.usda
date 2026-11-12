@@ -1083,7 +1083,7 @@ def Xform "Bush"
         quatf physics:localRot0 = (0.8870108, -0.4617486, 0.0000000, 0.0000000)
         point3f physics:localPos1 = (0.0000000, 0.0000000, 0.0000000)
         quatf physics:localRot1 = (1.0000000, 0.0000000, 0.0000000, 0.0000000)
-        float physics:lowerLimit = -0.060000
+        float physics:lowerLimit = -0.090000
         float physics:upperLimit = 0.001000
     }
     def PhysicsPrismaticJoint "stub_brown_slide" (
@@ -1100,7 +1100,7 @@ def Xform "Bush"
         quatf physics:localRot0 = (0.8870108, -0.4617486, 0.0000000, 0.0000000)
         point3f physics:localPos1 = (0.0000000, 0.0000000, 0.0000000)
         quatf physics:localRot1 = (1.0000000, 0.0000000, 0.0000000, 0.0000000)
-        float physics:lowerLimit = -0.120000
+        float physics:lowerLimit = -0.200000
         float physics:upperLimit = 0.001000
     }
     def PhysicsPrismaticJoint "stub_bud_slide" (

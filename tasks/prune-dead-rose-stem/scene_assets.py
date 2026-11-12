@@ -2,7 +2,8 @@
 
 - **The rose bush** (``bush.usda``): a terracotta pot of soil with four green, leafy, thorny canes and one dead cane at its front,
   as one articulation whose root is the pot (free on the table). The dead cane is green from the soil up to just above a red bud
-  and brown above, up to an old pruning cut. It can be cut once, at any height the blades reach:
+  and brown above, up to an old pruning cut. The first cut frees its upper section at any height the blades reach; later cuts
+  can shorten the retained stub and remove its original bud:
   - the stub left in the pot is two sleeves, green and brown, which slide down into the soil to the height of the cut;
   - the part cut off is a short top piece with two sleeves inside it, which slide out down to the height of the cut. Until the
     cut, a chain of six stiffly driven joints holds that part in place on the pot; the cut releases them, and from then on it moves
@@ -551,8 +552,8 @@ def write_bush() -> str:
     z_axis /= np.linalg.norm(z_axis)
     bud_rot = _q_wxyz_from_matrix(np.stack([x_axis, np.cross(z_axis, x_axis), z_axis], axis=1))
     j = ""
-    j += joint("Prismatic", "stub_green_slide", root, "pot", "stub_green", "Z", on_cane(SG_BOTTOM_S), q_lean, limits=(-0.06, 0.001))
-    j += joint("Prismatic", "stub_brown_slide", root, "pot", "stub_brown", "Z", on_cane(BROWN_S), q_lean, limits=(-0.12, 0.001))
+    j += joint("Prismatic", "stub_green_slide", root, "pot", "stub_green", "Z", on_cane(SG_BOTTOM_S), q_lean, limits=(-0.09, 0.001))
+    j += joint("Prismatic", "stub_brown_slide", root, "pot", "stub_brown", "Z", on_cane(BROWN_S), q_lean, limits=(-0.20, 0.001))
     j += joint("Prismatic", "stub_bud_slide", root, "pot", "stub_bud", "Z", on_cane(BUD_S), (1.0, 0.0, 0.0, 0.0), (0.0, 0.0, 0.0), q_back,
                limits=(BUD_SINK - 0.005, 0.001))
     j += joint("Prismatic", "c_px_joint", root, "pot", "c_px", "X", o_c, limits=(-0.9, 0.9))
@@ -720,3 +721,11 @@ def cut_joint_positions(h: float) -> dict[str, float]:
     q["cut_green_slide"] = (h - T_LOW_S) - CG_HIDE if h < BROWN_S else 0.0
     q["cut_bud_slide"] = BUD_TRAVEL if h < BUD_TOP_S else 0.0
     return q
+
+
+def stub_joint_positions(h: float, bud_present: bool) -> dict[str, float]:
+    """Shorten only the retained stub; the first cutting keeps its own shape."""
+    h = max(h, 0.006)
+    return {"stub_green_slide": min(h, BROWN_S) - BROWN_S,
+            "stub_brown_slide": (h if h >= BROWN_S else h - 0.001) - (BROWN_S + L_SB),
+            "stub_bud_slide": 0.0 if bud_present else BUD_SINK}
