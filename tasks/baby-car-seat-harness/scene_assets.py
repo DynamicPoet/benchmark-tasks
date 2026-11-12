@@ -1,15 +1,10 @@
-"""The scene's models, written as plain-text USD when the task file loads (no pxr needed).
+"""Practice-doll carrier geometry and a constrained five-point harness.
 
-An infant carrier reclined on its base, a newborn doll lying in it, and its three-point harness. The carrier, doll and crotch
-buckle are one fixed body. The harness is an articulation with a fixed root:
-
-- each strap is a straight flat band from a slot beside the doll's shoulder to a tongue: two revolute joints at the slot, a
-  sliding joint along the band (its two lengths overlap, so it reads as one strap whatever its length), and two revolute joints
-  at the tongue, which keep the tongue upright as the strap swings;
-- the chest clip is two halves on one carriage. The carriage slides along the doll's chest, and each half slides across it.
-
-Seat coordinates: u up the backrest towards the head, v to the robot's left (the world's y), w out of the backrest. Sizes in
-metres; every height is above the table.
+Rigid tongue and chest-clip mechanisms are combined with measured shoulder and
+material-feed joints. The shoulder/lap surfaces are rendered ribbons rather
+than fabric-contact physics. Their full width, material length, orientation and
+body separation remain explicit scoring evidence. The shoulder material assay
+is not a calibrated reproduction of a person's finger grasp.
 """
 
 from __future__ import annotations
@@ -20,6 +15,7 @@ from pathlib import Path
 
 import numpy as np
 import usdkit as uk
+import harness_fit as hf
 from usdkit import Look, Mesh, box, cylinder, join, lathe, prism, tube, write_usda
 
 HERE = Path(__file__).resolve().parent
@@ -58,9 +54,12 @@ BUCKLE = (0.040, 0.068, 0.026)
 SLOT_OFFSET_Y = 0.016  # each slot's middle from the buckle's middle
 SLOT = (0.012, 0.028, 0.020)  # x, y, depth
 # Each tongue starts with its blade in a pocket on the cushion, beside the doll's hip
-POCKET_XY = (0.216, 0.100)
+POCKET_XY = (0.200, 0.085)
 POCKET_TOP = 0.102
 POCKET = (0.036, 0.034)
+ADJUSTER_START = (0.060, 0.0, 0.080)
+ADJUSTER_EXIT = (0.100, 0.0, 0.080)
+ADJUSTER_TRAVEL = 0.035
 
 
 def seat_point(u: float, v: float, w: float) -> np.ndarray:
@@ -88,6 +87,21 @@ def strap_slot(side: int) -> np.ndarray:
 
 def clip_start() -> np.ndarray:
     return seat_point(CLIP_START_U, 0.0, RAIL_W)
+
+
+def initial_fold(side: int) -> float:
+    tongue = to_seat(tongue_start(side))[0]
+    centres = hf.fitted_centres(side, tongue)
+    return hf.fold_height_for_length(centres, material_budget(side) - hf.lap_length(side, tongue))
+
+
+def nominal_tongue(side: int) -> np.ndarray:
+    return np.array([BUCKLE_XY[0], side * SLOT_OFFSET_Y, BUCKLE_TOP + TONGUE[2] / 2 + 0.001])
+
+
+def material_budget(side: int) -> float:
+    tongue = to_seat(nominal_tongue(side))[0]
+    return hf.reference_length(hf.fitted_centres(side, tongue)) + hf.lap_length(side, tongue) + hf.SHOULDER_SLACK
 
 
 def _seat_mesh(m: Mesh) -> Mesh:
@@ -203,6 +217,25 @@ def _sphere_collider(name: str, radius: float, centre, root: str) -> str:
     }}"""
 
 
+def _body_surface_collider(name: str, centre, semi, root: str) -> str:
+    """Convex meshes match the doll surface used by the ribbon fitting checks."""
+    m = _seat_mesh(_ellipsoid(centre, semi, 32, 20))
+    return f'''
+    def Mesh "{name}" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysicsMeshCollisionAPI", "PhysxCollisionAPI"]
+    )
+    {{
+        uniform token purpose = "guide"
+        uniform token subdivisionScheme = "none"
+        token physics:approximation = "convexHull"
+        float physxCollision:contactOffset = 0.0005
+        float physxCollision:restOffset = 0
+        int[] faceVertexCounts = [{", ".join("3" for _ in m.f)}]
+        int[] faceVertexIndices = [{", ".join(str(int(x)) for x in m.f.ravel())}]
+        point3f[] points = [{uk._fmt(m.v)}]
+    }}'''
+
+
 def _slotted_block(name: str, centre_xy, top: float, size_xy, height: float, slots: list[float], slot, root: str) -> list[str]:
     """A block with slots along its x middle, as boxes: a floor, two long sides, and walls between the slots (y offsets)."""
     cx, cy = centre_xy
@@ -229,9 +262,9 @@ def _doll() -> list[tuple[str, Mesh, str]]:
     parts = [("torso", torso, "onesie"), ("head", head, "skin"), ("neck", neck, "skin")]
     sleeves, hands, thighs, feet = [], [], [], []
     for s in (-1, 1):
-        sleeves.append(tube([(0.135, s * 0.058, 0.024), (0.105, s * 0.070, 0.022), (0.065, s * 0.078, 0.020), (0.042, s * 0.078, 0.022)], 0.017, 12))
+        sleeves.append(tube([(0.135, s * 0.078, 0.024), (0.105, s * 0.090, 0.022), (0.065, s * 0.098, 0.020), (0.042, s * 0.098, 0.022)], 0.017, 12))
         sleeves.append(_ellipsoid((0.135, s * 0.058, 0.024), (0.022, 0.020, 0.018), 16, 8))
-        hands.append(_ellipsoid((0.030, s * 0.074, 0.026), (0.018, 0.015, 0.012), 16, 8))
+        hands.append(_ellipsoid((0.030, s * 0.094, 0.026), (0.018, 0.015, 0.012), 16, 8))
         thighs.append(tube([(0.015, s * 0.046, 0.022), (-0.02, s * 0.056, 0.034), (-0.052, s * 0.066, 0.046), (-0.070, s * 0.066, 0.034), (-0.072, s * 0.062, 0.020)], 0.019, 12))
         feet.append(_ellipsoid((-0.062, s * 0.056, 0.016), (0.026, 0.017, 0.015), 16, 8))
     parts += [("sleeves", join(*sleeves), "onesie"), ("hands", join(*hands), "skin"), ("legs", join(*thighs), "onesie"), ("feet", join(*feet), "skin")]
@@ -310,9 +343,10 @@ def write_seat() -> str:
         slanted("side_r", (su, wall, SHELL_RIM), (uc, -inner_v - wall / 2, SHELL_RIM / 2)),
         slanted("foot", (wall, sv, SHELL_RIM), (SHELL_U[0] + wall / 2, 0.0, SHELL_RIM / 2)),
         slanted("top_end", (wall, sv, SHELL_RIM), (SHELL_U[1] - wall / 2, 0.0, SHELL_RIM / 2)),
-        slanted("torso", (0.125, 0.11, 0.040), (0.0925, 0.0, 0.020)),  # from above the buckle to the shoulders
         _sphere_collider("head", HEAD[1] - 0.002, seat_point(HEAD[0][0], 0.0, HEAD[0][1]), root),
     ]
+    for k, (centre, semi) in enumerate(hf.BODY):
+        colliders.append(_body_surface_collider(f"body_surface{k}", centre, semi, root))
     return write_usda(str(ASSETS / "seat.usda"), root, parts, LOOKS, colliders, mass=1.0, friction=(0.6, 0.5), crease=55.0)
 
 
@@ -394,7 +428,34 @@ def write_harness() -> str:
             uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
         }}"""
 
-    links.append(link("frame", (0, 0, 0), np.eye(3), 1.0, 1e-3))
+    def ribbon_mesh(side, tongue):
+        centres = hf.fitted_centres(side, to_seat(np.asarray(tongue))[0])
+        tongue_local = to_seat(np.asarray(tongue))[0]
+        centres[2, 2] += hf.fold_height_for_length(centres, material_budget(side) - hf.lap_length(side, tongue_local))
+        points = hf.ribbon_points(centres)
+        world = np.array([X0, 0.0, Z0]) + points.reshape(-1, 3) @ R_SEAT.T
+        faces = []
+        for row in range(len(points) - 1):
+            for col in range(hf.WIDTH_SAMPLES - 1):
+                n = hf.WIDTH_SAMPLES
+                a, b, c, d = row * n + col, row * n + col + 1, (row + 1) * n + col + 1, (row + 1) * n + col
+                faces += [(a, b, c), (a, c, d)]
+        return Mesh(world, np.asarray(faces, int))
+
+    ribbon_visual = ""
+    tail_width = np.array([0.0, hf.STRAP_WIDTH / 2, 0.0])
+    tail = np.array([np.array(ADJUSTER_EXIT) - tail_width, np.array(ADJUSTER_EXIT) + tail_width,
+                     np.array(ADJUSTER_START) - tail_width, np.array(ADJUSTER_START) + tail_width])
+    ribbon_visual += mesh(("adjustment_tail", Mesh(tail, np.array([(0, 1, 3), (0, 3, 2)])), "webbing"))
+    for side, tag in ((1, "l"), (-1, "r")):
+        ribbon_visual += mesh((f"ribbon_{tag}", ribbon_mesh(side, tongue_start(side)), "webbing"))
+        a = seat_point(-0.015, side * 0.085, 0.030)
+        b = tongue_start(side)
+        d = b - a
+        normal = R_SEAT[:, 1] * 0.011
+        vv = np.array([a - normal, a + normal, b - normal, b + normal])
+        ribbon_visual += mesh((f"lap_{tag}", Mesh(vv, np.array([[0, 1, 3], [0, 3, 2]])), "webbing"))
+    links.append(link("frame", (0, 0, 0), np.eye(3), 1.0, 1e-3, ribbon_visual))
     for side, tag in ((1, "l"), (-1, "r")):
         slot, t0 = strap_slot(side), tongue_start(side)
         r = _strap_rotation(side)
@@ -403,8 +464,8 @@ def write_harness() -> str:
         near = box((band, 0.022, 0.002), center=(band / 2, 0.0, 0.0))
         far = box((band, 0.022, 0.002), center=(-band / 2, 0.0, 0.0005))
         links.append(link(f"yaw_{tag}", slot, r, 0.004, 1e-6))
-        links.append(link(f"pitch_{tag}", slot, r, 0.006, 2e-6, mesh(("band", near, "webbing"))))
-        links.append(link(f"stage_{tag}", t0, r, 0.006, 2e-6, mesh(("band", far, "webbing"))))
+        links.append(link(f"pitch_{tag}", slot, r, 0.006, 2e-6))
+        links.append(link(f"stage_{tag}", t0, r, 0.006, 2e-6))
         links.append(link(f"bend_{tag}", t0, r, 0.004, 1e-6))
         rt = r.T
         tz = TONGUE[2]
@@ -416,6 +477,21 @@ def write_harness() -> str:
         joints.append(joint("Prismatic", f"strap_len_{tag}", f"pitch_{tag}", f"stage_{tag}", (length, 0, 0), np.eye(3), "X", -0.09, 0.12))
         joints.append(joint("Revolute", f"tongue_pitch_{tag}", f"stage_{tag}", f"bend_{tag}", (0, 0, 0), np.eye(3), "Y", -120.0, 120.0))
         joints.append(joint("Revolute", f"tongue_yaw_{tag}", f"bend_{tag}", f"tongue_{tag}", (0, 0, 0), np.eye(3), "Z", -120.0, 120.0))
+
+        patch = seat_point(0.130, side * 0.035, float(hf.surface_w(0.130, side * 0.035)) + 0.001)
+        for stage in ("route", "lift", "roll", "fold"):
+            collision = cube("webbing_patch_c", (0.008, hf.STRAP_WIDTH, 0.0015), (0, 0, 0)) if stage == "fold" else ""
+            links.append(link(f"fit_body_{stage}_{tag}", patch, R_SEAT, 0.002, 1e-7, collision))
+        joints.append(joint("Prismatic", f"fit_route_{tag}", "frame", f"fit_body_route_{tag}", patch, R_SEAT, "Y", -0.06, 0.06))
+        joints.append(joint("Prismatic", f"fit_lift_{tag}", f"fit_body_route_{tag}", f"fit_body_lift_{tag}", (0, 0, 0), np.eye(3), "Z", 0.0, 0.08))
+        joints.append(joint("Revolute", f"fit_roll_{tag}", f"fit_body_lift_{tag}", f"fit_body_roll_{tag}", (0, 0, 0), np.eye(3), "X", -180.0, 180.0))
+        joints.append(joint("Prismatic", f"fit_fold_{tag}", f"fit_body_roll_{tag}", f"fit_body_fold_{tag}", (0, 0, 0), np.eye(3), "Z", 0.0, 0.10))
+
+    adjustment_rotation = np.diag([-1.0, 1.0, -1.0])
+    handle_mesh = mesh(("adjustment_tab", box((0.024, 0.016, 0.010), bevel=0.001), "webbing"))
+    handle_body = cube("adjustment_tab_c", (0.024, 0.016, 0.010), (0, 0, 0), patch=0.006) + handle_mesh
+    links.append(link("adjuster", ADJUSTER_START, adjustment_rotation, 0.012, 1e-6, handle_body))
+    joints.append(joint("Prismatic", "adjuster_pull", "frame", "adjuster", ADJUSTER_START, adjustment_rotation, "X", 0.0, ADJUSTER_TRAVEL))
 
     start = clip_start()
     links.append(link("carriage", start, R_SEAT, 0.02, 1e-5))
