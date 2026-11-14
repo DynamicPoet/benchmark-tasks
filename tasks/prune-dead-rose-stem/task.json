@@ -16,6 +16,6 @@
   "run_limit": "1,200 steps (1 minute at 20 Hz)",
   "reset_notes": "In the real world the dead cane is used up: each trial needs a fresh plant or a fresh practice cane in the pot.",
   "fidelity": "Rigid driven bodies. Closing cuts require current finite blade/material overlap. Cane contact uses a conservative radius disk inside its oblique section; bud plane-sections intersect the blade mesh. First cutting is freed on a six-joint chain. Later cuts shorten visible stub sleeves or remove its bud; small trimmings are not free bodies. Final link poses and original cut are scored; full conditions persist for 1 s. Green canes do not visibly part; leaves have no colliders.",
-  "scores": "Historical Dream-1 episode: 0.0 (environment revision a803c4cfeb4d, 1,200 steps); current scripted demo: 1.0. Dream-1 has not run on this revision; later bud/stub and finite-blade mechanisms are validated by scripted controls.",
-  "media": "M-2GCRFN"
+  "scores": "Dream-1 run: 0.0; demo: 1.0",
+  "media": "M-P8RQBL"
 }

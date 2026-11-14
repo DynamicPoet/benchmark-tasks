@@ -56,12 +56,13 @@ The run prints `task_score` at the end: 1.0 once `success()` has held for 1 s, o
 ## Runtime and seeds
 
 - Current scripted demo: 356 steps (17.80 s simulated), 156.65 s wall time at 640 x 360; slowest 30 control steps 11.24 s. Environment revision `e7a06b34d41d`, source `da4a980`. Wall time depends on GPU load.
+- Dream-1: 1,200 steps (60 s simulated), about 10 minutes wall time.
 - The run limit is 1,200 steps (60 s at 20 Hz).
 - `object_jitter=0` keeps the layout fixed, so no seed is needed. Scripted waypoints and timed waits are open loop.
 
-## Model episode provenance
+## Dream-1 run
 
-The Dream-1 video is a complete 1,200-step episode from environment revision `a803c4cfeb4d`, whose original scorer reported 0.0. It is historical model evidence, not a Dream-1 execution on the current revision. Its secateurs stayed open and the cane was never cut; the 240 saved-state samples also score 0.0 under the current scorer. This saved-state calculation is not a physical replay. The initial visible layout is unchanged, while retained-sleeve travel limits and cutting interactions differ. The later bud/stub and finite-blade mechanisms were not exercised by the historical model episode; the current scripted demo and controls provide that evidence.
+The Dream-1 video is a complete 1,200-step episode on this revision (environment revision `e7a06b34d41d`), run with the command above at 320 x 176 and 8 action rows per request, in one model session from the first action to the end. Its scorer reported 0.0: the arms moved towards the plant and the secateurs, and the dead cane was not cut.
 
 ## Scripted controls
 
