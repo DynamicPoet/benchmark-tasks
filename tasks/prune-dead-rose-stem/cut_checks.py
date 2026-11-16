@@ -21,6 +21,39 @@ def footprint_distance(point, vertices, faces):
     return float(np.linalg.norm(delta - fraction[..., None] * edges, axis=2).min())
 
 
+def footprint_distances(points, vertices, faces):
+    """footprint_distance for many points at once."""
+    triangles = vertices[faces, :2]
+    edges = np.roll(triangles, -1, axis=1) - triangles
+    area = cross(edges[:, 0], triangles[:, 2] - triangles[:, 0])
+    valid = abs(area) > 1e-12
+    out = np.empty(len(points))
+    for start in range(0, len(points), 256):
+        p = np.asarray(points[start:start + 256])[:, None, None, :]
+        delta = p - triangles[None]
+        sides = cross(edges[None], delta)
+        inside = (((sides >= -1e-12).all(axis=2) | (sides <= 1e-12).all(axis=2)) & valid[None]).any(axis=1)
+        fraction = np.clip((delta * edges[None]).sum(axis=3) / np.maximum((edges * edges).sum(axis=2), 1e-24)[None], 0, 1)
+        dist = np.linalg.norm(delta - fraction[..., None] * edges[None], axis=3).min(axis=(1, 2))
+        out[start:start + 256] = np.where(inside, 0.0, dist)
+    return out
+
+
+def segment_blade_distance(a, b, vertices, faces, z_mid, half_thickness, radius, step=0.0005):
+    """Smallest distance from the axis a-b (blade frame) to the blade's metal: its mesh footprint, z_mid +- half_thickness.
+
+    Samples every `step` along the axis; only samples within `radius` of the blade's faces can be in contact."""
+    a, b = np.asarray(a, float), np.asarray(b, float)
+    n = max(2, int(np.ceil(np.linalg.norm(b - a) / step)) + 1)
+    p = a + np.linspace(0.0, 1.0, n)[:, None] * (b - a)
+    dz = np.maximum(np.abs(p[:, 2] - z_mid) - half_thickness, 0.0)
+    keep = dz <= radius
+    if not keep.any():
+        return float("inf")
+    dxy = footprint_distances(p[keep, :2], vertices, faces)
+    return float(np.hypot(dxy, dz[keep]).min())
+
+
 def convex_section(points):
     """Convex hull of a plane section of the convex bud mesh, counterclockwise."""
     points = sorted(set(tuple(map(float, p)) for p in points))

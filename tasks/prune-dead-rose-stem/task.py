@@ -1,6 +1,7 @@
-"""On the station table, in front of the robot: a potted rose bush with four green, leafy canes and, at the front of the pot, one
-dead cane. The dead cane is green from the soil up to just above a small red bud and brown above, up to an old pruning cut. Bypass
-secateurs with red handles lie open on the table to the right of the pot, and an open black garden tub stands to the left.
+"""On the station table, in front of the robot: a potted rose bush with five live, leafy canes and one dead cane, all leaning out
+over the pot's rim. The dead cane stands between two live canes that lean the same way; it is green from the soil up to just above
+a small red bud and brown above, up to an old pruning cut. Bypass secateurs with red handles lie open on the table to the right of
+the pot, and an open black garden tub stands to the left.
 
 Run it:  inspect-robots run --embodiment yam_arena -E task=task.py -E object_jitter=0 -E control_hz=20 \\
            -E cam_width=320 -E cam_height=176 --scorer task_score --max-steps 1200 --instruction "<the task.json instruction>"
@@ -22,7 +23,7 @@ import scenekit  # noqa: E402
 import steptime  # noqa: E402
 from motion_checks import points_at_rest  # noqa: E402
 from pruning_checks import PruningState  # noqa: E402
-from cut_checks import footprint_distance, section_contact  # noqa: E402
+from cut_checks import footprint_distance, section_contact, segment_blade_distance  # noqa: E402
 from scenekit import UsdBody, on_reset, on_step  # noqa: E402
 from yam_arena.constants import FINGER_CLOSED, FINGER_OPEN, PAD_TIP_PAST_TCP, TCP_OFFSET  # noqa: E402
 from yam_arena.demo import Waypoint  # noqa: E402
@@ -41,6 +42,7 @@ BUD_EDGES = np.unique(np.sort(np.concatenate([_bud_mesh.f[:, [0, 1]], _bud_mesh.
                                               _bud_mesh.f[:, [2, 0]]]), axis=1), axis=0)
 BUD_EDGES = BUD_EDGES[np.linalg.norm(BUD_VERTICES[BUD_EDGES[:, 0]] - BUD_VERTICES[BUD_EDGES[:, 1]], axis=1) > 1e-8]
 _BLADE_MESH = next(mesh for name, mesh, _ in sa._closed_half(1)[0] if name == "blade")
+BLADE_HALF_T = 0.0014      # the blade's half thickness about BLADE_Z (scene_assets builds it 2.8 mm thick)
 
 CHAIN = ("c_px_joint", "c_py_joint", "c_pz_joint", "c_rx_joint", "c_ry_joint", "c_rz_joint")
 SLIDES = ("stub_green_slide", "stub_brown_slide", "stub_bud_slide", "cut_brown_slide", "cut_green_slide", "cut_bud_slide")
@@ -196,6 +198,17 @@ def _blade_frame(point, q):
     return np.array([c * point[0] + sn * point[1], -sn * point[0] + c * point[1]])
 
 
+def _blade_on_live_cane(name: str, a: np.ndarray, b: np.ndarray, o: np.ndarray, r: np.ndarray, q: float) -> bool:
+    """Whether a live cane's material (its axis within its radius) overlaps the closed blade's metal, from any approach."""
+    radius = sa.GREEN_CANES[int(name[5:])][2]
+    ends = []
+    for p in (a, b):
+        local = r.T @ (p - o)
+        ends.append(np.array([*_blade_frame(local, q), local[2]]))
+    distance = segment_blade_distance(ends[0], ends[1], _BLADE_MESH.v, _BLADE_MESH.f, sa.BLADE_Z, BLADE_HALF_T, radius)
+    return distance <= radius
+
+
 def _check_cut(env, origin: np.ndarray) -> None:
     """Record closure only at current finite blade/material contact, never remembered jaw entry."""
     base = env.unwrapped
@@ -209,6 +222,11 @@ def _check_cut(env, origin: np.ndarray) -> None:
     n = r[:, 2]
     bud_section = []
     for name, a, b, s_min in _canes(bush, origin):
+        if name.startswith("green"):
+            if closing_edge and _blade_on_live_cane(name, a, b, o, r, q):
+                _S["cut_events"].append({"target": name, "height": None, "t": _S["t"] / 20.0, "contact": "blade_volume", "q": q})
+                _S["green_cut"] = True
+            continue
         d = b - a
         length = float(np.linalg.norm(d))
         d = d / length
@@ -228,10 +246,7 @@ def _check_cut(env, origin: np.ndarray) -> None:
         reach = sa.JAW_REACH[0] <= radius <= sa.JAW_REACH[1]
         phi_mid = math.atan2(-local[0], local[1]) - q / 2
         _S["in_jaw"][name] = reach and abs(phi_mid) <= half_open
-        if name in ("dead", "stub"):
-            material_radius = sa.R1 if sa.BROWN_S <= s < sa.T_LOW_S else sa.R0
-        else:
-            material_radius = sa.GREEN_CANES[int(name[5:])][2]
+        material_radius = sa.R1 if sa.BROWN_S <= s < sa.T_LOW_S else sa.R0
         distance = footprint_distance(_blade_frame(local, q), _BLADE_MESH.v, _BLADE_MESH.f) if closing_edge and reach else float("inf")
         # A radius-R disk is inside the oblique cylinder's elliptical section:
         # this contact gate is conservative, without enlarging the visible cane.
@@ -253,8 +268,6 @@ def _check_cut(env, origin: np.ndarray) -> None:
         elif name == "stub":
             _S["pruning"].cut(s)
             _write_joints(bush, sa.stub_joint_positions(_S["pruning"].stub_length, not _S["pruning"].bud_damaged))
-        else:
-            _S["green_cut"] = True
     if closing and not _S["pruning"].bud_damaged:
         contact = section_contact(bud_section, _BLADE_MESH.v, _BLADE_MESH.f, sa.JAW_REACH)
         if contact is not None:
@@ -451,7 +464,10 @@ TOOL_SAG = 0.008         # held by its handles, the tool hangs this much lower t
 CUT_AT = sa.BUD_TOP_S + 0.009   # along the cane: 9 mm above the bud
 HOLD_AT = 0.205          # the left hand holds the cane here, near its tip
 PINCH_BELOW_TCP = 0.006  # the cane sits this far below the left TCP, between the pads
-LEFT_CLEAR = (0.15, 0.20, TOP + 0.20)
+LEFT_OPEN = -0.025       # the left fingers open 50 mm: enough round the 10 mm cane, clear of the live canes beside it
+DRAW_OUT = 0.025         # after the cut, the left hand first draws the cutting this far out along the cane
+OUT_OF_BUSH = (0.30, 0.30, TOP + 0.20)  # ... then carries it out past the live canes' tips, toward the bin
+LEFT_CLEAR = (0.30, 0.30, TOP + 0.20)
 RIGHT_CLEAR = (0.14, -0.305, TOP + 0.16)
 
 
@@ -467,19 +483,27 @@ def _cane_point(s: float) -> np.ndarray:
     return sa.on_cane(s) + np.array([sa.POT_XY[0], sa.POT_XY[1], 0.0])
 
 
+def _live_cane_point(cane, height: float) -> np.ndarray:
+    """The point on a live cane's axis at a height above the table, in the station frame."""
+    s = (height - sa.SOIL_Z) / cane.direction[2]
+    return cane.at(s) + np.array([sa.POT_XY[0], sa.POT_XY[1], 0.0])
+
+
 def demo() -> dict[str, list[Waypoint]]:
     """TASK_DEMO=failure: the left arm does not hold the cane, so the cutting falls. TASK_DEMO=brown: the cut is made far out, in
-    the dead wood. recut/side_bud cut the retained plant; retrim stays above the bud; repair starts with a misplaced cut.
+    the dead wood. TASK_DEMO=green: the jaws close on the live cane beside the dead one. recut/side_bud cut the retained plant; retrim stays above the bud; repair starts with a misplaced cut.
     Open loop, with timed waits only."""
     mode = os.environ.get("TASK_DEMO", "success")
     cut = _cane_point(0.083 if mode == "repair" else 0.090 if mode == "brown" else CUT_AT)
+    if mode == "green":  # careless aim: the jaws go round the live cane beside the dead one, at the same height
+        cut = _live_cane_point(sa.LIVE_CANES[0], cut[2])
     held = _cane_point(HOLD_AT)
     px, py = sa.SECATEURS_START
     grip_y = py - GRIP_BACK
     hold = -(_handle_outer_x(-GRIP_BACK) - 0.003)  # squeeze 3 mm a side: the spring then holds the tool against the pads
     z_table = TOP + sa.TOOL_HALF_T + 0.0005 + TCP_OVER_TOOL
     z_cut = TOP + cut[2] - sa.BLADE_Z + TCP_OVER_TOOL + TOOL_SAG
-    cut_x, cut_y = cut[0], cut[1] - CUT_RADIUS - GRIP_BACK
+    cut_x, cut_y = cut[0], cut[1] - (CUT_RADIUS + 0.008 if mode == "green" else CUT_RADIUS) - GRIP_BACK
     left_z = TOP + held[2] + PINCH_BELOW_TCP
     down = (0.20, -0.18)
     right = [
@@ -494,8 +518,8 @@ def demo() -> dict[str, list[Waypoint]]:
     left: list[Waypoint] = []
     if mode != "failure":
         left = [
-            Waypoint(1.6, (held[0], held[1] + 0.07, left_z), FINGER_OPEN, "beyond the cane's tip", YAW_LEFT),
-            Waypoint(1.4, (held[0], held[1], left_z), FINGER_OPEN, "round the cane near its tip", YAW_LEFT),
+            Waypoint(1.6, (held[0], held[1] + 0.07, left_z), LEFT_OPEN, "beyond the cane's tip", YAW_LEFT),
+            Waypoint(1.4, (held[0], held[1], left_z), LEFT_OPEN, "round the cane near its tip", YAW_LEFT),
             Waypoint(0.8, (held[0], held[1], left_z), FINGER_CLOSED, "hold it", YAW_LEFT),
         ]
     t_held = sum(w.duration for w in left)
@@ -533,12 +557,21 @@ def demo() -> dict[str, list[Waypoint]]:
     ]
     if mode == "failure":
         return {"right": right}
+    if mode == "green":
+        return {"left": left + [
+            Waypoint(max(t_open - t_held, 0.1), (held[0], held[1], left_z), FINGER_CLOSED, "hold the cane", YAW_LEFT),
+            Waypoint(0.6, (held[0], held[1], left_z), LEFT_OPEN, "let go", YAW_LEFT),
+            Waypoint(1.0, (held[0], held[1] + 0.07, left_z), LEFT_OPEN, "back off past the tip", YAW_LEFT),
+            Waypoint(1.2, LEFT_CLEAR, FINGER_OPEN, "clear", YAW_LEFT),
+            Waypoint(3.0, LEFT_CLEAR, FINGER_OPEN, "watch", YAW_LEFT),
+        ], "right": right}
     bx, by = sa.BIN_XY
     centre_from_hand = (HOLD_AT - (CUT_AT + sa.TOP_S) / 2) * sa.CANE_DIR  # from the cutting's middle to the hand
     over = (bx + centre_from_hand[0], by + centre_from_hand[1])
     left += [
         Waypoint(max(t_open - t_held, 0.1), (held[0], held[1], left_z), FINGER_CLOSED, "hold the cutting", YAW_LEFT),
-        Waypoint(1.2, (held[0] - 0.04, held[1] + 0.03, TOP + 0.20), FINGER_CLOSED, "lift it clear", YAW_LEFT),
+        Waypoint(0.8, tuple(np.array([held[0], held[1], left_z]) + DRAW_OUT * sa.CANE_DIR), FINGER_CLOSED, "draw it out", YAW_LEFT),
+        Waypoint(1.2, OUT_OF_BUSH, FINGER_CLOSED, "out of the bush", YAW_LEFT),
         Waypoint(1.5, (over[0], over[1], TOP + 0.20), FINGER_CLOSED, "over the bin", YAW_LEFT),
         Waypoint(1.2, (over[0], over[1], TOP + 0.15), FINGER_CLOSED, "lower it in", YAW_LEFT),
         Waypoint(0.6, (over[0], over[1], TOP + 0.15), FINGER_OPEN, "let go", YAW_LEFT),

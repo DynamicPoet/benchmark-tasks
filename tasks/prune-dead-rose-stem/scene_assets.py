@@ -1,7 +1,7 @@
 """The scene's models, written as plain-text USD when the task file loads (no pxr needed).
 
-- **The rose bush** (``bush.usda``): a terracotta pot of soil with four green, leafy, thorny canes and one dead cane at its front,
-  as one articulation whose root is the pot (free on the table). The dead cane is green from the soil up to just above a red bud
+- **The rose bush** (``bush.usda``): a terracotta pot of soil with five live, leafy, thorny canes (``LIVE_CANES``) and one dead
+  cane between two of them, as one articulation whose root is the pot (free on the table). The dead cane is green from the soil up to just above a red bud
   and brown above, up to an old pruning cut. The first cut frees its upper section at any height the blades reach; later cuts
   can shorten the retained stub and remove its original bud:
   - the stub left in the pot is two sleeves, green and brown, which slide down into the soil to the height of the cut;
@@ -9,7 +9,7 @@
     cut, a chain of six stiffly driven joints holds that part in place on the pot; the cut releases them, and from then on it moves
     as a free body.
   Every slide is driven stiffly, so each part stays rigid. The nested sleeves never collide with one another; the cut-off part
-  collides with the pot, the soil and the green canes.
+  collides with the pot, the soil and the live canes. Leaves and flowers have no colliders.
 - **Bypass secateurs** (``secateurs.usda``): two halves on a pivot with a spring that holds them open. Squeezing the handles closes
   the blade past the hook. The handles and the pivot collide; the blade and the hook do not (the task file judges the cut).
 - **The bin** (``bin.usda``): an open black plastic garden tub, free on the table.
@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import math
 import os
+from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
@@ -71,14 +72,51 @@ def on_cane(s: float) -> np.ndarray:
     return CANE_IN_POT + s * CANE_DIR
 
 
-# Green canes, in the pot frame: (base on the soil, top, radius). They stand behind the dead cane and lean a little outward.
-GREEN_CANES = [
-    ((0.060, -0.040), (0.085, -0.060, 0.300), 0.0042),
-    ((0.070, 0.030), (0.100, 0.040, 0.320), 0.0045),
-    ((0.035, 0.075), (0.050, 0.095, 0.290), 0.0040),
-    ((0.055, 0.060), (0.080, 0.075, 0.270), 0.0042),
+# Live canes: straight rose stems set into the pot. Each leaves the soil at `base` (pot frame: x away from the robot, y to its
+# left, from the pot's centre), leans `lean` degrees from upright toward `toward` degrees (0 = away from the robot, 90 = the robot's
+# left), and is `length` long above the soil. Leaves are (distance along the stem, direction in degrees, droop in rad, size).
+# `head`: "bloom", "bud" or "cut" (flower head removed, a cut end).
+@dataclass(frozen=True)
+class Cane:
+    name: str
+    base: tuple[float, float]
+    lean: float
+    toward: float
+    length: float
+    radius: float
+    leaves: tuple[tuple[float, float, float, float], ...]
+    head: str
+
+    @property
+    def direction(self) -> np.ndarray:
+        a, t = math.radians(self.lean), math.radians(self.toward)
+        return np.array([math.sin(a) * math.cos(t), math.sin(a) * math.sin(t), math.cos(a)])
+
+    def at(self, s: float) -> np.ndarray:
+        """A point on the axis, s along it from the soil (pot frame, height above the table)."""
+        return np.array([self.base[0], self.base[1], SOIL_Z]) + s * self.direction
+
+    @property
+    def top(self) -> np.ndarray:
+        return self.at(self.length)
+
+
+LIVE_CANES = [
+    # The dead cane's two neighbours lean the same way, one nearer the robot and one beyond, about 5 cm from it at the bud.
+    Cane("A", (-0.080, -0.010), 50.0, 108.0, 0.260, 0.0045,
+         ((0.135, 205.0, 0.25, 0.95), (0.172, 22.0, 0.5, 0.75), (0.205, 200.0, 0.25, 0.9), (0.240, 175.0, 0.3, 0.8)), "cut"),
+    Cane("B", (-0.003, -0.021), 50.0, 70.0, 0.290, 0.0045,
+         ((0.130, -15.0, 0.25, 0.95), (0.175, 160.0, 0.5, 0.75), (0.215, -20.0, 0.25, 0.95), (0.248, 185.0, 0.3, 0.55),
+          (0.278, 40.0, 0.2, 0.8)), "bud"),
+    Cane("C", (0.040, 0.030), 40.0, 40.0, 0.300, 0.0045,
+         ((0.110, 140.0, 0.2, 1.0), (0.160, -40.0, 0.3, 1.0), (0.205, 130.0, 0.25, 1.0), (0.250, -50.0, 0.3, 0.9)), "bloom"),
+    Cane("D", (0.055, -0.012), 35.0, -5.0, 0.300, 0.0045,
+         ((0.120, 85.0, 0.2, 1.0), (0.170, -95.0, 0.3, 1.0), (0.215, 80.0, 0.25, 0.95), (0.260, -100.0, 0.3, 0.9)), "bud"),
+    Cane("E", (0.025, -0.060), 40.0, -40.0, 0.270, 0.0045,
+         ((0.120, 50.0, 0.25, 1.0), (0.165, -130.0, 0.3, 0.95), (0.210, 45.0, 0.25, 0.9)), "cut"),
 ]
-GREEN_CUT_FROM = SOIL_Z + 0.01  # a green cane counts as cut if the blades close across it above this
+GREEN_CANES = [((c.base[0], c.base[1]), tuple(float(v) for v in c.top), c.radius) for c in LIVE_CANES]
+GREEN_CUT_FROM = SOIL_Z  # a live cane counts as cut if the blades close across it anywhere above the soil
 
 # Bypass secateurs, in the tool frame: pivot at the origin, the jaws pointing +y, z up through the tool's middle.
 JAW_OPEN = 0.62     # rad between the blade's and the hook's edges at rest
@@ -109,8 +147,8 @@ LOOKS = {
     "grit": Look(color=(0.30, 0.27, 0.22), roughness=0.9),
     "cane": Look(color=(0.075, 0.17, 0.025), roughness=0.55),
     "cane_young": Look(color=(0.16, 0.12, 0.02), roughness=0.55),
-    "dead": Look(color=(0.16, 0.085, 0.040), roughness=0.9),
-    "dead_dark": Look(color=(0.075, 0.035, 0.018), roughness=0.9),
+    "dead": Look(color=(0.085, 0.045, 0.022), roughness=0.9),  # dark matte brown, like the painted stand-in
+    "dead_dark": Look(color=(0.045, 0.022, 0.012), roughness=0.9),
     "pith": Look(color=(0.78, 0.74, 0.50), roughness=0.8),
     "pith_dead": Look(color=(0.28, 0.17, 0.08), roughness=0.9),
     "old_cut": Look(color=(0.10, 0.07, 0.05), roughness=0.95),
@@ -424,41 +462,54 @@ def _pot_parts(rng) -> list[tuple[str, Mesh, str]]:
     return parts
 
 
-def _green_cane_parts(rng) -> list[tuple[str, Mesh, str]]:
-    canes, thorns, leaves, young = [], [], [], []
-    flower: list[tuple[Mesh, str]] = []
-    for k, (base, top, r) in enumerate(GREEN_CANES):
-        b = np.array([base[0], base[1], SOIL_Z - 0.004])
-        t = np.array(top)
-        mid = (b + t) / 2 + np.array([rng.uniform(-0.004, 0.004), rng.uniform(-0.004, 0.004), 0.0])
-        pts = [b + (mid - b) * s for s in np.linspace(0, 1, 5)] + [mid + (t - mid) * s for s in np.linspace(0, 1, 5)[1:]]
-        canes.append(uk.tube(pts, r, 12))
-        d = (t - b) / np.linalg.norm(t - b)
-        for j, s in enumerate(np.linspace(0.12, 0.85, 6)):
-            p = b + (t - b) * s
+def _oriented(parts: list[tuple[Mesh, str]], at, direction) -> list[tuple[Mesh, str]]:
+    """Parts built along +z at the origin, turned so +z points along `direction`, and moved to `at`."""
+    return [(placed(m, at, direction), look) for m, look in parts]
+
+
+def _green_cane_parts(rng, record: list | None = None) -> list[tuple[str, Mesh, str]]:
+    """The live canes' visual parts. `record`, if given, collects (cane, leaf index, leaf mesh) for checks."""
+    canes, thorns, leaves, young, ends = [], [], [], [], []
+    heads: list[tuple[Mesh, str]] = []
+    for cane in LIVE_CANES:
+        d = cane.direction
+        b = cane.at(-0.004 / d[2])
+        t = cane.top
+        canes.append(uk.tube([b + (t - b) * u for u in np.linspace(0.0, 1.0, 6)], cane.radius, 12))
+        side = np.cross(d, np.array([0.0, 0.0, 1.0]))
+        side /= np.linalg.norm(side)
+        up = np.cross(side, d)
+        for j, u in enumerate(np.linspace(0.10, 0.88, 7)):
+            p = cane.at(u * cane.length)
             a = rng.uniform(0, 2 * math.pi) + j * 2.3
+            out = math.cos(a) * side + math.sin(a) * up
+            thorns.append(thorn(p + out * cane.radius * 0.8, out, size=1.1))
+        for k, (s_along, toward, droop, size) in enumerate(cane.leaves):
+            a = math.radians(toward)
             out = np.array([math.cos(a), math.sin(a), 0.0])
             out -= out.dot(d) * d
-            thorns.append(thorn(p + out / np.linalg.norm(out) * r * 0.8, out, size=1.1))
-        for j, s in enumerate((0.45, 0.62, 0.80, 0.94)):
-            p = b + (t - b) * s
-            if p[2] < 0.15:
-                continue
-            a = rng.uniform(0, 2 * math.pi) + j * 2.4
-            leaf = compound_leaf(p, a, rng.uniform(-0.25, 0.15), rng.uniform(0.85, 1.1), rng)
-            (young if s > 0.9 else leaves).append(leaf)
-        if k == 1:
-            flower = rose_flower(t + np.array([0.0, 0.0, 0.004]), 1.0)
-        elif k == 3:
-            flower.append((lathe([(0.0, 0.0), (0.006, 0.006), (0.005, 0.014), (0.0, 0.022)], 10).moved(t), "petal_dark"))
+            p = cane.at(s_along) + out / np.linalg.norm(out) * cane.radius * 0.6
+            leaf = compound_leaf(p, a, droop, size, rng)
+            if record is not None:
+                record.append((cane.name, k, leaf))
+            (young if k == len(cane.leaves) - 1 else leaves).append(leaf)
+        if cane.head == "bloom":
+            heads += _oriented(rose_flower(np.zeros(3), 1.0), t + 0.004 * d, d)
+        elif cane.head == "bud":
+            bud = [(lathe([(0.0, 0.0), (0.006, 0.006), (0.005, 0.014), (0.0, 0.022)], 10), "petal_dark")]
             sepal = lathe([(0.0, 0.0), (0.003, 0.003), (0.001, 0.016), (0.0, 0.019)], 6).scaled((1.0, 0.3, 1.0))
             sepal = Mesh(sepal.v @ _rx(-0.5).T, sepal.f)
-            flower += [(spun(sepal, 2 * math.pi * i / 5).moved(t), "sepal") for i in range(5)]
+            bud += [(spun(sepal, 2 * math.pi * i / 5), "sepal") for i in range(5)]
+            heads += _oriented(bud, t, d)
+        else:
+            ends.append(placed(cap(0.0, cane.radius, True, 12), t, d))
     parts = [("canes", join(*canes), "cane"), ("thorns", join(*thorns), "thorn"), ("leaves", join(*leaves), "leaf")]
     if young:
         parts.append(("young_leaves", join(*young), "leaf_young"))
+    if ends:
+        parts.append(("cane_ends", join(*ends), "pith"))
     by_look: dict[str, list[Mesh]] = {}
-    for m, look in flower:
+    for m, look in heads:
         by_look.setdefault(look, []).append(m)
     parts += [(f"flower_{look}", join(*ms), look) for look, ms in by_look.items()]
     return parts
