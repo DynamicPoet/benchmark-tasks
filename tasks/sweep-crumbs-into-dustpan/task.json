@@ -1,0 +1,22 @@
+{
+  "title": "Sweep spilled cereal into a dustpan held flat",
+  "category": "Societal relatability",
+  "keywords": [
+    "bimanual",
+    "sweeping",
+    "dustpan",
+    "hand brush",
+    "household",
+    "spill",
+    "tool use"
+  ],
+  "instruction": "Sweep the spilled cereal into the dustpan.",
+  "context": "Clearing a small spill with a dustpan and brush is an everyday chore: one hand keeps the pan's thin lip flat on the table while the other brushes light pieces over it, without flicking them away or pushing them under the lip.",
+  "setup": "Positions are from the midpoint between the two arm bases: forward is away from the arms, left and right as the arms see them. On the table (oak-effect laminate): a blue polypropylene hand dustpan (pan 25 cm wide and 21.5 cm deep, 2 mm floor, a black rubber lip sloping from 0.4 mm to 2 mm over its first 3 cm, side walls rising from 6 mm to 7.5 cm, back wall 7.5 cm, a 12 x 2.8 x 1.5 cm handle 5.5 cm up at the back; 0.20 kg) lies flat, the middle of its lip's front edge 34 cm forward on the midline, its opening facing right and its handle pointing left. 20 plain toasted oat cereal rings, a common breakfast cereal (12 mm across, 5 mm thick, 4 mm hole, 0.3 g each) lie flat, scattered at least 24 mm apart over a 20 x 20 cm patch from 25 to 45 cm forward and from 6 to 26 cm right of the midline. A hand brush (28.4 cm long: a lacquered beech back 18.4 x 4.6 x 1.5 cm set with black polypropylene bristles 18 x 4 x 2.5 cm, and a beech handle 10 x 2.6 x 1.6 cm; 0.11 kg) lies bristles down with its length pointing forward, the bristles centred 35 cm forward and 30 cm right of the midline, its handle towards the arms.",
+  "scoring": "Counted from a top photo at the end. A piece is in the dustpan when it lies on the pan's floor past the lip: its centre at least 3 cm behind the lip's front edge (beyond the black rubber strip), between the side walls, in front of the back wall, and no more than 3 cm above the pan's bottom; a piece on the lip or under the pan is not in it. 0 at any moment, and it stays 0: the dustpan or the brush falls off the table (drops more than 10 cm below the table top). Otherwise, by the state at the end: 0 for fewer than 5 of the 20 pieces in the dustpan (doing nothing, or refusing, scores 0); 0.25 for at least 5; 0.5 for at least 10; 0.75 for at least 18. 1.0 for all 20 in the dustpan, the dustpan resting flat on the table (tilted less than 5 degrees, both ends of its lip within 5 mm of the table top), both arms let go of both tools (every fingertip at least 2 cm from the dustpan and the brush) with every fingertip at least 5 cm from every piece, and no piece moving more than 5 mm over the last 1 s, all held for 1 s. Possible scores: 0, 0.25, 0.5, 0.75, 1.0.",
+  "run_limit": "2,400 steps (2 minutes at 20 Hz)",
+  "reset_notes": "Mark the layout once: print layout_template.svg (in the task folder) at 100 % and check its 100 mm bar; lay it with its left edge 5.5 cm right of the centre line between the arms, parallel to it, and the dashed patch's near edge 25 cm in front of the arms' base line; prick the 20 ring centres onto the table and remove it. Outline the dustpan and the brush at their start positions with tape. Before each trial: lay one ring flat on each dot (a fresh ring for any broken one) and put the dustpan and the brush flat on their outlines.",
+  "fidelity": "GPU PhysX, 240 Hz, rigid bodies. The bristles are one rigid block with bevelled bottom edges, sliding on the table with polypropylene friction (0.35/0.30). Each cereal ring is a rigid hull of a 12 mm torus, 0.3 g; the rubber lip is a rigid wedge 0.4 mm thick at its edge. Friction (static/dynamic): table 0.5, oats 0.45/0.40, pan 0.35/0.30, beech 0.5/0.45, rubber 0.8/0.7. Arms: the station's i2rt model.",
+  "scores": "Dream-1 run: 0.0; demo: 1.0",
+  "media": "M-PZHTSK"
+}
