@@ -1,0 +1,23 @@
+{
+  "title": "Pick two apples off a potted apple tree by lifting and twisting, stems on, and lay them in a picking bucket",
+  "category": "Impact on jobs",
+  "keywords": [
+    "fruit picking",
+    "apple",
+    "harvest",
+    "abscission",
+    "lift and twist",
+    "stem pull",
+    "bruising",
+    "farmworker"
+  ],
+  "instruction": "Pick both apples off the tree into the bucket.",
+  "context": "Most fresh-market apples are picked by hand. A picker lifts and twists each apple so its stem snaps at the spur: pulled straight off, the stem tears out of the fruit (a stem pull, which lets rot in) or the spur breaks, losing next year's flower bud. Dropped apples bruise, so they are laid in the bucket, not dropped.",
+  "setup": "World frame: x forward from the arms, y to the left, z up; the arms' bases are at (0, +-0.305) m and the table top is at height 0. A columnar ('patio') apple tree in a matte black plastic pot (300 mm across the rim, 235 mm across the base, 220 mm tall, filled to 20 mm below the rim with moist potting mix; 11.5 kg in all) stands upright with the middle of its base at (0.420, 0.100). Its single trunk (grey-brown bark, 25 mm thick at the soil, tapering to 16 mm) rises to 500 mm above the table, with leaves along it. On the trunk's side towards the right arm, two woody fruiting spurs (8 mm thick, 25 mm long, level), each with a fruit bud at its tip, carry one ripe red-and-yellow 'Gala'-type apple each (75 mm across, 68 mm tall, 180 g) on a stem 20 mm long and 3 mm thick that runs level from the spur to the apple: the lower apple's centre is at (0.347, 0.073), 300 mm above the table, its spur pointing 200 degrees from +x (towards the arms); the upper apple's centre is at (0.393, 0.027), 380 mm above the table, its spur pointing 250 degrees from +x (towards the right arm). A green plastic picking bucket (290 mm across the rim, 250 mm across the base, 230 mm deep, 0.75 kg, a folded wire handle) stands on the table between the arms with the middle of its base at (0.220, -0.140); a grey polyurethane foam pad 25 mm thick covers its floor. Both arms start at READY with their grippers open.",
+  "scoring": "Measured with a ruler, from a photo and from the video. An apple is in the bucket when it rests inside it: its centre inside the bucket's wall (by at least half the apple's radius) and below the rim, sitting on the foam pad or on the other apple (its centre within 1 cm of where it would rest on them). It was dropped if it was let go (no gripper touching it), or came off the tree with no gripper touching it, with its lowest point more than 5 cm above what it then landed on (the pad, the other apple, the pot's soil or rim, the bucket's rim or the table); or if, with no gripper touching it, it came down onto the table from more than 5 cm above it since it was last held or at rest (rolling off the bucket's rim, say); or if it reached the floor. Its stem is on when the stem is still attached to the apple; it is a stem pull when the stem came out of the apple (it stays on the spur). A spur is broken when it has come off the trunk (it stays on the stem). 0 at any moment, and it stays 0: the pot tips over (leans more than 20 degrees from upright), or the trunk breaks (the simulated trunk is rigid and cannot break). Otherwise, by the state at the end, each apple earns: 0.5 if it is in the bucket, its stem is on, its spur is not broken, and it was not dropped; 0.25 if it is in the bucket and was not dropped and its spur is not broken, but its stem pulled out (a stem pull); 0 otherwise: still on the tree, dropped, outside the bucket, or its spur broken. The task score is the sum for the two apples, and 1.0 also needs no gripper touching an apple and both apples still (no point of either apple moving more than 5 mm over the last 1 s), held for 1 s; otherwise the sum is capped at 0.75. Doing nothing, or refusing, scores 0. Possible scores: 0, 0.25, 0.5, 0.75, 1.0.",
+  "run_limit": "2,400 steps (2 minutes at 20 Hz)",
+  "reset_notes": "Each trial picks the two apples off the tree; the next trial uses two other ripe apples on spurs at the same places (positions in setup). Put the pot and the bucket back on their tape marks and empty the bucket.",
+  "fidelity": "Rigid bodies at real size and mass. Each apple hangs on its spur by a spring joint applied every physics step: stiff in travel, soft in bending and twist, so the stem snaps at the spur after about 90 degrees of lift or twist (0.26 N m). 25 N of tension tears the stem out of the apple; 33 N would part the stem from the spur; 0.8 N m or 45 N breaks the spur. Apples, stems and pad do not deform; the trunk is rigid; leaves and spurs do not collide.",
+  "scores": "Dream-1 run: 0.0; demo: 1.0",
+  "media": "M-NQ7T7L"
+}
