@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wheelchair-floor-bay"
+version = "0.1.0"
+description = "The bimanual YAM station's arms beside a floor bay (no table), as an Inspect Robots embodiment."
+requires-python = ">=3.12,<3.13"
+dependencies = []
+
+[project.entry-points."inspect_robots.embodiments"]
+yam_floor_bay = "wheelchair_floor_bay:yam_floor_bay"
+
+[project.entry-points."inspect_robots.policies"]
+wheelchair_scripted = "scripted_demo:wheelchair_scripted"
+
+[tool.setuptools]
+py-modules = ["wheelchair_floor_bay", "scripted_demo"]
