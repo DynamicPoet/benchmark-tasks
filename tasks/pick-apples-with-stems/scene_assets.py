@@ -1,20 +1,19 @@
-"""The potted apple tree, its two apples and the picking bucket: meshes, materials and colliders, written as plain-text USD.
+"""The apple-picking practice rig: an artificial apple tree in a pot, two imitation apples on magnetic breakaway spurs, and
+the picking bucket: meshes, materials and colliders, written as plain-text USD.
 
 Every named or handled object is a mesh with a real object's shape and size. Each collides through separate simple shapes
 kept out of the render (purpose "guide"): PhysX boxes where the part is a box, short convex hulls elsewhere.
 
 Frames (metres, z up):
-- tree: origin at the middle of the pot's base, on the table. The trunk rises along +z. Each spur points out of the trunk
-  along its own azimuth (``SPURS``), level, and carries its apple's stem at its tip.
-- apple: origin at the apple's centre of mass. +x points along the stem, from the apple to the spur; the stem's end at the
-  spur (the abscission joint) is at ``ABSCISSION`` on the x axis.
+- tree: origin at the middle of the pot's base, on the table. The trunk rises along +z. Each printed spur points out of the
+  trunk along its own azimuth (``SPURS``), level, with a disc magnet at its tip.
+- apple: origin at the apple's centre of mass. +x points along the stem, from the apple to the spur; the stem's cap sits on
+  the spur's magnet at ``ABSCISSION`` on the x axis (the seat).
 - bucket: origin at the middle of the bucket's base, on the table. The foam pad lies on its floor.
 
-What changes when a joint breaks is shown by switching prims on and off (task.py does it):
-- tree ``visual/spur_<k>`` (the spur and its fruit bud), ``visual/stub_<k>`` (a torn stub, hidden), ``visual/stem_<k>`` (a
-  stem left on the spur after a stem pull, hidden);
-- apple ``visual/stem`` (shown), ``visual/torn`` (the stem cavity torn open, hidden), ``visual/spur`` (a spur torn off the
-  tree with the stem, hidden).
+What changes when the stem pulls out of the apple is shown by switching prims on and off (task.py does it): the apple's
+``visual/stem`` and ``visual/cap`` go, its ``visual/socket`` and ``visual/socket_magnet`` show, and the tree's
+``visual/stem_<k>`` and ``visual/cap_<k>`` (the stem left on the spur) show.
 
 Pure Python and NumPy (PIL and SciPy for the textures and hulls).
 """
@@ -39,9 +38,17 @@ APPLE_MASS = 0.18
 APPLE_TOP = 0.0335          # the shoulders round the stem cavity, from the centre along the stem axis
 APPLE_BOTTOM = -0.0330      # the calyx end
 CAVITY_BOTTOM = 0.0205      # where the stem leaves the fruit (the stem cavity is 13 mm deep)
-STEM_L = 0.020              # stem, cavity bottom to spur
-STEM_D = 0.003
-ABSCISSION = np.array([CAVITY_BOTTOM + STEM_L, 0.0, 0.0])   # the stem-spur joint, in the apple's frame
+WELL_R = 0.008             # actual open installation well, 16 mm across
+SOCKET_H = 0.0167          # socket mouth recessed at CAVITY_BOTTOM
+SOCKET_BOTTOM = CAVITY_BOTTOM - SOCKET_H
+SOCKET_BORE_R = 0.0064
+SOCKET_MAGNET_TOP = SOCKET_BOTTOM + 0.0015 + 0.0032
+STEM_L = 0.020              # the printed stem's flexible part, 6 mm thick, from the cavity ...
+STEM_D = 0.006
+CAP_L = 0.004               # ... to its cap, 15 mm across, holding a 12.7 mm steel disc that sits on the spur's magnet
+CAP_D = 0.015
+DISC_D = 0.0127
+ABSCISSION = np.array([CAVITY_BOTTOM + STEM_L + CAP_L, 0.0, 0.0])   # the seat (cap on magnet), in the apple's frame
 
 # -- the tree: a columnar apple tree in a 12 L plastic pot ---------------------------------------------------------------
 
@@ -51,15 +58,15 @@ POT_H = 0.220               # ... 220 mm tall
 SOIL_Z = 0.200              # the potting mix is filled to 20 mm below the rim
 TRUNK_D = 0.025             # the trunk, 25 mm thick at the soil, ...
 TRUNK_TOP = 0.500           # ... to 500 mm above the table
-SPUR_L = 0.025              # a fruiting spur: 25 mm long out of the trunk's bark, ...
-SPUR_D = 0.008              # ... 8 mm thick
-TREE_MASS = 11.5            # kg: the pot (0.7 kg), 11.3 L of moist potting mix (10.2 kg) and the tree (0.6 kg)
+SPUR_L = 0.025              # a printed fruiting spur: 25 mm long out of the trunk, ...
+SPUR_D = 0.016              # ... 16 mm across at its tip, where a 12.7 mm disc magnet sits flush
+TREE_MASS = 11.5            # kg: the pot (0.7 kg), 11.3 L of dry sand under bark mulch (10.3 kg), trunk, spurs and leaves (0.5 kg)
 TREE_COM_Z = 0.100
 # (azimuth of the spur, degrees from +x towards +y; height of the apple's centre above the table)
-SPURS = {"a": (200.0, 0.300), "b": (250.0, 0.380)}
+SPURS = {"a": (160.0, 0.310), "b": (250.0, 0.350)}
 APPLE_FROM_AXIS = TRUNK_D / 2 + SPUR_L + float(ABSCISSION[0])   # trunk axis to the apple's centre
 
-# -- the bucket: a 20 L plastic picking bucket with a foam pad -----------------------------------------------------------
+# -- the bucket: a plastic picking bucket with a foam pad -----------------------------------------------------------
 
 BKT_R_TOP = 0.145           # outer radius at the rim (290 mm across), ...
 BKT_R_BOT = 0.125           # ... at the base (250 mm), ...
@@ -75,11 +82,11 @@ BKT_MASS = 0.75             # kg, with the pad
 LOOKS = {
     "apple": Look(texture="apple_skin.png", roughness=0.38),
     "apple_cavity": Look(color=(0.55, 0.52, 0.22), roughness=0.7),
-    "stem": Look(color=(0.24, 0.16, 0.07), roughness=0.75),
-    "torn": Look(color=(0.78, 0.70, 0.45), roughness=0.9),
+    "stem": Look(color=(0.24, 0.16, 0.07), roughness=0.6),
+    "steel": Look(color=(0.62, 0.63, 0.65), metallic=1.0, roughness=0.35),
+    "socket": Look(color=(0.05, 0.05, 0.05), roughness=0.8),
     "bark": Look(texture="bark.png", roughness=0.85, tile=0.08),
-    "spur": Look(texture="bark.png", color=(0.80, 0.76, 0.72), roughness=0.85, tile=0.05),
-    "bud": Look(color=(0.30, 0.20, 0.13), roughness=0.7),
+    "spur": Look(color=(0.30, 0.21, 0.14), roughness=0.6),
     "wood": Look(color=(0.78, 0.68, 0.48), roughness=0.85),
     "leaf": Look(texture="leaf.png", roughness=0.45),
     "soil": Look(texture="soil.png", roughness=0.95, tile=0.12),
@@ -220,8 +227,8 @@ def apple_profile() -> list[tuple[float, float]]:
         z = -0.0332 * math.cos(phi) if math.cos(phi) > 0 else -APPLE_TOP * math.cos(phi)
         if r > 0.0095:
             pts.append((r, z))
-    pts += [(0.0105, APPLE_TOP - 0.0012), (0.0075, APPLE_TOP - 0.0045), (0.0045, CAVITY_BOTTOM + 0.0035),
-            (0.0018, CAVITY_BOTTOM + 0.0004), (0.0, CAVITY_BOTTOM)]
+    pts += [(0.0105, APPLE_TOP - 0.0012), (WELL_R, APPLE_TOP),
+            (WELL_R, SOCKET_BOTTOM), (0.0, SOCKET_BOTTOM)]
     return pts
 
 
@@ -236,16 +243,31 @@ def _lathe_uv(m: Mesh, z0: float, z1: float) -> np.ndarray:
     return np.stack([u, 1.0 - v], axis=-1)
 
 
+def stem_meshes() -> dict:
+    """The printed stem in the apple's frame (+x from the apple to the spur): the flexible part and the cap (brown TPU), and
+    the steel disc on the cap's face."""
+    x0, x1 = CAVITY_BOTTOM, CAVITY_BOTTOM + STEM_L
+    flex = tube([(x, 0.0, 0.0) for x in np.linspace(x0, x1, 6)], STEM_D / 2, 12)
+    cap = lathe([(0.0, x1), (CAP_D/2,x1), (CAP_D/2,x1+CAP_L),
+                 (0.00645,x1+CAP_L), (0.00645,x1+0.0009), (0.0,x1+0.0009)],24).turned(90.0,"y")
+    peg = cylinder(0.0063, 0.0089, (CAVITY_BOTTOM-0.0089/2,0,0),axis="x",segments=24)
+    disc = cylinder(DISC_D/2,0.003,(ABSCISSION[0]-.0015,0,0),axis="x",segments=24)
+    end = cylinder(DISC_D/2,0.003,(CAVITY_BOTTOM-.0105,0,0),axis="x",segments=24)
+    return {"stem": join(flex, cap, peg), "cap": join(disc,end)}
+
+
 def apple_meshes() -> dict:
-    """In the apple's frame (+x along the stem): the fruit with per-corner uv, its cavity lining, the stem."""
+    """In the apple's frame (+x along the stem): the fruit with per-corner uv, the printed stem, and the stem's socket as
+    it shows once the stem has pulled out (a dark bore with the magnet at its bottom)."""
     body = lathe(apple_profile(), 40)
     uv = _lathe_uv(body, APPLE_BOTTOM, APPLE_TOP)
-    stem_pts = [(CAVITY_BOTTOM - 0.002, 0.0, 0.0), (CAVITY_BOTTOM + 0.006, 0.0, 0.0006), (CAVITY_BOTTOM + 0.013, 0.0, 0.0010),
-                (ABSCISSION[0] - 0.0015, 0.0, 0.0006), (ABSCISSION[0], 0.0, 0.0)]
-    stem = join(tube(stem_pts, STEM_D / 2, 8), cylinder(0.0022, 0.002, (ABSCISSION[0] - 0.001, 0.0, 0.0), axis="x", segments=10))
-    torn = lathe([(0.0042, CAVITY_BOTTOM + 0.0040), (0.0024, CAVITY_BOTTOM + 0.0012), (0.0, CAVITY_BOTTOM + 0.0003)], 12)
+    socket = lathe([(0,SOCKET_BOTTOM),(WELL_R,SOCKET_BOTTOM),(WELL_R,CAVITY_BOTTOM),
+                    (SOCKET_BORE_R,CAVITY_BOTTOM),(SOCKET_BORE_R,SOCKET_BOTTOM+.0015),(0,SOCKET_BOTTOM+.0015)],32)
+    magnet = cylinder(DISC_D/2,0.003175,(0,0,SOCKET_BOTTOM+.0015+.003175/2),segments=32)
     turn = lambda m: m.turned(90.0, "y")  # noqa: E731  (+z -> +x)
-    return {"apple": (turn(body), uv), "stem": stem, "torn": turn(torn)}
+    out = {"apple": (turn(body), uv), "socket": turn(socket), "socket_magnet": turn(magnet)}
+    out.update(stem_meshes())
+    return out
 
 
 def apple_hull_points() -> np.ndarray:
@@ -260,20 +282,12 @@ def apple_hull_points() -> np.ndarray:
     return p[:, [2, 1, 0]] * np.array([1.0, 1.0, -1.0])  # turned so +z goes to +x (same turn as apple_meshes)
 
 
-def spur_mesh(length: float = SPUR_L) -> Mesh:
-    """A fruiting spur along +x from x = 0 (the trunk's bark) to `length`: knobbly, with a fat bud beside the stem."""
-    r = SPUR_D / 2
-    pts = [(x, 0.0, 0.0) for x in np.linspace(-0.004, length, 7)]
-    m = tube(pts, r, 10)
-    rings = [cylinder(r * 1.25, 0.0022, (x, 0.0, 0.0), axis="x", segments=10) for x in (0.006, 0.013, 0.019)]
-    bud = lathe([(0.0, 0.0), (0.0032, 0.0015), (0.0030, 0.0045), (0.0012, 0.0075), (0.0, 0.0085)], 10)
-    bud = _turn_to(bud, np.array([0.55, 0.0, 0.83])).moved((length - 0.002, 0.0, 0.0022))
-    return join(m, *rings), bud
-
-
-def stub_mesh() -> Mesh:
-    """What is left on the trunk when a spur breaks off: a short torn stub."""
-    return tube([(-0.004, 0.0, 0.0), (0.004, 0.0, 0.0)], SPUR_D / 2 * 0.95, 10)
+def spur_mesh(length: float = SPUR_L) -> tuple[Mesh, Mesh]:
+    """A printed fruiting spur along +x from x = 0 (the trunk's surface) to `length`, 19 mm across at its base and 16 mm
+    at its tip; and the disc magnet's face, flush with the tip."""
+    body = lathe([(0.0, -0.004), (0.0095, -0.004), (SPUR_D / 2, length - 0.0008), (SPUR_D / 2 - 0.0008, length), (0.0, length)], 32)
+    magnet = cylinder(DISC_D / 2, 0.0004, (0.0, 0.0, length - 0.0001), segments=32)
+    return body.turned(90.0, "y"), magnet.turned(90.0, "y")
 
 
 def leaf_mesh(length: float, width: float) -> tuple[Mesh, np.ndarray]:
@@ -349,27 +363,21 @@ def tree_meshes() -> list:
     soil = lathe([(0.0, SOIL_Z - 0.012), (POT_R_TOP - 0.009, SOIL_Z - 0.012), (POT_R_TOP - 0.009, SOIL_Z - 0.001),
                   (0.06, SOIL_Z + 0.002), (TRUNK_D / 2 + 0.004, SOIL_Z + 0.005), (0.0, SOIL_Z + 0.006)], 40)
     parts.append(("soil", soil, "soil"))
-    zs = np.linspace(SOIL_Z - 0.01, TRUNK_TOP, 14)
-    trunk_pts = [(0.0015 * math.sin(9 * z), 0.0012 * math.cos(7 * z), z) for z in zs]
-    trunk = tube(trunk_pts, TRUNK_D / 2, 14)
-    # taper to 16 mm at the top
-    scale = 1.0 - 0.36 * np.clip((trunk.v[:, 2] - SOIL_Z) / (TRUNK_TOP - SOIL_Z), 0, 1)
-    tv = trunk.v.copy()
-    tv[:, 0] = tv[:, 0] * scale
-    tv[:, 1] = tv[:, 1] * scale
-    parts.append(("trunk", Mesh(tv, trunk.f), "bark"))
-    tip = lathe([(0.008, 0.0), (0.006, 0.02), (0.002, 0.05), (0.0, 0.058)], 10).moved((0.0, 0.0, TRUNK_TOP - 0.004))
+    trunk = cylinder(TRUNK_D / 2, TRUNK_TOP - SOIL_Z + 0.01, (0.0, 0.0, (TRUNK_TOP + SOIL_Z - 0.01) / 2), segments=20)
+    parts.append(("trunk", trunk, "bark"))   # a 25 mm dowel, bark-brown
+    tip = lathe([(TRUNK_D / 2, 0.0), (0.009, 0.02), (0.003, 0.05), (0.0, 0.058)], 14).moved((0.0, 0.0, TRUNK_TOP - 0.004))
     parts.append(("leader", tip, "bark"))
     for k in SPURS:
         base, d = spur_frame(k)
         rot = _rz(SPURS[k][0])
-        spur, bud = spur_mesh()
+        spur, magnet = spur_mesh()
         start = base + d * (TRUNK_D / 2)
-        parts.append((f"spur_{k}", _place(join(spur, bud), rot, start), "spur"))
-        parts.append((f"stub_{k}", _place(stub_mesh(), rot, start), "torn", True))
+        parts.append((f"spur_{k}", _place(spur, rot, start), "spur"))
+        parts.append((f"magnet_{k}", _place(magnet, rot, start), "steel"))
         centre, arot = apple_rest(k)
-        stem = apple_meshes()["stem"]
-        parts.append((f"stem_{k}", _place(stem, arot, centre), "stem", True))
+        sm = stem_meshes()   # shown on the spur after a stem pull
+        parts.append((f"stem_{k}", _place(sm["stem"], arot, centre), "stem", True))
+        parts.append((f"cap_{k}", _place(sm["cap"], arot, centre), "steel", True))
     for i, (az, z, tilt, length) in enumerate(leaf_layout()):
         mesh, uv = leaf_mesh(length, length * 0.48)
         rot = _rz(az) @ _ry(-tilt)
@@ -496,6 +504,38 @@ def tree_colliders(root: str) -> list[str]:
     out = [_hull("c_pot", pot, root, "PotMaterial")]
     h = TRUNK_D * 0.42
     out.append(_cube("c_trunk", (-h, -h, POT_H), (h, h, TRUNK_TOP - 0.02), root, "BarkMaterial"))
+    for k in SPURS:
+        base,d=spur_frame(k);R=_rz(SPURS[k][0]);start=base+d*(TRUNK_D/2)
+        rings=np.vstack([_ring(.0095,-.004,16),_ring(SPUR_D/2,SPUR_L,16)])
+        out.append(_hull("c_spur_"+k,rings[:,[2,1,0]]@R.T+start,root,"BarkMaterial",.002))
+    return out
+
+
+def apple_colliders(root: str) -> list[str]:
+    """Real open installation well: bulk fruit plus finite annular crown sectors.
+
+    The socket/magnet belong to the apple rigid body. Above the magnet there is
+    a12.8mm bore up to the recessed socket mouth, then a16mm open counterbore.
+    No single convex hull bridges or plugs that opening.
+    """
+    profile=apple_profile()[:-2]  # outer skin, including the mouth rim
+    def radius(x):
+        values=[]
+        for (ra,xa),(rb,xb) in zip(profile[:-1],profile[1:]):
+            if min(xa,xb)<=x<=max(xa,xb) and abs(xb-xa)>1e-12:values.append(ra+(rb-ra)*(x-xa)/(xb-xa))
+        return max(values)
+    turn=lambda p:p[:,[2,1,0]]*np.array([1.,1.,-1.])
+    bulk=[_ring(r,x,16)for r,x in profile if x<=SOCKET_MAGNET_TOP]
+    bulk.append(_ring(radius(SOCKET_MAGNET_TOP),SOCKET_MAGNET_TOP,16))
+    out=[_hull("c_apple_bulk",turn(np.vstack(bulk)),root,"AppleMaterial",.002)]
+    for band,(lo,hi,inner)in enumerate([(SOCKET_MAGNET_TOP,CAVITY_BOTTOM,SOCKET_BORE_R),(CAVITY_BOTTOM,APPLE_TOP-.0012,WELL_R)]):
+        stations=sorted(set([lo,hi]+[x for _,x in profile if lo<x<hi]))
+        for i in range(16):
+            a0,a1=2*math.pi*i/16,2*math.pi*(i+1)/16;v=[]
+            for a in (a0,a1):
+                v += [(radius(x)*math.cos(a),radius(x)*math.sin(a),x)for x in stations]
+                v += [(inner/math.cos(math.pi/16)*math.cos(a),inner/math.cos(math.pi/16)*math.sin(a),x)for x in (lo,hi)]
+            out.append(_hull(f"c_apple_well_{band}_{i:02}",turn(np.array(v)),root,"AppleMaterial",.002))
     return out
 
 
@@ -616,15 +656,11 @@ def write_all() -> None:
     _write(ASSETS / "tree.usda", root, tree_meshes(), tree_colliders(root), mats, mass=TREE_MASS, com=(0.0, 0.0, TREE_COM_Z))
 
     am = apple_meshes()
-    spur, bud = spur_mesh()
     for k in SPURS:
         root = f"apple_{k}"
-        # a spur torn off with the stem: from the abscission joint back to the trunk (apple frame: +x towards the trunk)
-        carried = Mesh(join(spur, bud).v * np.array([1.0, 1.0, 1.0]), join(spur, bud).f)
-        carried = _place(carried, _rz(180.0), ABSCISSION + np.array([SPUR_L, 0.0, 0.0]))
-        parts = [("apple", am["apple"], "apple"), ("stem", am["stem"], "stem"),
-                 ("torn", am["torn"], "torn", True), ("spur", carried, "spur", True)]
-        cols = [_hull("c_apple", apple_hull_points(), root, "AppleMaterial", 0.002)]
+        parts = [("apple", am["apple"], "apple"), ("stem", am["stem"], "stem"), ("cap", am["cap"], "steel"),
+                 ("socket", am["socket"], "socket"), ("socket_magnet", am["socket_magnet"], "steel")]
+        cols = apple_colliders(root)
         _write(ASSETS / f"{root}.usda", root, parts, cols, _material("AppleMaterial", FRICTION["apple"]), mass=APPLE_MASS,
                com=(0.0, 0.0, 0.0), solver_iters=32, contact_report=True)
 

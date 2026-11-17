@@ -1,89 +1,86 @@
-# Pick two apples off a potted apple tree by lifting and twisting, stems on
+# Pick two apples off a potted apple tree by lifting, stems on
 
-A task file for the `yam_arena` embodiment ([yam-isaac-lab-arena](https://github.com/kairosiann/yam-isaac-lab-arena),
-Isaac Lab-Arena 0.3.1). A columnar apple tree in a pot stands on the station table with two ripe apples on short fruiting
-spurs, and a picking bucket with a foam pad stands in front of the arms. The arms must pick both apples the way a picker
-does, lifting and twisting each one until its stem snaps where it joins the spur, and lay them in the bucket. Pulled
-straight off, an apple's stem tears out of the fruit instead (a stem pull); an apple let go from high up is dropped.
+Pick two weighted imitation apples from a repeatable practice tree and lay them in a padded bucket. In this rig, tilting combined with draw can detach the magnetic stem cap with the stem retained; a straight AXIAL pull instead removes the peg from the apple. This fixed failure ordering does not apply universally to real apples. This is a reusable physical practice rig, rather than a claim to reproduce every cultivar's living tissue.
 
-## Run a trial
-
-Dream-1:
+## Run
 
 ```bash
-inspect-robots run --embodiment yam_arena --policy dream \
-  -E task=task.py -E object_jitter=0 -E control_hz=20 -E cam_width=320 -E cam_height=176 \
+inspect-robots run --embodiment yam_arena --policy yam_scripted \
+  -E task=task.py -E object_jitter=0 -E control_hz=20 \
+  -E cam_width=320 -E cam_height=176 \
   --instruction "Pick both apples off the tree into the bucket." \
-  --scorer task_score --max-steps 2400 --store-frames --log-dir runs/dream
+  --scorer task_score --max-steps 2400 --store-frames --log-dir runs/demo
 ```
 
-Scripted demo (scores 1.0): the same command with `--policy yam_scripted`. The right arm grips each apple level from the
-front, across its middle, turns it about 105 degrees about its stem while tilting it up 12 degrees (the stem snaps at the
-spur on the way), backs off, carries it over the bucket, lowers it until it is 1 cm above the pad (or beside the first
-apple) and lets go. The scripted failure (`TASK_DEMO=failure`, same command): the arm grips each apple and pulls it 10 cm
-straight away from the trunk; each stem tears out of its apple (two stem pulls), and both are laid in the bucket: 0.5.
+`TASK_DEMO=failure` selects the counterexample: pull each apple 10 cm along its stem without rolling, then place it in the same bucket. The intended outcomes are two clean seat releases for the normal plan and two peg pulls for the counterexample. Current-run results are recorded separately; these are not claims of measured hardware performance.
 
-## How the simulation works
+The normal plan approaches from the front with fingers above and below the fruit, rolls it upward about its own seat through approximately 60 degrees, then draws it away. The front-facing grasp does not change that roll into a sideways swing. Both arms' per-finger effort limits are set to 40 N and read back from the native articulation. The demo consists only of ordinary joint and gripper actions. Callbacks read the actual apples and bucket when each move begins; they do not set object states or select release events.
 
-- **Apples on spurs** (`stemjoint.py`). Each apple is a free rigid body. Until it comes off, a joint spring holds its stem's
-  end (the abscission joint, where the stem meets the spur) to the spur: every physics step (240 Hz) the task applies the
-  spring's force and moment to the apple, and the opposite to the tree. The spring is stiff in travel (20 kN/m, integrated
-  implicitly), and soft in bending and twisting, as a short apple stem is: it holds the apple level where it hangs, and
-  its moment reaches the abscission joint's limit after about 90 degrees of lift or of twist. The spring's force and moment
-  are the joint's loads. Every physics step they are checked against three limits, and the first one passed (the most
-  overloaded) decides what gives way; the spring is then no longer applied:
-  - the abscission joint snaps at 0.26 N m of bending and twisting moment together, or 33 N of tension or shear: a clean
-    pick, stem on the apple, spur and its fruit bud on the tree;
-  - the stem tears out of the apple at 25 N of tension along it: a stem pull; the stem stays on the spur and the apple
-    shows its torn stem cavity;
-  - the spur breaks off the trunk at 0.8 N m or 45 N at its base: it comes away on the stem, leaving a torn stub.
-- **Loads, from published measurements**: about 0.26 N m of torque detached 95 % of hand-tested apples, with 28.3 N of
-  pulling force (Dickinson, MS thesis, Michigan State University, 2022); the branch-stem joint of apples with an obtuse
-  stem angle parted at 33.2 +- 7.5 N in a straight pull (Bu et al., Scientia Horticulturae 261, 2020, 108937); in
-  straight pulls, stems tore out of the fruit at 24.8 +- 0.5 N (Hussain et al., Journal of the ASABE, 2022); bending and
-  twisting need much less force than a straight pull (Bu et al. 2020; Li et al., Computers and Electronics in Agriculture
-  127, 2016). The spur's limits are set above the others, so a spur breaks only when an apple is levered or pulled hard
-  while its stem holds.
-- The tree (pot, potting mix, trunk, spurs), the apples and the bucket are rigid bodies at real size and mass. The pot can
-  slide and tip. The trunk is rigid. Leaves and spurs have no colliders. Apples, stems and the foam pad do not deform.
+## Reproducible practice rig
 
-## How the simulation scores
+- Use a 25 mm hardwood-dowel trunk, 500 mm above the table, in a 300 mm, 12 L black pot. Dry sand, bark mulch, pot, trunk and artificial leaves total 11.5 kg. Screw the two printed 25 mm spurs to the dowel at the positions in `task.json`. The pot is free to slide or tip.
+- Print `rig/spur.scad` and `rig/socket.scad` in PLA or PETG. The seat holds a [K&J D84](https://www.kjmagnetics.com/d84-neodymium-disc-magnet), 12.7 x 6.35 mm N42 magnet. Its manufacturer's 10.88 lb (about 48 N) rating is for a thick steel plate, not a measured force for this assembly.
+- Print `rig/stem.scad` in TPU 95A at 100% infill, bend plane parallel to the bed, with removable supports under the raised ends and span. The flexible length is 20 mm, diameter 6 mm, precurve 19 degrees. A 12.7 x 3 mm mild-steel disc sits in the cap's 12.9 x 3.1 mm pocket, cut after the polymer union. At the apple end, an 8.9 mm polymer spigot, 0.1 mm adhesive and 3 mm flat steel end make a 12 mm insertion; the disc is not recessed inside the smaller 12.6 mm spigot.
+- Use a hollow 75 mm imitation apple, or make an internal cavity accessible through a 20 mm calyx port. Secure steel shot in epoxy around its centre so the complete handled apple/socket/peg/stem/cap assembly is 180 +- 5 g with centred COM (subtract every installed component from the ballast allowance); verify on a kitchen scale and by balancing on a pencil. A typical 170 g of added steel needs about 22 mL: the 20 mm hole is an access port, not the entire ballast cavity. Close the access port flush after securing the ballast.
+- Make a **16 mm diameter, 30 mm deep open installation well** at the stem shoulder. Glue the 16 x 16.7 mm socket with its mouth 13 mm below the shoulder. The upper 13 mm stays open for the flexible stem; do not bury it in the imitation fruit. `rig/apple-installation-section.scad` shows the section. The 12.8 mm socket bore contains a [K&J D82](https://www.kjmagnetics.com/d82-neodymium-disc-magnet), 12.7 x 3.175 mm N42 magnet. Its thick-plate rating is 6.44 lb (about 29 N).
+- Use a 290 mm diameter, 230 mm deep plastic bucket with a 25 mm polyurethane foam pad. Empty it and return pot and bucket to their tape marks between trials. Reseat caps and pulled-out pegs; no part is consumed.
 
-`score()` and `success()` in `task.py` implement the scoring in `task.json` line by line:
+### Calculations and proposed session checks
 
-- **Came off**: which joint gave way (above), recorded when it happens.
-- **Touching**: a contact force above 0.02 N between an apple and either gripper or its fingers (a PhysX contact view),
-  read every control step (20 Hz).
-- **Dropped** (latched until a reset): at the first control step an apple that is off the tree is not touched, its centre's
-  height above where it would come to rest if it fell straight down (on the pad, on the other apple if that one is off the
-  tree, on the pot's soil or rim, on the bucket's rim, or on the table) is more than 5 cm; or, while not touched, its lowest
-  point comes within 5 mm of the table top outside the bucket having been more than 5 cm higher since it was last touched
-  or at rest (slower than 2 cm/s); or its lowest point is more than 10 cm below the table top (the floor).
-- **In the bucket**: its centre inside the bucket's inner wall by at least half the apple's radius (19 mm), above the pad
-  and below the rim, and within 1 cm of where it would rest if it fell straight down (on the pad or the other apple).
-- **Tipped over** (latched): the pot's axis more than 20 degrees from vertical at any control step.
-- **Still**: over the last 21 control steps (1 s), no point of seven on each apple (centre and six on its skin) moves more
-  than 5 mm (largest distance between any two samples).
-- Each apple: 0.5 in the bucket, stem on, spur whole, not dropped; 0.25 the same with a stem pull; otherwise 0. The sum
-  is capped at 0.75 by `score()`; 1.0 comes from `success()` (both 0.5, neither touched, both still) held for 1 s (the
-  harness's `SUCCESS_HOLD_S`). The pot tipped over makes it 0.
+These are design calculations and acceptance checks. **No physical assembly or force calibration has been performed.** Manufacturer ratings do not establish the assembled release loads.
 
-## Runtime and seeds
+The circular stem has `I = pi*d^4/64 = 63.617 mm^4`. Selecting `E ~= 66 MPa` gives `EI/L ~= 0.21 N m/rad`. The manufacturer's printed [TPU 95A data sheet](https://um-support-files.ultimaker.com/materials/2.85mm/tds/TPU-95A/Ultimaker-TPU95A-TDS-v5.00.pdf) reports orientation-dependent tensile moduli around 56-67 MPa; printing and bending need the checks below. A 40 N seat tipping about its 6.35 mm edge gives 0.254 N m. The 19-degree precurve approximately balances the 180 g apple at a 44.5 mm seat-to-COM lever. Adding 100 g predicts roughly 11.9 degrees further droop.
 
-- Demo: 928 steps (46.4 s simulated) to success; about 6 minutes of wall time with 640 x 360 cameras on one L40S GPU,
-  including start-up. The slowest 30 steps took 10.6 s.
-- Dream-1: 2,400 steps (2 minutes simulated), about 24 minutes of wall time at 8 rows per request (one session), including start-up.
-- `object_jitter=0` keeps the layout fixed, so no seed is needed. The scripted demo reads each apple's pose when it starts
-  a move (what the cameras show) and the bucket's; it writes nothing into the simulation.
+Before a physical session, use a spring/luggage scale with 1 N resolution and a side-view phone photo:
 
-## Objects
+| Check | Proposed acceptance |
+|---|---|
+| Pull stem cap straight off spur | 40 +- 3 N |
+| Hold cap, pull apple off peg | 24 +- 2 N |
+| Apple hanging level | Within 5 degrees |
+| Add 100 g at apple centre | Further droop 11 +- 3 degrees |
+| Pull downward at apple centre | Clean seat release at 5.5 +- 1.5 N |
 
-- Apple: a ripe 'Gala'-type apple, 75 mm across and 68 mm tall, 180 g, with a 20 mm stem 3 mm thick, red-orange blush and
-  stripes over a yellow ground.
-- Tree: a columnar ('patio') apple tree in a 300 mm, 12 L plastic pot of moist potting mix, 11.5 kg in all; trunk 25 mm thick.
-- Bucket: a 20 L plastic picking bucket, 290 mm across, 230 mm deep, with a 25 mm polyurethane foam pad on its floor.
-- Real trials: the tree stands on tape marks with the two apples on the side facing the right arm, their centres 30 and
-  38 cm above the table at the positions in `task.json`; the bucket stands on its own marks. Each trial picks two apples;
-  the next trial uses two other ripe apples on spurs at the same places.
-- Meshes and textures (apple skin, bark, potting mix, foam, leaf) are generated by `scene_assets.py`: procedural, no
-  third-party images. `usdkit.py`, `scenekit.py` and `poseplay.py` are helper modules.
+Reduce excessive magnetic hold with thin paper shims, starting at 0.1 mm; replace a weak disc and reprint an out-of-range stem. These checks preserve the specified rig response. The estimated lift-and-draw load is about 17 N, or 14 N per rubber-padded finger; a 24 N straight pull needs about 20 N per finger, within the 40 N envelope.
+
+### Biological evidence and limits
+
+The 40 N seat, 24 N peg and calculated 0.254 N m edge-tip moment are fixed engineering targets for this deliberately stem-pull-prone attachment. They are not universal ripe-apple failure thresholds or measured upward-bending data. A native demonstration establishes this modeled rig's feasibility, not its physical calibration or transfer to every apple variety.
+
+- [Design and Evaluation of End Effectors for a Vacuum-Based Robotic Apple Harvester](https://doi.org/10.13031/ja.14970) reports 95% thresholds of 28.3 N pulling and 0.257 N m **twisting**. That torque does not validate the rig's upward-bending threshold.
+- [Green Fruit Removal Dynamics for Development of Robotic Green Fruit Thinning End-Effector](https://doi.org/10.13031/ja.14974) reports mean fruit-end and spur-end pulls of 24.78 and 19.91 N for **green-fruit thinning**, not ripe harvesting. These data do not establish the rig's failure ordering for ripe fruit.
+- [Experimental and simulation analysis of optimum picking patterns for robotic apple harvesting](https://doi.org/10.1016/j.scienta.2019.108937), sections 3.1–3.3, reports harvesting-date Pink Lady fruit with strongly direction-dependent results: horizontal samples detached at the branch/stem; vertical pulling gave three fruit-end separations in 25 samples. Bending also failed to detach seven of 25 samples. Straight pulling therefore does not universally lose the stem. The rig selects one repeatable failure ordering rather than reproducing that biological variability.
+
+## Simulation and scoring
+
+Each apple is a free 180 g rigid body. `stemjoint.py` applies the seat spring wrench at 240 Hz and the equal/opposite wrench to the free tree. Translational stiffness is 20 kN/m, integrated implicitly; bending stiffness is 0.21 N m/rad with a gravity preload. Twist slips at the steel-cap friction limit (mu=0.25, about 0.04 N m without tension). The first overloaded connection releases from actual loads:
+
+- Seat: positive stem tension plus bending moment / 6.35 mm reaches 40 N. The stem stays on the apple.
+- Peg: stem tension reaches 24 N first. The stem stays on the spur; the apple shows its empty socket.
+
+For the draw, the expert reads the native robot gains/limits and the current stem axis once, then ramps a feed-forward joint-position bias over 4 seconds (`drawplan.py`). Its 22 N intended TCP load is a planning reference, not an applied or measured force. It emits only the standard joint/gripper position actions; actual spring loads and physical release decide the outcome. The nominal grip reference is about 35.5 N per finger at the observed contact opening, under the unchanged 40 N native effort cap.
+
+Stem bending is condensed to one hinge at the seat, not a distributed deformable beam. Magnetic force does not fade with gap before release. Apples, socket, trunk and pad are rigid; the pad does not predict bruising. Stem/cap visuals switch only after the corresponding physical release. Apple visual and separate annular colliders leave the recessed well open. Printed spurs collide; decorative leaves do not.
+
+`task.json` gives the complete scoring definition. Per apple: 0.5 for a clean pick in the bucket without a drop, 0.25 for a stem pull in the bucket without a drop, 0 otherwise. Pot tilt over 20 degrees permanently makes the trial 0. Drops latch, including rim/table falls and high unheld release. Bucket occupancy requires support near the pad or other fruit. Full score also needs both apples untouched and still (seven material points each, maximum 5 mm movement over the last 1 second), followed by the harness's 1-second success hold. Otherwise the sum is capped at 0.75. Refusing scores 0. There is no required action trajectory in the scorer.
+
+## Assets, validation and runtime
+
+All meshes and textures are procedural in `scene_assets.py`; there are no third-party image assets. CAD solids and disc-pocket clearances have been rendered and checked. That verifies topology and declared clearance, not real magnetic or material performance. Physical calibration remains proposed.
+
+The scripted plan is checked offline against six-axis kinematics and finite collision geometry. Native results and timings are listed below. The limit is 2,400 controls / 120 seconds at 20 Hz. `object_jitter=0` fixes the layout; no special seed is required.
+
+
+### Native validation
+
+The scripted trials use `object_jitter=0`, seed 0, 20 Hz control, 240 Hz physics and all three native cameras at 640 x 360.
+
+| Run | Official score | Controls / simulated time | Total wall time | Slowest 30 controls |
+|---|---:|---:|---:|---:|
+| Upward roll and draw | 1.0 | 1,635 / 81.75 s | 566.06 s | 14.99 s |
+| Straight axial pull | 0.5 | 1,281 / 64.05 s | 429.43 s | 14.59 s |
+| Dream-1 | 0.0 | 2,400 / 120.00 s | 980.51 s | 16.20 s |
+
+Both scripted trials completed without an error, drop or pot tip, with both apples untouched in the bucket. The normal plan produced two clean seat releases at actual fruit up-rolls of 58.7 and 58.4 degrees, with evaluated seat tensions of 18.52 and 18.40 N. The counterexample pulled both pegs at 24.08 and 24.05 N. These are simulator results for this modeled rig, not measured hardware forces. A 320 x 176 diagnostic reproduced the 1.0 and 0.5 outcomes. Timings were measured on an exclusive NVIDIA L40S with THP disabled and Python bytecode enabled.
+
+Dream-1 used 320 x 176 cameras and eight rows per request. It completed the 2,400-control limit with score 0.0, 296 actual requests, one session and no expiry. CPU checks are `python tests/check_scoring.py`, `python tests/check_joint.py` and `python tests/check_drawplan.py` in the task environment. Assets and textures are generated on import; no external asset download is required.

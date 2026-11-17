@@ -1,11 +1,7 @@
-"""On the station table: a columnar apple tree in a black plastic pot (300 mm across, 220 mm tall, filled with potting mix)
-stands in front of the left arm. Its single trunk rises to 500 mm above the table. On the trunk's side towards the right
-arm, two short fruiting spurs carry one ripe red 'Gala' apple each (75 mm across, 180 g), on level stems 20 mm long: the
-lower apple's centre is 300 mm above the table, the upper one's 380 mm. Between the arms, in front, stands a green plastic
-picking bucket (290 mm across, 230 mm deep) with a grey foam pad on its floor.
-
-Run it:  inspect-robots run --embodiment yam_arena -E task=task.py -E object_jitter=0 -E control_hz=20 \\
-           -E cam_width=320 -E cam_height=176 --scorer task_score --max-steps 2400 --instruction "<the task.json instruction>"
+"""Apple-picking practice station: two180g imitation apples on magnetic
+breakaway spurs of a free11.5kg artificial tree, and a padded picking bucket.
+The normal technique is an upward roll and draw; straight pulling removes
+an apple's peg. Sizes and proposed hardware checks are in README.md.
 """
 
 from __future__ import annotations
@@ -20,6 +16,7 @@ import numpy as np
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))  # lets this file import the helpers beside it
 
 import poseplay  # noqa: E402,F401  (lets demo() hold the gripper level)
+import drawplan  # noqa: E402
 import scene_assets as sa  # noqa: E402
 import scenekit  # noqa: E402
 import stemjoint as sj  # noqa: E402
@@ -42,8 +39,8 @@ sa.write_all()
 
 # -- layout (world frame: x forward from the arms, y left, metres) -----------------------------------------------------
 
-TREE_XY = (0.42, 0.10)
-BUCKET_XY = (0.22, -0.14)
+TREE_XY = (0.35, -0.10)
+BUCKET_XY = (0.20, -0.43)
 
 
 def _quat(rot: np.ndarray) -> tuple[float, float, float, float]:
@@ -173,7 +170,7 @@ def track_apple(st: dict, centre: np.ndarray, touched: bool, others: list[np.nda
 
 def apple_value(st: dict) -> float:
     """One apple's share by the state at the end: 0.5, 0.25 or 0."""
-    if st["broken"] is None or st["dropped"] or not st["in_bucket"] or st["broken"] == "spur":
+    if st["broken"] not in ("seat", "stem") or st["dropped"] or not st["in_bucket"]:
         return 0.0
     return 0.25 if st["broken"] == "stem" else 0.5
 
@@ -223,6 +220,7 @@ def _touching() -> dict:
     if _S["view"] is None:
         _S["view"] = _contact_view()
     f = _np(_S["view"].get_contact_force_matrix(dt=PHYSICS_DT)).reshape(len(sa.SPURS), -1, 3)
+    _S["contact_normals_N"]={k:np.linalg.norm(f[i],axis=1).tolist()for i,k in enumerate(sa.SPURS)}
     return {k: bool(np.linalg.norm(f[i], axis=1).max() > TOUCH_FORCE) for i, k in enumerate(sa.SPURS)}
 
 
@@ -237,13 +235,14 @@ def _show(path: str, visible: bool) -> None:
 
 
 def _show_state(k: str, broken: str | None) -> None:
-    """The tree and the apple as they look after `broken` (None: still whole)."""
-    _show(f"tree/visual/spur_{k}", broken != "spur")
-    _show(f"tree/visual/stub_{k}", broken == "spur")
-    _show(f"tree/visual/stem_{k}", broken == "stem")
-    _show(f"{NAMES[k]}/visual/stem", broken != "stem")
-    _show(f"{NAMES[k]}/visual/torn", broken == "stem")
-    _show(f"{NAMES[k]}/visual/spur", broken == "spur")
+    """The tree and the apple as they look after `broken`: after a stem pull the stem stays on the spur and the apple
+    shows its empty socket."""
+    pulled = broken == "stem"
+    for part in ("stem", "cap"):
+        _show(f"tree/visual/{part}_{k}", pulled)
+        _show(f"{NAMES[k]}/visual/{part}", not pulled)
+    for part in ("socket", "socket_magnet"):
+        _show(f"{NAMES[k]}/visual/{part}", True)
 
 
 def _new_joints(env) -> None:
@@ -251,9 +250,8 @@ def _new_joints(env) -> None:
     tree_rot = np.eye(3)
     for k in sa.SPURS:
         centre, rot = sa.apple_rest(k)
-        _, d = sa.spur_frame(k)
-        j = sj.Joint(name=k, anchor=sa.ABSCISSION.copy(), point=sa.abscission_in_tree(k), rot0=rot, spur_dir=d,
-                     spur_len=sa.SPUR_L, mass=sa.APPLE_MASS, inertia=0.4 * sa.APPLE_MASS * R_APPLE ** 2)
+        j = sj.Joint(name=k, anchor=sa.ABSCISSION.copy(), point=sa.abscission_in_tree(k), rot0=rot.copy(),
+                     mass=sa.APPLE_MASS, inertia=0.4 * sa.APPLE_MASS * R_APPLE ** 2)
         j.settle(GRAVITY, tree_rot)
         _J[k] = j
         if env is not None:
@@ -266,15 +264,34 @@ def _env_reset(env) -> None:
     """A reset puts both apples back on their spurs, whole."""
     _new_joints(env)
     _clear()
+    _finger_limits(env)
 
 
 @on_reset
 def _reset(env) -> None:
     """Failures stay failed until a real reset (the settling steps after it do not count)."""
     _clear()
+    _finger_limits(env)
     for k in sa.SPURS:
         if _J[k].broken is not None:  # cannot happen while settling; if it did, the trial starts with it
             _S["apple"][k]["broken"] = _J[k].broken
+
+
+def _finger_limits(env) -> None:
+    """Set and read the practice station's 40 N per-finger effort envelope."""
+    import torch
+
+    limits = {}
+    for side in ("left", "right"):
+        robot = env.unwrapped.scene[f"{side}_robot"]
+        ids = [robot.joint_names.index(n) for n in ("joint7", "joint8")]
+        robot.write_joint_effort_limit_to_sim_index(
+            limits=torch.full((1, 2), 40., device=robot.device), joint_ids=ids)
+        actual = _np(robot.root_physx_view.get_dof_max_forces())[0, ids]
+        if not np.allclose(actual, 40., atol=1e-4, rtol=0):
+            raise RuntimeError("The native per-finger effort cap is not 40 N")
+        limits[side] = actual.tolist()
+    _S["gripper_limits"] = limits
 
 
 def _set_wrench(env, name: str, force: np.ndarray, torque: np.ndarray) -> None:
@@ -306,6 +323,7 @@ def _substep(env) -> None:
         pos, rot = _pose(env, NAMES[k])
         v, w = _vel(env, NAMES[k])
         force, moment, p_tree, loads = j.wrench(pos, rot, v, w, tree_pos, tree_rot, tree_com, tree_v, tree_w, PHYSICS_DT)
+        loads["uproll_deg"] = float(np.degrees(np.arctan2(-rot[2, 0], np.hypot(rot[0, 0], rot[1, 0]))))
         part = j.check(loads)
         if part is not None:
             j.broken = part
@@ -364,14 +382,16 @@ def _log(env, poses) -> None:
            "tool_z": np.round(grot[:, 2], 3).tolist(),
            "q_r": np.round(scenekit.arm_joints(env, "right", [f"joint{n}" for n in range(1, 9)]), 4).tolist(),
            "tree": np.round(np.r_[_pose(env, "tree")[0], _tilt_deg(_pose(env, "tree")[1])], 4).tolist(),
-           "events": _S["events"]}
+           "events": _S["events"], "native_gripper_effort_limits_N": _S["gripper_limits"]}
     for k in sa.SPURS:
         st = _S["apple"][k]
         c, r = poses[k]
         row[k] = {"c": np.round(c, 4).tolist(), "x": np.round(r[:, 0], 3).tolist(), "broken": st["broken"],
                   "touch": bool(st["touched"]), "dropped": bool(st["dropped"]), "in": bool(st["in_bucket"]),
                   "drop_from": None if st["drop_from"] is None else round(float(st["drop_from"]), 4),
-                  "peak": {n: round(x, 3) for n, x in _J[k].peak.items()}}
+                  "peak": {n: round(x, 3) for n, x in _J[k].peak.items()},
+                  "actual_uproll_deg":round(math.degrees(math.atan2(-r[2,0],math.hypot(r[0,0],r[1,0]))),3),
+                  "contact_normal_N_by_left_gripper_tips_right_gripper_tips":_S.get("contact_normals_N",{}).get(k)}
         if st["broken"] is None and st["centre"] is not None:
             row[k]["rel_tcp"] = np.round(grot.T @ (c - tcp), 4).tolist()
     folder = pathlib.Path(os.environ["TASK_SCORE_DIR"])
@@ -398,7 +418,7 @@ def _evaluate() -> dict:
 
 
 def score(objects) -> float:
-    """0 if the pot ever tips over. Otherwise each apple earns 0.5 (in the bucket, stem on, spur whole, not dropped) or
+    """0 if the pot ever tips over. Otherwise each apple earns 0.5 (in the bucket, stem on, not dropped) or
     0.25 (the same with its stem pulled out), and the sum is capped at 0.75: 1.0 comes only from success(), held 1 s."""
     return min(_evaluate()["total"], 0.75)
 
@@ -445,14 +465,13 @@ def approach_dir(k: str) -> np.ndarray:
     return -d
 
 
-TWIST = math.radians(105.0)     # the hand turns the apple this far about its stem (the way that keeps the wrist in range) ...
-TWIST_SIGN = {"a": 1.0, "b": -1.0}
-LIFT = math.radians(12.0)       # ... while tilting it up this much and raising it 1 cm: the stem snaps at the spur
+UPROLL = math.radians(60.0)
+GRASP_CLOCK = {"a": -math.pi/2, "b": math.pi/2}  # fingers above/below the fruit; front-facing palm
+HOLD_FINGER = -0.0295           # observed36.6mm half-opening: ~35.5N at5000N/m, native hardcap remains40N
 PULL = 0.10                     # the failure: the hand pulls this far straight away from the trunk
-RETREAT = 0.06                  # after the stem snaps, the hand backs off this far before turning to the bucket
 PLACE_GAP = 0.010               # the apple is let go with its lowest point this far above the pad
 SLOTS = {"b": (-0.03, -0.042), "a": (-0.03, 0.042)}   # where each apple goes in the bucket, from its middle (x, y)
-DOWN_YAW = math.pi / 2          # over the bucket the fingers close along x, so the second apple goes in beside the first
+DOWN_YAW = -math.pi / 2         # fingers close along x; this wrist branch remains reachable through the bucket
 CARRY_Z = TOP + 0.30            # the TCP's height over the bucket before lowering (the apple's bottom 3 cm over the rim)
 MID_Z = TOP + 0.19              # ... and part way down, where the hand has turned almost straight down
 
@@ -489,6 +508,31 @@ def _slot(k: str):
     return lambda plan: _bucket_slot(k)
 
 
+def _uproll_targets(k: str, grip: np.ndarray):
+    """Cache the observed seat and apple once, then make an actual upward arc.
+
+    The hand may approach from world+X independently of the spur azimuth. The
+    fruit still rolls about the horizontal axis across its OWN stem, not yaw.
+    """
+    cache={}
+    def frame():
+        if not cache:
+            env=scenekit.env()
+            c=_pose(env,NAMES[k])[0]if env is not None else apple_home(k)[0]
+            tp,tr=_pose(env,"tree")if env is not None else(np.array([*TREE_XY,TOP]),np.eye(3))
+            p=tp+tr@sa.abscission_in_tree(k);v=c-p;axis=np.cross(v,[0.,0.,1.]);axis/=np.linalg.norm(axis)
+            cache.update(p=p,v=v,axis=axis)
+        return cache
+    def position(angle,draw=0.):
+        def target(plan):
+            f=frame();A=axis_angle_matrix(f['axis'],angle);v=A@f['v']
+            return f['p']+v+draw*v/np.linalg.norm(v)
+        return target
+    def rotation(angle):
+        return lambda plan:axis_angle_matrix(frame()['axis'],angle)@grip
+    return position,rotation
+
+
 _SEEDS = [np.array(READY, float), np.array([0.6, 1.6, 1.2, 0.4, 0.0, 0.0]), np.array([0.2, 1.9, 1.9, 0.0, -1.0, 0.0]),
           np.array([-0.8, 1.4, 1.5, -1.0, -0.4, 0.5]), np.array([-1.1, 1.5, 1.6, -1.4, -0.4, 0.5])]
 
@@ -511,44 +555,128 @@ def _joints_for(pos_fn, rot: np.ndarray):
     return q
 
 
+def _axial_reference(k, grip, up_rotation, cache):
+    """Read the real drive contract, then return stock arm POSITION targets only."""
+    from yam_arena import ik
+    from yam_arena.station import BASES
+
+    def target(plan):
+        env = scenekit.env()
+        if env is None:
+            if os.environ.get("TASK_SCORE_DIR"):
+                raise RuntimeError("A native draw cannot use the offline gain reference")
+            actual = plan.q.copy()
+            axis = up_rotation(plan) @ grip.T @ apple_home(k)[1][:, 0]
+            gains = np.array([80., 80., 80., 10., 10., 10.])
+            bounds = np.c_[ik.LOWER, ik.UPPER]
+            efforts = np.array([27., 27., 27., 7., 7., 7.])
+            velocities = np.array([5.5, 5.5, 5.5, 20., 20., 20.])
+            contract = {"scope": "offline configured reference; native contract still required"}
+        else:
+            robot = env.unwrapped.scene["right_robot"]
+            ids = [robot.joint_names.index(f"joint{i}") for i in range(1, 7)]
+            view = robot.root_physx_view
+            actual = _np(view.get_dof_positions())[0, ids].copy()
+            gains = _np(view.get_dof_stiffnesses())[0, ids].copy()
+            damping = _np(view.get_dof_dampings())[0, ids].copy()
+            bounds = _np(view.get_dof_limits())[0, ids].copy()
+            efforts = _np(view.get_dof_max_forces())[0, ids].copy()
+            native_velocity = _np(view.get_dof_max_velocities())[0, ids].copy()
+            drive_type = _np(view.get_drive_types())[0, ids].copy()
+            after_reads = _np(view.get_dof_positions())[0, ids].copy()
+            contract = dict(scope="native read-only contract", joint_names=[robot.joint_names[i] for i in ids],
+                            drive_type=drive_type.tolist(), stiffness=gains.tolist(), damping=damping.tolist(),
+                            limits=bounds.tolist(), efforts=efforts.tolist(), native_velocity=native_velocity.tolist(),
+                            q_before=actual.tolist(), q_after=after_reads.tolist(),
+                            getters_left_q_unchanged=bool(np.array_equal(actual, after_reads)))
+            if os.environ.get("TASK_SCORE_DIR"):
+                import json
+                with open(pathlib.Path(os.environ["TASK_SCORE_DIR"]) / "draw-contract.jsonl", "a") as f:
+                    f.write(json.dumps(dict(apple=k, t=_S["step"] / 20., **contract)) + "\n")
+            if not np.array_equal(actual, after_reads):
+                raise RuntimeError("The native draw contract changed joint state while being read")
+            if not np.all(drive_type == 1) or not np.allclose(gains, [80, 80, 80, 10, 10, 10], atol=1e-4, rtol=0):
+                raise RuntimeError("The axial planner requires the unchanged native SI force-drive gains")
+            if not np.allclose(bounds, np.c_[ik.LOWER, ik.UPPER], atol=1e-4, rtol=0):
+                raise RuntimeError("Native and physical robot joint limits disagree")
+            velocities = np.minimum(native_velocity, [5.5, 5.5, 5.5, 20, 20, 20])
+            axis = _pose(env, NAMES[k])[1][:, 0]
+        q, report = drawplan.reference(plan.q.copy(), actual, axis, gains, bounds, efforts, velocities,
+                                       BASES["right"], force_N=22., ramp_s=4.)
+        cache["q_target"] = q.copy()
+        if env is not None and os.environ.get("TASK_SCORE_DIR"):
+            import json
+            report.update(apple=k, t=_S["step"] / 20., contract=contract, stock_joint_position_actions_only=True)
+            with open(pathlib.Path(os.environ["TASK_SCORE_DIR"]) / "draw-reference.jsonl", "a") as f:
+                f.write(json.dumps(report) + "\n")
+        return tuple(float(v) for v in q)
+    return target
+
+
 def pick(k: str, pull: bool, last: bool = False) -> list:
-    """Pick apple k (lift and twist; or, for the failure, a straight pull) and lay it on the bucket's pad."""
-    a = approach_dir(k)
-    o, cl = FINGER_OPEN, FINGER_CLOSED
-    level = level_grip(a)
-    off = level_grip(a, 0.0 if pull else TWIST_SIGN[k] * TWIST, 0.0 if pull else LIFT)
+    """True upward roll and draw; the counterexample draws along the stem without rolling."""
+    a = np.array([1.,0.,0.])
+    o, cl = FINGER_OPEN, HOLD_FINGER
+    level = level_grip(a,GRASP_CLOCK[k])
     down = grip_rotation(DOWN_YAW)
     tilted = _ry(-math.radians(45.0)) @ down    # pointing forward and down: the arm cannot hold it straight down this high
     steep = _ry(-math.radians(12.0)) @ down
     zero = (0.0, 0.0, 0.0)
+    seen=_seen_apple(k)
+    front=lambda back:(lambda plan:np.asarray(seen(plan))-back*a)
     w = [
-        Joints(4.0, zero, o, f"in front of apple {k}", q=_joints_for(_from_apple(k, 0.10), level)),
-        Pose(2.0, _from_apple(k, 0.0), o, f"round apple {k}", rot=level),
-        Pose(0.8, _from_apple(k, 0.0), cl, f"close on apple {k}", rot=level),
-        Pose(0.4, _from_apple(k, 0.0), cl, f"hold apple {k}", rot=level),
+        Joints(4.0, zero, o, f"in front of apple {k}", q=_joints_for(front(.10), level)),
+        Pose(2.0, front(0.), o, f"round apple {k}", rot=level),
+        Pose(1.2, front(0.), cl, f"close on apple {k}", rot=level),
+        Pose(0.8, front(0.), cl, f"hold apple {k}", rot=level),
     ]
     if pull:
         w += [Pose(3.0, _from_apple(k, PULL), cl, f"pull apple {k} straight off", rot=level)]
-        away = level
     else:
-        w += [Pose(4.0, _from_apple(k, 0.0, 0.01), cl, f"lift and twist apple {k}", rot=off),
-              Pose(0.5, _from_apple(k, 0.0, 0.01), cl, f"hold apple {k} off", rot=off),
-              Pose(1.5, _from_apple(k, RETREAT, 0.02), cl, f"apple {k} away from the tree", rot=off)]
-        away = off
+        position,rotation=_uproll_targets(k,level)
+        for index in range(1,25):
+            angle=UPROLL*index/24
+            w.append(Pose(.2,position(angle),cl,f"roll apple {k} UP {index*2.5:g}deg",rot=rotation(angle)))
+        w += [Pose(1.,position(UPROLL),cl,f"settle apple {k} at upward roll",rot=rotation(UPROLL)),
+              Pose(4.,position(UPROLL,.002),cl,f"draw apple {k} from its seat",rot=rotation(UPROLL))]
+    if not pull:  # the straight-pull counterexample is already 10 cm clear
+        # A bounded joint-position bias plans an axial load while retaining the
+        # UP baseline. It never sends an effort or force action to the robot.
+        draw_cache = {}
+        w += [Joints(4., zero, cl, f"load apple {k} axially from the UP baseline",
+                     q=_axial_reference(k, level, rotation(UPROLL), draw_cache))]
+        def released_centre(plan):
+            if scenekit.env() is not None:
+                if _J[k].broken is None:
+                    raise RuntimeError(f"Apple {k} did not physically release during the bounded draw; no transport")
+                return np.asarray(seen(plan))
+            from yam_arena import ik
+            from yam_arena.station import BASES
+            return ik.tcp_pose(draw_cache["q_target"], BASES["right"])[0]
+        def released_hold(plan):
+            released_centre(plan)  # physical release is required before free handling
+            return tuple(float(v) for v in draw_cache["q_target"])
+        w += [Joints(1.,zero,cl,f"settle released apple {k}",q=released_hold),
+              Pose(2.,released_centre,cl,f"unroll the released apple {k}",rot=level)]
     w += [
+        Pose(3.,(.20,-.30,TOP+.34),cl,f"apple {k} along the clear front corridor",rot=level),
         Joints(4.0, zero, cl, f"apple {k} over the bucket", q=_joints_for(_over_slot(k), tilted)),
-        Pose(1.5, _over_slot(k, MID_Z), cl, f"apple {k} into the bucket", rot=steep),
+        Pose(1., _over_slot(k, TOP+.26), cl, f"apple {k} above the rim", rot=_ry(-math.radians(30))@down),
+        Pose(1., _over_slot(k, TOP+.23), cl, f"apple {k} through the rim", rot=_ry(-math.radians(15))@down),
+        Pose(1., _over_slot(k, MID_Z), cl, f"apple {k} into the bucket", rot=down),
         Pose(1.5, _slot(k), cl, f"lower apple {k} to the pad", rot=down),
         Pose(0.8, _slot(k), o, f"let go of apple {k}", rot=down),
     ]
     if last:  # out of the camera's way quickly: the trial ends 2 s after both apples are still
-        w += [Pose(0.5, _over_slot(k, MID_Z), o, f"up from apple {k}", rot=steep),
-              Pose(0.6, _over_slot(k), o, f"out of the bucket ({k})", rot=tilted),
-              Joints(1.2, zero, o, "back to the start", q=tuple(READY))]
+        w += [Pose(1., _over_slot(k, MID_Z), o, f"up from apple {k}", rot=down),
+              Pose(1., _over_slot(k, TOP+.23), o, f"clear the rim ({k})", rot=_ry(-math.radians(15))@down),
+              Pose(1., _over_slot(k), o, f"out of the bucket ({k})", rot=tilted),
+              Joints(2., zero, o, "back to the start", q=tuple(READY))]
     else:
-        w += [Pose(1.2, _over_slot(k, MID_Z), o, f"up from apple {k}", rot=steep),
-              Pose(1.2, _over_slot(k), o, f"out of the bucket ({k})", rot=tilted)]
-    del away
+        w += [Pose(1.2, _over_slot(k, MID_Z), o, f"up from apple {k}", rot=down),
+              Pose(1., _over_slot(k, TOP+.23), o, f"clear the rim ({k})", rot=_ry(-math.radians(15))@down),
+              Pose(1.2, _over_slot(k), o, f"out of the bucket ({k})", rot=tilted),
+              Joints(2.,zero,o,"clear before the next apple",q=tuple(READY))]
     return w
 
 

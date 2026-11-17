@@ -1,17 +1,19 @@
-"""stemjoint: how an apple hangs on its spur, and when the stem, the abscission joint or the spur gives way.
+"""stemjoint: how an apple hangs on its spur in the practice rig, and when it comes off.
 
-Each apple is a free rigid body held to the tree at its abscission joint (where the stem meets the spur) by a joint spring
-that the task file applies every physics step: stiff in every direction of travel (the stem does not stretch more than
-about a millimetre before it tears), and soft in bending and twisting, as a 20 mm apple stem is. The spring's force and
-moment are the loads on the joint. They are checked against three limits every physics step:
+The rig: the spur's tip holds a disc magnet; the apple's stem ends in a steel cap that sits flat on it; the stem's other
+end is a peg held in a socket in the apple by a weaker magnet. In the simulation each apple is a free rigid body held at
+the cap (the seat) by a joint spring that the task file applies every physics step:
 
-- the abscission joint snaps when its bending and twisting moment together reach ``ABSCISSION_MOMENT``, or its tension or
-  shear reaches ``ABSCISSION_FORCE``: a clean pick, stem on the apple, spur on the tree;
-- the stem tears out of the fruit (a stem pull) when the tension along it reaches ``STEM_TENSION``;
-- the spur breaks off the trunk when the moment at its base reaches ``SPUR_MOMENT`` or its tension ``SPUR_TENSION``.
+- stiff in travel; in bending as stiff as the flexible stem (pre-bent so the apple hangs level), so a lift or a sideways
+  bend of about 60-90 degrees loads the seat to its limit, while a pull lines the apple up with the stem;
+- in twist, only up to the friction torque of the cap on the magnet; beyond it the apple turns on the seat.
 
-When a limit is reached the spring is no longer applied: from then on the apple is a free body. Sources for the numbers are
-in the task's README.
+The spring's force and moment are the loads on the seat. Every physics step they are checked against two limits, and
+the one passed further decides what gives way; the spring is then released and the apple is free:
+
+- the cap parts from the magnet when the tension along the stem plus the bending moment divided by the magnet's radius
+  reaches ``SEAT_PULL`` (it tips over the magnet's edge): a clean pick, stem on the apple;
+- the peg pulls out of the apple when the tension reaches ``PEG_PULL``: a stem pull, the stem stays on the spur.
 
 Pure NumPy, no simulator.
 """
@@ -23,17 +25,25 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-ABSCISSION_MOMENT = 0.26   # N m: about the twisting torque that detached 95% of hand-picked apples (Dickinson 2022)
-ABSCISSION_FORCE = 33.0    # N: an obtuse-angled branch-stem joint in a straight pull, 33.19 +- 7.48 N (Bu et al. 2020)
-STEM_TENSION = 25.0        # N: the stem pulled out of the fruit, 24.78 +- 0.48 N (Hussain et al. 2022)
-SPUR_MOMENT = 0.80         # N m: assumed; a spur outlasts the abscission joint unless levered hard
-SPUR_TENSION = 45.0        # N: assumed; above the stem's tension limit, so a straight pull tears the stem first
+SEAT_PULL = 40.0           # N: the cap's hold on the spur's magnet (session-check target 40 +- 3 N)
+SEAT_RADIUS = 0.00635      # m: the magnet's radius (1/2 in disc): the cap tips about its edge
+PEG_PULL = 24.0            # N: the peg's hold in the apple's socket (session-check target 24 +- 2 N)
+CAP_FRICTION = 0.25        # friction of the steel cap on the nickel-plated magnet
+K_LIN = 2.0e4              # N/m: the seat's stiffness along any direction (integrated implicitly)
+C_LIN = 6.0                # N s/m
+K_BEND = 0.21              # N m/rad: the printed TPU stem bends (E I / L, 66 MPa x 63.617 mm^4 / 20 mm)
+K_TWIST = 0.14             # N m/rad (G J / L of the TPU stem), up to the cap's friction torque
+C_ROT = 0.004              # N m s/rad
 
-BEND_TURN = math.radians(90.0)   # the abscission joint snaps after about this much bending from where it hangs, ...
-TWIST_TURN = math.radians(90.0)  # ... or this much twist
-K_LIN = 2.0e4                    # N/m: the joint's stiffness along any direction (1.25 mm of stretch at the stem's limit)
-C_LIN = 6.0                      # N s/m
-C_ROT = 0.002                    # N m s/rad
+
+def tip_moment() -> float:
+    """The bending moment that tips the cap off the magnet with no tension: about 0.25 N m."""
+    return SEAT_PULL * SEAT_RADIUS
+
+
+def twist_limit(tension: float) -> float:
+    """The torque at which the cap turns on the magnet: friction over the face (mean radius 2/3 r) under the clamp."""
+    return CAP_FRICTION * max(SEAT_PULL - tension, 0.0) * 2.0 / 3.0 * SEAT_RADIUS
 
 
 def skew(v: np.ndarray) -> np.ndarray:
@@ -42,8 +52,7 @@ def skew(v: np.ndarray) -> np.ndarray:
 
 def rotvec(r: np.ndarray) -> np.ndarray:
     """The rotation vector (axis times angle, rad) of a rotation matrix."""
-    c = (np.trace(r) - 1.0) / 2.0
-    c = min(1.0, max(-1.0, c))
+    c = min(1.0, max(-1.0, (np.trace(r) - 1.0) / 2.0))
     angle = math.acos(c)
     w = np.array([r[2, 1] - r[1, 2], r[0, 2] - r[2, 0], r[1, 0] - r[0, 1]])
     if angle < 1e-7:
@@ -55,39 +64,43 @@ def rotvec(r: np.ndarray) -> np.ndarray:
     return w / (2.0 * math.sin(angle)) * angle
 
 
+def rot_x(a: float) -> np.ndarray:
+    c, s = math.cos(a), math.sin(a)
+    return np.array([[1.0, 0.0, 0.0], [0.0, c, -s], [0.0, s, c]])
+
+
+def part_of(loads: dict) -> str | None:
+    """Which part gives way under these loads, if any: the one loaded further past its limit."""
+    ratio = {"seat": (max(loads["tension"], 0.0) + loads["bending"] / SEAT_RADIUS) / SEAT_PULL,
+             "stem": loads["tension"] / PEG_PULL}
+    part = max(ratio, key=ratio.get)
+    return part if ratio[part] >= 1.0 else None
+
+
 @dataclass
 class Joint:
-    """One apple's attachment. Frames: the tree's (``rot0``, ``point``, ``spur_dir`` are in it) and the apple's
-    (``anchor``: the abscission joint from the apple's centre of mass)."""
+    """One apple's seat. Frames: the tree's (``rot0``, ``point`` are in it) and the apple's (``anchor``: the seat, from
+    the apple's centre of mass; the stem runs along the apple's +x, from the apple to the spur)."""
 
     name: str
-    anchor: np.ndarray             # apple frame: centre of mass -> abscission joint
-    point: np.ndarray              # tree frame: the abscission joint as the apple hangs
-    rot0: np.ndarray               # tree frame: the apple's rotation as it hangs
-    spur_dir: np.ndarray           # tree frame: the spur's outward direction (unit)
-    spur_len: float
+    anchor: np.ndarray             # apple frame: centre of mass -> the cap on the magnet
+    point: np.ndarray              # tree frame: the magnet's face as the apple hangs
+    rot0: np.ndarray               # tree frame: the apple's rotation as it hangs (turned as the cap slips in twist)
     mass: float
     inertia: float                 # kg m^2 (the apple taken as a uniform sphere)
     preload: np.ndarray = field(default_factory=lambda: np.zeros(3))  # tree frame: the moment that holds the apple up
-    k_bend: float = 0.0
-    k_twist: float = 0.0
-    broken: str | None = None      # None, "abscission", "stem" or "spur"
+    broken: str | None = None      # None, "seat" (clean pick) or "stem" (stem pull)
     peak: dict = field(default_factory=dict)
 
     def settle(self, gravity: np.ndarray, tree_rot: np.ndarray) -> None:
-        """Pre-bend the joint so the apple hangs still where it was placed, and set its stiffness so that the abscission
-        joint snaps after BEND_TURN of bending beyond that or TWIST_TURN of twist."""
+        """Hold the apple still where it was placed: the seat carries its weight's moment from the start."""
         r = tree_rot @ self.rot0 @ self.anchor
-        weight_moment = np.cross(r, self.mass * gravity)
-        self.preload = tree_rot.T @ weight_moment
-        self.k_bend = (ABSCISSION_MOMENT + float(np.linalg.norm(weight_moment))) / BEND_TURN
-        self.k_twist = ABSCISSION_MOMENT / TWIST_TURN
+        self.preload = tree_rot.T @ np.cross(r, self.mass * gravity)
         self.broken = None
-        self.peak = {"moment": 0.0, "tension": 0.0, "shear": 0.0, "spur_moment": 0.0, "stem": 0.0}
+        self.peak = {"tension": 0.0, "bending": 0.0, "twist": 0.0, "seat_ratio": 0.0, "stem_ratio": 0.0}
 
     def wrench(self, apple_pos, apple_rot, apple_v, apple_w, tree_pos, tree_rot, tree_com, tree_v, tree_w, dt: float):
-        """The joint's force (at the abscission joint) and moment on the apple, world frame, and the loads it carries.
-        The force is integrated implicitly (backward Euler with the apple's own inertia), so it stays stable however stiff."""
+        """The seat's force (at the cap) and moment on the apple, world frame, and the loads it carries."""
         r = apple_rot @ self.anchor
         p_apple = apple_pos + r
         p_tree = tree_pos + tree_rot @ self.point
@@ -97,31 +110,28 @@ class Joint:
         inv_mass = np.eye(3) / self.mass - sr @ sr / self.inertia
         rhs = K_LIN * e + (K_LIN * dt + C_LIN) * v
         force = -np.linalg.solve(np.eye(3) + (K_LIN * dt * dt + C_LIN * dt) * inv_mass, rhs)
-        rest = tree_rot @ self.rot0
-        phi = rotvec(apple_rot @ rest.T)
         u = apple_rot @ np.array([1.0, 0.0, 0.0])   # along the stem, apple to spur
-        twist = float(phi @ u) * u
-        moment = -self.k_bend * (phi - twist) - self.k_twist * twist - C_ROT * (apple_w - tree_w) + tree_rot @ self.preload
-        return force, moment, p_tree, self.loads(force, moment, u, tree_rot)
-
-    def loads(self, force: np.ndarray, moment: np.ndarray, u: np.ndarray, tree_rot: np.ndarray) -> dict:
         tension = float(force @ u)
-        shear = float(np.linalg.norm(force - tension * u))
-        d = tree_rot @ self.spur_dir
-        # the apple's pull on the spur (-force at the joint, -moment), taken about the spur's base
-        spur_moment = -moment + np.cross(self.spur_len * d, -force)
-        return {"moment": float(np.linalg.norm(moment)), "tension": tension, "shear": shear,
-                "spur_moment": float(np.linalg.norm(spur_moment)), "spur_tension": float(-force @ d)}
+        phi = rotvec(apple_rot @ (tree_rot @ self.rot0).T)
+        twist = float(phi @ u)
+        limit = twist_limit(tension)
+        if abs(K_TWIST * twist) > limit:   # the cap turns on the magnet: move its rest so the twist torque stays at the limit
+            slip = twist - math.copysign(limit / K_TWIST, twist)
+            self.rot0 = self.rot0 @ rot_x(slip)
+            twist -= slip
+            phi = rotvec(apple_rot @ (tree_rot @ self.rot0).T)
+        bend = phi - float(phi @ u) * u
+        w_rel = apple_w - tree_w
+        moment = (-K_BEND * bend - K_TWIST * twist * u - C_ROT * w_rel + tree_rot @ self.preload)
+        m_twist = float(moment @ u)
+        loads = {"tension": tension, "bending": float(np.linalg.norm(moment - m_twist * u)), "twist": abs(m_twist),
+                 "shear": float(np.linalg.norm(force - tension * u))}
+        return force, moment, p_tree, loads
 
     def check(self, loads: dict) -> str | None:
-        """Which part gives way under these loads, if any: the one loaded furthest past its limit."""
-        for key in ("moment", "tension", "shear", "spur_moment"):
+        for key in ("tension", "bending", "twist"):
             self.peak[key] = max(self.peak.get(key, 0.0), loads[key])
-        ratio = {
-            "abscission": max(loads["moment"] / ABSCISSION_MOMENT, loads["tension"] / ABSCISSION_FORCE,
-                              loads["shear"] / ABSCISSION_FORCE),
-            "stem": loads["tension"] / STEM_TENSION,
-            "spur": max(loads["spur_moment"] / SPUR_MOMENT, loads["spur_tension"] / SPUR_TENSION),
-        }
-        part = max(ratio, key=ratio.get)
-        return part if ratio[part] >= 1.0 else None
+        self.peak["seat_ratio"] = max(self.peak["seat_ratio"],
+                                      (max(loads["tension"], 0.0) + loads["bending"] / SEAT_RADIUS) / SEAT_PULL)
+        self.peak["stem_ratio"] = max(self.peak["stem_ratio"], loads["tension"] / PEG_PULL)
+        return part_of(loads)
