@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 import task
+from load_fixture import loaded_tool, set_blade_angle, attach
 
 
 @pytest.fixture(autouse=True)
@@ -47,7 +48,7 @@ def test_retained_geometry_reads_actual_body_poses(monkeypatch):
 
 
 def blade_fixture(monkeypatch, targets):
-    tool = SimpleNamespace(joint_names=["pivot"], data=SimpleNamespace(joint_pos=np.array([[0.0]])))
+    tool = loaded_tool()
     bush = object()
     environment = SimpleNamespace(unwrapped=SimpleNamespace(scene={"secateurs": tool, "bush": bush}))
     writes = []
@@ -57,9 +58,12 @@ def blade_fixture(monkeypatch, targets):
     monkeypatch.setattr(task, "_write_joints", lambda asset, values: writes.append(dict(values)))
     monkeypatch.setattr(task, "_chain_gains", lambda *args: None)
     def close():
-        tool.data.joint_pos[0, 0] = 0.0
+        set_blade_angle(tool, 0.0)
+        attach(environment)
         task._check_cut(environment, np.zeros(3))
-        tool.data.joint_pos[0, 0] = task.sa.CLOSE
+        set_blade_angle(tool, 0.24)
+        attach(environment)
+        task._check_cut(environment, np.zeros(3))
         task._check_cut(environment, np.zeros(3))
     return close, writes
 
@@ -77,9 +81,10 @@ def test_tool_recut_shortens_visible_stub_and_removes_bud(monkeypatch):
     assert task._S["pruning"].cuts == 2
     assert task._S["pruning"].stub_length == pytest.approx(cut)
     assert task._S["pruning"].bud_damaged
-    assert writes[-1]["stub_green_slide"] == pytest.approx(cut - task.sa.BROWN_S)
-    assert writes[-1]["stub_bud_slide"] == task.sa.BUD_SINK
-    assert set(writes[-1]) == {"stub_green_slide", "stub_brown_slide", "stub_bud_slide"}
+    cut_write = next(w for w in writes if "stub_green_slide" in w)
+    assert cut_write["stub_green_slide"] == pytest.approx(cut - task.sa.BROWN_S)
+    assert cut_write["stub_bud_slide"] == task.sa.BUD_SINK
+    assert set(cut_write) == {"stub_green_slide", "stub_brown_slide", "stub_col_slide", "stub_bud_slide"}
     assert task._S["h"] == first_height
     assert task._S["pruning"].first_cut == first_height
     assert task.score({}) == 0.0

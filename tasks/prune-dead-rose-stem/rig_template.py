@@ -45,11 +45,13 @@ def table() -> str:
              "|---|---|---|---|---|---|---|---|---|"]
     for r in rows():
         bx, by = r["base"]
-        sx, sy = bx + sa.POT_XY[0], by + sa.POT_XY[1]
-        tx, ty, tz = r["top"][0] + sa.POT_XY[0], r["top"][1] + sa.POT_XY[1], r["top"][2]
-        toward = f"{r['toward']:.0f} deg"
+        offset=sa.BUSH_R@np.array([bx,by,0.])
+        bx,by=offset[:2]
+        sx,sy=offset[:2]+sa.POT_XY
+        tx,ty,tz=sa.BUSH_R@r["top"]+np.r_[sa.POT_XY,0.]
+        toward = f"{r['toward']+math.degrees(sa.BUSH_YAW):.0f} deg"
         if r["name"] == "dead":
-            carries = (f"bud {sa.BUD_S * 100:.1f} cm along, facing the robot; brown from {sa.BROWN_S * 100:.1f} cm along; leafless; "
+            carries = (f"bud {sa.BUD_S * 100:.1f} cm along, facing {180+math.degrees(sa.BUSH_YAW):.0f} degrees from forward; brown from {sa.BROWN_S * 100:.1f} cm along; leafless; "
                        "square-cut tip")
         else:
             carries = f"leaves from {r['leaves_from'] * 100:.1f} cm along; {head[r['head']]}"
@@ -60,6 +62,7 @@ def table() -> str:
 
 def _page(x: float, y: float) -> tuple[float, float]:
     """Pot frame (m) to page (mm): away from the robot is up the page, the robot's left is left."""
+    x,y,_=sa.BUSH_R@np.array([x,y,0.])
     return DISC_C[0] - y * 1000.0, DISC_C[1] - x * 1000.0
 
 

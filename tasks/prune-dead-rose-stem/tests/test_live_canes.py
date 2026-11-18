@@ -7,6 +7,7 @@ import numpy as np
 import pytest
 
 import task
+from load_fixture import loaded_tool, set_blade_angle, attach
 
 sa = task.sa
 LEAN = sa._lean()[0]
@@ -28,7 +29,7 @@ def rotation(normal, jaws) -> np.ndarray:
 
 def scene(monkeypatch):
     """The real cut targets of the bush (pot at the station's origin), with the secateurs' pose set by each test."""
-    tool = SimpleNamespace(joint_names=["pivot"], data=SimpleNamespace(joint_pos=np.zeros((1, 1))))
+    tool = loaded_tool()
     env = SimpleNamespace(unwrapped=SimpleNamespace(scene={"secateurs": tool, "bush": object()}))
     poses = {"pot": (np.zeros(3), np.eye(3)), "stub_bud": (sa.on_cane(sa.BUD_S), LEAN)}
     writes = []
@@ -40,8 +41,9 @@ def scene(monkeypatch):
     def close_at(point, rot, radius=0.03):
         """Put `point` in the open jaws, `radius` from the pivot on the jaws' middle line, then squeeze fully."""
         poses["hook_half"] = (np.asarray(point, float) - rot @ np.array([0.0, radius, sa.BLADE_Z]), rot)
-        for q in (0.0, 0.3, sa.CLOSE):
-            tool.data.joint_pos[0, 0] = q
+        for q in (0.0, 0.24, 0.24, sa.CLOSE):
+            set_blade_angle(tool, q)
+            attach(env)
             task._check_cut(env, np.zeros(3))
 
     return close_at, writes
@@ -107,7 +109,7 @@ def test_a_careful_cut_fits_between_the_neighbours_from_any_side(monkeypatch, ya
 def test_jaws_aimed_at_the_neighbour_beside_the_dead_cane_cut_it(monkeypatch):
     """The careless miss of the failure demo: the same height, the neighbour nearer the robot."""
     close_at, _ = scene(monkeypatch)
-    target = task._live_cane_point(sa.LIVE_CANES[0], sa.on_cane(task.CUT_AT)[2]) - np.array([*sa.POT_XY, 0.0])
+    target = sa.BUSH_R.T @ (task._live_cane_point(sa.LIVE_CANES[0], sa.on_cane(task.CUT_AT)[2]) - np.array([*sa.POT_XY, 0.0]))
     close_at(target, HORIZONTAL[2], radius=task.CUT_RADIUS + 0.008)
     assert task._S["green_cut"] and not task._S["cut"]
     assert task.score({}) == 0.0

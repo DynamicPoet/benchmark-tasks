@@ -3,42 +3,42 @@
 <text x="105" y="9" font-size="5" text-anchor="middle">Rose bush template: print at 100 % on A4; the bar must measure 100 mm</text>
 <g stroke="black" stroke-width="0.4"><line x1="55" y1="14" x2="155" y2="14"/><line x1="55" y1="12.5" x2="55" y2="15.5"/><line x1="65" y1="12.5" x2="65" y2="15.5"/><line x1="75" y1="12.5" x2="75" y2="15.5"/><line x1="85" y1="12.5" x2="85" y2="15.5"/><line x1="95" y1="12.5" x2="95" y2="15.5"/><line x1="105" y1="12.5" x2="105" y2="15.5"/><line x1="115" y1="12.5" x2="115" y2="15.5"/><line x1="125" y1="12.5" x2="125" y2="15.5"/><line x1="135" y1="12.5" x2="135" y2="15.5"/><line x1="145" y1="12.5" x2="145" y2="15.5"/><line x1="155" y1="12.5" x2="155" y2="15.5"/></g>
 <circle cx="105.0" cy="112.0" r="95.0" fill="none" stroke="black" stroke-width="0.5" stroke-dasharray="3 1.5"/>
-<text x="105.0" y="213.0" font-size="4" text-anchor="middle">robot side (the pot's centre is at x 0.37 m, y +0.03 m on the station)</text>
+<text x="105.0" y="213.0" font-size="4" text-anchor="middle">robot side (the pot's centre is at x 0.36 m, y +0.01 m on the station)</text>
 <text x="111.0" y="118.0" font-size="3.2">pot centre</text>
 <g stroke="black" stroke-width="0.3"><line x1="101.0" y1="112.0" x2="109.0" y2="112.0"/><line x1="105.0" y1="108.0" x2="105.0" y2="116.0"/></g>
 <line x1="105.0" y1="42.0" x2="105.0" y2="24.0" stroke="black" stroke-width="0.6"/>
 <path d="M102.0,28.0 L105.0,22.0 L108.0,28.0 Z"/>
 <text x="110.0" y="28.0" font-size="4">away from the robot</text>
-<circle cx="115.00" cy="192.00" r="1.6" fill="none" stroke="#1b6e20" stroke-width="0.5"/>
-<g stroke="#1b6e20" stroke-width="0.25"><line x1="112.00" y1="192.00" x2="118.00" y2="192.00"/><line x1="115.00" y1="189.00" x2="115.00" y2="195.00"/></g>
-<line x1="115.00" y1="192.00" x2="94.08" y2="198.80" stroke="#1b6e20" stroke-width="0.6"/>
-<path d="M94.08,198.80 L97.96,199.43 L96.85,196.00 Z" fill="#1b6e20"/>
-<text x="119.85" y="196.07" font-size="3.6" fill="#1b6e20">A 50&#176;</text>
-<circle cx="135.00" cy="152.00" r="1.6" fill="none" stroke="#7a3b10" stroke-width="0.5"/>
-<g stroke="#7a3b10" stroke-width="0.25"><line x1="132.00" y1="152.00" x2="138.00" y2="152.00"/><line x1="135.00" y1="149.00" x2="135.00" y2="155.00"/></g>
-<line x1="135.00" y1="152.00" x2="113.00" y2="152.00" stroke="#7a3b10" stroke-width="0.6"/>
-<path d="M113.00,152.00 L116.50,153.80 L116.50,150.20 Z" fill="#7a3b10"/>
-<text x="140.00" y="157.00" font-size="3.6" fill="#7a3b10">dead 55&#176;</text>
-<circle cx="126.00" cy="115.00" r="1.6" fill="none" stroke="#1b6e20" stroke-width="0.5"/>
-<g stroke="#1b6e20" stroke-width="0.25"><line x1="123.00" y1="115.00" x2="129.00" y2="115.00"/><line x1="126.00" y1="112.00" x2="126.00" y2="118.00"/></g>
-<line x1="126.00" y1="115.00" x2="105.33" y2="107.48" stroke="#1b6e20" stroke-width="0.6"/>
-<path d="M105.33,107.48 L108.00,110.36 L109.23,106.98 Z" fill="#1b6e20"/>
-<text x="130.82" y="121.03" font-size="3.6" fill="#1b6e20">B 50&#176;</text>
-<circle cx="75.00" cy="72.00" r="1.6" fill="none" stroke="#1b6e20" stroke-width="0.5"/>
-<g stroke="#1b6e20" stroke-width="0.25"><line x1="72.00" y1="72.00" x2="78.00" y2="72.00"/><line x1="75.00" y1="69.00" x2="75.00" y2="75.00"/></g>
-<line x1="75.00" y1="72.00" x2="60.86" y2="55.15" stroke="#1b6e20" stroke-width="0.6"/>
-<path d="M60.86,55.15 L61.73,58.99 L64.49,56.67 Z" fill="#1b6e20"/>
-<text x="78.93" y="79.30" font-size="3.6" fill="#1b6e20">C 40&#176;</text>
-<circle cx="117.00" cy="57.00" r="1.6" fill="none" stroke="#1b6e20" stroke-width="0.5"/>
-<g stroke="#1b6e20" stroke-width="0.25"><line x1="114.00" y1="57.00" x2="120.00" y2="57.00"/><line x1="117.00" y1="54.00" x2="117.00" y2="60.00"/></g>
-<line x1="117.00" y1="57.00" x2="118.92" y2="35.08" stroke="#1b6e20" stroke-width="0.6"/>
-<path d="M118.92,35.08 L116.82,38.41 L120.41,38.73 Z" fill="#1b6e20"/>
-<text x="118.74" y="64.99" font-size="3.6" fill="#1b6e20">D 35&#176;</text>
-<circle cx="165.00" cy="87.00" r="1.6" fill="none" stroke="#1b6e20" stroke-width="0.5"/>
-<g stroke="#1b6e20" stroke-width="0.25"><line x1="162.00" y1="87.00" x2="168.00" y2="87.00"/><line x1="165.00" y1="84.00" x2="165.00" y2="90.00"/></g>
-<line x1="165.00" y1="87.00" x2="179.14" y2="70.15" stroke="#1b6e20" stroke-width="0.6"/>
-<path d="M179.14,70.15 L175.51,71.67 L178.27,73.99 Z" fill="#1b6e20"/>
-<text x="165.07" y="94.30" font-size="3.6" fill="#1b6e20">E 40&#176;</text>
+<circle cx="121.90" cy="171.44" r="1.6" fill="none" stroke="#1b6e20" stroke-width="0.5"/>
+<g stroke="#1b6e20" stroke-width="0.25"><line x1="118.90" y1="171.44" x2="124.90" y2="171.44"/><line x1="121.90" y1="168.44" x2="121.90" y2="174.44"/></g>
+<line x1="121.90" y1="171.44" x2="107.82" y2="188.35" stroke="#1b6e20" stroke-width="0.6"/>
+<path d="M107.82,188.35 L111.45,186.81 L108.68,184.51 Z" fill="#1b6e20"/>
+<text x="125.82" y="174.14" font-size="3.6" fill="#1b6e20">A 50&#176;</text>
+<circle cx="151.71" cy="129.84" r="1.6" fill="none" stroke="#7a3b10" stroke-width="0.5"/>
+<g stroke="#7a3b10" stroke-width="0.25"><line x1="148.71" y1="129.84" x2="154.71" y2="129.84"/><line x1="151.71" y1="126.84" x2="151.71" y2="132.84"/></g>
+<line x1="151.71" y1="129.84" x2="133.10" y2="141.57" stroke="#7a3b10" stroke-width="0.6"/>
+<path d="M133.10,141.57 L137.02,141.23 L135.10,138.19 Z" fill="#7a3b10"/>
+<text x="156.25" y="133.24" font-size="3.6" fill="#7a3b10">dead 55&#176;</text>
+<circle cx="122.62" cy="123.79" r="1.6" fill="none" stroke="#1b6e20" stroke-width="0.5"/>
+<g stroke="#1b6e20" stroke-width="0.25"><line x1="119.62" y1="123.79" x2="125.62" y2="123.79"/><line x1="122.62" y1="120.79" x2="122.62" y2="126.79"/></g>
+<line x1="122.62" y1="123.79" x2="101.12" y2="128.44" stroke="#1b6e20" stroke-width="0.6"/>
+<path d="M101.12,128.44 L104.92,129.46 L104.16,125.94 Z" fill="#1b6e20"/>
+<text x="127.55" y="128.15" font-size="3.6" fill="#1b6e20">B 50&#176;</text>
+<circle cx="58.29" cy="94.16" r="1.6" fill="none" stroke="#1b6e20" stroke-width="0.5"/>
+<g stroke="#1b6e20" stroke-width="0.25"><line x1="55.29" y1="94.16" x2="61.29" y2="94.16"/><line x1="58.29" y1="91.16" x2="58.29" y2="97.16"/></g>
+<line x1="58.29" y1="94.16" x2="37.34" y2="87.44" stroke="#1b6e20" stroke-width="0.6"/>
+<path d="M37.34,87.44 L40.13,90.22 L41.23,86.79 Z" fill="#1b6e20"/>
+<text x="63.15" y="100.07" font-size="3.6" fill="#1b6e20">C 40&#176;</text>
+<circle cx="85.83" cy="59.07" r="1.6" fill="none" stroke="#1b6e20" stroke-width="0.5"/>
+<g stroke="#1b6e20" stroke-width="0.25"><line x1="82.83" y1="59.07" x2="88.83" y2="59.07"/><line x1="85.83" y1="56.07" x2="85.83" y2="62.07"/></g>
+<line x1="85.83" y1="59.07" x2="75.76" y2="39.51" stroke="#1b6e20" stroke-width="0.6"/>
+<path d="M75.76,39.51 L75.76,43.44 L78.96,41.80 Z" fill="#1b6e20"/>
+<text x="89.20" y="66.74" font-size="3.6" fill="#1b6e20">D 35&#176;</text>
+<circle cx="142.43" cy="58.86" r="1.6" fill="none" stroke="#1b6e20" stroke-width="0.5"/>
+<g stroke="#1b6e20" stroke-width="0.25"><line x1="139.43" y1="58.86" x2="145.43" y2="58.86"/><line x1="142.43" y1="55.86" x2="142.43" y2="61.86"/></g>
+<line x1="142.43" y1="58.86" x2="145.41" y2="37.06" stroke="#1b6e20" stroke-width="0.6"/>
+<path d="M145.41,37.06 L143.15,40.28 L146.72,40.77 Z" fill="#1b6e20"/>
+<text x="144.02" y="66.83" font-size="3.6" fill="#1b6e20">E 40&#176;</text>
 <text x="12" y="221" font-size="3.6">1 Cut out the disc and lay it on the soil, centred, its arrow pointing away from the robot.</text>
 <text x="12" y="226" font-size="3.6">2 At each ring, push a skewer 6 cm in along its arrow, at its lean angle. Lift the disc off.</text>
 <text x="12" y="231" font-size="3.6">3 Push each stem 6 cm into its hole (measured along the stem from the soil), leaning along its arrow.</text>

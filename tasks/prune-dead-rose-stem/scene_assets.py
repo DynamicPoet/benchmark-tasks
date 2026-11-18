@@ -1,6 +1,6 @@
 """The scene's models, written as plain-text USD when the task file loads (no pxr needed).
 
-- **The rose bush** (``bush.usda``): a terracotta pot of soil with five live, leafy, thorny canes (``LIVE_CANES``) and one dead
+- **The rose bush** (``bush.usda``): a terracotta pot of soil with five live, leafy, de-thorned canes (``LIVE_CANES``) and one dead
   cane between two of them, as one articulation whose root is the pot (free on the table). The dead cane is green from the soil up to just above a red bud
   and brown above, up to an old pruning cut. The first cut frees its upper section at any height the blades reach; later cuts
   can shorten the retained stub and remove its original bud:
@@ -11,7 +11,7 @@
   Every slide is driven stiffly, so each part stays rigid. The nested sleeves never collide with one another; the cut-off part
   collides with the pot, the soil and the live canes. Leaves and flowers have no colliders.
 - **Bypass secateurs** (``secateurs.usda``): two halves on a pivot with a spring that holds them open. Squeezing the handles closes
-  the blade past the hook. The handles and the pivot collide; the blade and the hook do not (the task file judges the cut).
+  the blade past the hook. The handles, pivot, physical blade and hook collide with the plant; a loaded cut rule handles severing.
 - **The bin** (``bin.usda``): an open black plastic garden tub, free on the table.
 
 Sizes in metres. The station frame: x forward, y left, heights above the table top.
@@ -35,23 +35,26 @@ RNG_SEED = 7
 
 # -- layout -----------------------------------------------------------------------------------------------------------
 
-POT_XY = (0.37, 0.03)
+POT_XY = (0.3626205315663239, 0.0100229763736168)
+BUSH_YAW = math.radians(32.22186198337223)
+BUSH_R = np.array([[math.cos(BUSH_YAW),-math.sin(BUSH_YAW),0.],
+                   [math.sin(BUSH_YAW),math.cos(BUSH_YAW),0.],[0.,0.,1.]])
 POT_R_BOTTOM, POT_R_TOP, POT_H = 0.085, 0.110, 0.075
 SOIL_Z = 0.066
-CANE_BASE = (0.33, 0.0)  # where the dead cane leaves the soil, at the front of the pot
-CANE_IN_POT = np.array([CANE_BASE[0] - POT_XY[0], CANE_BASE[1] - POT_XY[1], SOIL_Z])
+CANE_IN_POT = np.array([-0.040, -0.030, SOIL_Z])
+CANE_BASE = tuple(np.asarray(POT_XY)+(BUSH_R@CANE_IN_POT)[:2])
 LEAN = math.radians(55.0)  # the dead cane leans out over the pot's rim, toward the robot's left
 CANE_DIR = np.array([0.0, math.sin(LEAN), math.cos(LEAN)])
 
-R0 = 0.0050   # the dead cane's radius: the stub's green sleeve and the cutting's top piece
-R1 = 0.00485  # its brown sleeves
-R2 = 0.0047   # the cutting's green sleeve
+R0 = 0.00225  # 4.5 mm natural flower-stem grade; no scaling of tool, bush or neighbour spacing
+R1 = 0.00219  # its brown sleeves
+R2 = 0.00213  # the cutting's green sleeve
 # Distances along the dead cane, from where it leaves the soil:
-BUD_S = 0.055       # the bud's middle
-BUD_TOP_S = 0.059   # its top
+BUD_S = 0.125       # the bud's middle
+BUD_TOP_S = 0.129   # its top
 BROWN_S = BUD_TOP_S + 0.020  # where the brown, dead wood starts
-TOP_S = 0.240       # the old pruning cut at the cane's tip
-T_LOW_S = 0.155     # the cutting's top piece starts here; a cut further out parts here
+TOP_S = 0.310       # the old pruning cut at the cane's tip
+T_LOW_S = 0.195     # the cutting's top piece starts here; a cut further out parts here
 H_MIN_S = 0.045     # the lowest cut the parts can show (the pot's rim keeps the blades above it)
 
 SG_BOTTOM_S = -0.010
@@ -61,8 +64,9 @@ L_T = TOP_S - T_LOW_S               # cutting, top piece
 CB_HIDE, CG_HIDE = 0.002, 0.003     # where the cutting's sleeves sit inside the top piece before the cut
 L_CB = T_LOW_S - BROWN_S + 0.002    # cutting, brown sleeve
 L_CG = BROWN_S - H_MIN_S + 0.002    # cutting, green sleeve
-BUD_SINK = -0.05                    # the stub's bud sinks this far (straight down, into the soil) when the cut takes it
-BUD_HIDDEN = (R0 - 0.0015, 0.0, 0.030)  # the cutting's bud, hidden inside the top piece (cane frame)
+L_STUB_COL = T_LOW_S + 0.002 - SG_BOTTOM_S  # the stub's collider, up to just inside the top piece before any cut
+BUD_SINK = -(BUD_S * CANE_DIR[2] + 0.020)                    # the stub's bud sinks this far (straight down, into the soil) when the cut takes it
+BUD_HIDDEN = (R0 - 0.0008, 0.0, 0.030)  # the cutting's bud, hidden inside the top piece (cane frame)
 BUD_SHOWN = (0.0, 0.0, BUD_S - T_LOW_S)  # ... and shown on the cutting, where it grew
 BUD_TRAVEL = float(np.linalg.norm(np.subtract(BUD_SHOWN, BUD_HIDDEN)))
 
@@ -103,38 +107,38 @@ class Cane:
 
 LIVE_CANES = [
     # The dead cane's two neighbours lean the same way, one nearer the robot and one beyond, about 5 cm from it at the bud.
-    Cane("A", (-0.080, -0.010), 50.0, 108.0, 0.260, 0.0045,
+    Cane("A", (-0.05930107697070601, 0.017398251389936212), 50.0, 108.0, 0.260, 0.0035,
          ((0.135, 205.0, 0.25, 0.95), (0.172, 22.0, 0.5, 0.75), (0.205, 200.0, 0.25, 0.9), (0.240, 175.0, 0.3, 0.8)), "cut"),
-    Cane("B", (-0.003, -0.021), 50.0, 70.0, 0.290, 0.0045,
+    Cane("B", (-0.019365432825377466, -0.008623014047096606), 50.0, 70.0, 0.290, 0.0035,
          ((0.130, -15.0, 0.25, 0.95), (0.175, 160.0, 0.5, 0.75), (0.215, -20.0, 0.25, 0.95), (0.248, 185.0, 0.3, 0.55),
           (0.278, 40.0, 0.2, 0.8)), "bud"),
-    Cane("C", (0.040, 0.030), 40.0, 40.0, 0.300, 0.0045,
+    Cane("C", (0.040, 0.030), 40.0, 40.0, 0.300, 0.0035,
          ((0.110, 140.0, 0.2, 1.0), (0.160, -40.0, 0.3, 1.0), (0.205, 130.0, 0.25, 1.0), (0.250, -50.0, 0.3, 0.9)), "bloom"),
-    Cane("D", (0.055, -0.012), 35.0, -5.0, 0.300, 0.0045,
+    Cane("D", (0.055, -0.012), 35.0, -5.0, 0.300, 0.0035,
          ((0.120, 85.0, 0.2, 1.0), (0.170, -95.0, 0.3, 1.0), (0.215, 80.0, 0.25, 0.95), (0.260, -100.0, 0.3, 0.9)), "bud"),
-    Cane("E", (0.025, -0.060), 40.0, -40.0, 0.270, 0.0045,
+    Cane("E", (0.025, -0.060), 40.0, -40.0, 0.270, 0.0035,
          ((0.120, 50.0, 0.25, 1.0), (0.165, -130.0, 0.3, 0.95), (0.210, 45.0, 0.25, 0.9)), "cut"),
 ]
 GREEN_CANES = [((c.base[0], c.base[1]), tuple(float(v) for v in c.top), c.radius) for c in LIVE_CANES]
 GREEN_CUT_FROM = SOIL_Z  # a live cane counts as cut if the blades close across it anywhere above the soil
 
 # Bypass secateurs, in the tool frame: pivot at the origin, the jaws pointing +y, z up through the tool's middle.
-JAW_OPEN = 0.62     # rad between the blade's and the hook's edges at rest
+JAW_OPEN = 0.45     # rad between the blade's and the hook's edges at rest
 OVERLAP = 0.06      # rad the blade passes the hook when the handles are fully squeezed
 CLOSE = JAW_OPEN + OVERLAP  # the pivot's travel
 HALF = CLOSE / 2    # each half turns this far between closed and open
-HANDLE_X = 0.012    # when closed, the handles' middles lie this far either side of the axis
+HANDLE_X = 0.010    # when closed, the handles' middles lie this far either side of the axis
 HANDLE_W, HANDLE_T = 0.016, 0.018
-GRIP_Y = (-0.036, -0.130)  # the red grips along each handle (closed)
+GRIP_Y = (-0.036, -0.137)  # the red grips along each handle (closed)
 BLADE_Z = 0.0018    # the blade's middle, above the tool's middle: the cutting plane
-JAW_REACH = (0.008, 0.055)  # a cane between the blade and the hook, this far from the pivot, is in the jaws
+JAW_REACH = (0.008, 0.057)  # a cane between the blade and the hook, this far from the pivot, is in the jaws
 TOOL_HALF_T = 0.0095  # the tool's lowest point below its middle
 SECATEURS_START = (0.22, -0.13)  # the pivot on the table at the start; the jaws point left (+y)
 SPRING_K = 1.0      # N m/rad
-SPRING_PRELOAD = 0.30  # rad: the spring pushes the halves against their open stop with 0.3 N m
+SPRING_PRELOAD = 0.30  # rad: ordinary opening-spring preload, 0.3 Nm at the open stop
 
 # The bin: an open black plastic garden tub.
-BIN_XY = (0.20, 0.37)
+BIN_XY = (0.26, 0.37)
 BIN_R_BOTTOM, BIN_R_TOP, BIN_H, BIN_WALL = 0.110, 0.130, 0.120, 0.004
 
 # -- looks ------------------------------------------------------------------------------------------------------------
@@ -304,7 +308,7 @@ def obox(name: str, size, center, root: str, quat=(1.0, 0.0, 0.0, 0.0), patch: f
 {indent}    rel material:binding:physics = </{root}/PhysicsMaterial>
 {indent}    uniform token purpose = "guide"
 {indent}    double size = 1
-{indent}    float physxCollision:contactOffset = 0.003
+{indent}    float physxCollision:contactOffset = 0.0002
 {indent}    float physxCollision:restOffset = 0{extra}
 {indent}    double3 xformOp:translate = {_f3(center)}
 {indent}    quatd xformOp:orient = {_f4(quat)}
@@ -313,16 +317,39 @@ def obox(name: str, size, center, root: str, quat=(1.0, 0.0, 0.0, 0.0), patch: f
 {indent}}}"""
 
 
-def segment_box(name: str, p0, p1, radius: float, root: str, indent: str = "        ") -> str:
-    """A square collider round the segment p0-p1."""
+def cylinder_collider(name: str, length: float, radius: float, center, root: str,
+                      quat=(1.0, 0.0, 0.0, 0.0), indent: str = "        ") -> str:
+    """Finite round stem, matching the visible cross-section without box corners."""
+    return f'''
+{indent}def Cylinder "{name}" (
+{indent}    prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+{indent})
+{indent}{{
+{indent}    uniform token purpose = "guide"
+{indent}    rel material:binding:physics = </{root}/PhysicsMaterial>
+{indent}    uniform token axis = "Z"
+{indent}    double radius = {radius:.7f}
+{indent}    double height = {length:.7f}
+{indent}    float physxCollision:contactOffset = 0.0002
+{indent}    float physxCollision:restOffset = 0
+{indent}    double3 xformOp:translate = {_f3(center)}
+{indent}    quatd xformOp:orient = {_f4(quat)}
+{indent}    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+{indent}}}'''
+
+
+def segment_collider(name: str, p0, p1, radius: float, root: str, indent: str = "        ") -> str:
+    """A finite circular cylinder along p0-p1."""
     p0, p1 = np.asarray(p0, float), np.asarray(p1, float)
     d = p1 - p0
     q = _q_wxyz_from_matrix(_frame(d))
-    return obox(name, (2 * radius, 2 * radius, float(np.linalg.norm(d))), (p0 + p1) / 2, root, q, indent=indent)
+    return cylinder_collider(name, float(np.linalg.norm(d)), radius, (p0 + p1) / 2, root, q, indent)
 
 
-def hull(name: str, mesh: Mesh, root: str, indent: str = "        ") -> str:
+def hull(name: str, mesh: Mesh, root: str, indent: str = "        ", patch: float = 0.0) -> str:
     """A convex-hull collider from a mesh, not rendered."""
+    extra = (f"\n{indent}    float physxCollision:torsionalPatchRadius = {patch:.4f}"
+             f"\n{indent}    float physxCollision:minTorsionalPatchRadius = {0.8 * patch:.4f}") if patch else ""
     return f"""
 {indent}def Mesh "{name}" (
 {indent}    prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysicsMeshCollisionAPI", "MaterialBindingAPI"]
@@ -331,8 +358,8 @@ def hull(name: str, mesh: Mesh, root: str, indent: str = "        ") -> str:
 {indent}    uniform token physics:approximation = "convexHull"
 {indent}    rel material:binding:physics = </{root}/PhysicsMaterial>
 {indent}    uniform token purpose = "guide"
-{indent}    float physxCollision:contactOffset = 0.003
-{indent}    float physxCollision:restOffset = 0
+{indent}    float physxCollision:contactOffset = 0.0002
+{indent}    float physxCollision:restOffset = 0{extra}
 {indent}    int[] faceVertexCounts = [{", ".join("3" for _ in range(len(mesh.f)))}]
 {indent}    int[] faceVertexIndices = [{", ".join(str(int(i)) for i in mesh.f.reshape(-1))}]
 {indent}    point3f[] points = [{uk._fmt(mesh.v)}]
@@ -344,14 +371,17 @@ def visuals(parts, root: str, indent: str = "        ") -> str:
 
 
 def link(name: str, mass: float, inertia, body: str, at=(0.0, 0.0, 0.0), gravity: bool = True, com=(0.0, 0.0, 0.0),
-         extra_api: str = "", extra: str = "", orient=(1.0, 0.0, 0.0, 0.0)) -> str:
+         extra_api: str = "", extra: str = "", orient=(1.0, 0.0, 0.0, 0.0), principal_axes=None) -> str:
+    mass_text = f"{mass:.6f}" if principal_axes is None else f"{mass:.9f}"
+    inertia_text = ", ".join(f"{x:.3e}" if principal_axes is None else f"{x:.9e}" for x in inertia)
+    axes = "" if principal_axes is None else f"\n        quatf physics:principalAxes = {_f4(principal_axes)}"
     return f"""
     def Xform "{name}" (
         prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"{extra_api}]
     )
     {{
-        float physics:mass = {mass:.6f}
-        float3 physics:diagonalInertia = ({inertia[0]:.3e}, {inertia[1]:.3e}, {inertia[2]:.3e})
+        float physics:mass = {mass_text}
+        float3 physics:diagonalInertia = ({inertia_text}){axes}
         point3f physics:centerOfMass = {_f3(com)}
         bool physxRigidBody:disableGravity = {0 if gravity else 1}
         float physxRigidBody:maxDepenetrationVelocity = 1
@@ -469,7 +499,7 @@ def _oriented(parts: list[tuple[Mesh, str]], at, direction) -> list[tuple[Mesh, 
 
 def _green_cane_parts(rng, record: list | None = None) -> list[tuple[str, Mesh, str]]:
     """The live canes' visual parts. `record`, if given, collects (cane, leaf index, leaf mesh) for checks."""
-    canes, thorns, leaves, young, ends = [], [], [], [], []
+    canes, leaves, young, ends = [], [], [], []
     heads: list[tuple[Mesh, str]] = []
     for cane in LIVE_CANES:
         d = cane.direction
@@ -479,11 +509,6 @@ def _green_cane_parts(rng, record: list | None = None) -> list[tuple[str, Mesh, 
         side = np.cross(d, np.array([0.0, 0.0, 1.0]))
         side /= np.linalg.norm(side)
         up = np.cross(side, d)
-        for j, u in enumerate(np.linspace(0.10, 0.88, 7)):
-            p = cane.at(u * cane.length)
-            a = rng.uniform(0, 2 * math.pi) + j * 2.3
-            out = math.cos(a) * side + math.sin(a) * up
-            thorns.append(thorn(p + out * cane.radius * 0.8, out, size=1.1))
         for k, (s_along, toward, droop, size) in enumerate(cane.leaves):
             a = math.radians(toward)
             out = np.array([math.cos(a), math.sin(a), 0.0])
@@ -503,7 +528,7 @@ def _green_cane_parts(rng, record: list | None = None) -> list[tuple[str, Mesh, 
             heads += _oriented(bud, t, d)
         else:
             ends.append(placed(cap(0.0, cane.radius, True, 12), t, d))
-    parts = [("canes", join(*canes), "cane"), ("thorns", join(*thorns), "thorn"), ("leaves", join(*leaves), "leaf")]
+    parts = [("canes", join(*canes), "cane"), ("leaves", join(*leaves), "leaf")]
     if young:
         parts.append(("young_leaves", join(*young), "leaf_young"))
     if ends:
@@ -516,19 +541,16 @@ def _green_cane_parts(rng, record: list | None = None) -> list[tuple[str, Mesh, 
 
 
 def _dead_cane_fixed_parts() -> list[tuple[str, Mesh, str]]:
-    """The dead cane's part that never moves: a short stump in the soil, with two thorns low down (below any cut)."""
+    """The dead cane's part that never moves: a short stump in the soil (its thorns are stripped, like the live canes')."""
     stump = placed(join(rod(-0.008, 0.006, R0 + 0.0004), cap(0.006, R0 + 0.0004, True)), CANE_IN_POT, CANE_DIR)
-    up = np.array([0.0, -CANE_DIR[2], CANE_DIR[1]])  # across the cane, on its upper side
-    thorns = join(thorn(on_cane(0.014) + np.array([R0 * 0.8, 0.0, 0.0]), (1.0, 0.0, 0.0), up=0.0, size=1.0),
-                  thorn(on_cane(0.030) + up * R0 * 0.8, up - 0.3 * CANE_DIR, up=0.0, size=0.9))
-    return [("dead_stump", stump, "cane"), ("dead_thorns", thorns, "thorn")]
+    return [("dead_stump", stump, "cane")]
 
 
 def bud_mesh() -> Mesh:
     """The bud, pointing -x out of the cane's side, in a frame on the cane's axis at the bud's height."""
-    m = lathe([(0.0, -0.0015), (0.0030, -0.0005), (0.0026, 0.0020), (0.0011, 0.0034), (0.0, 0.0040)], 12)
+    m = lathe([(0.0, -0.0011), (0.0021, -0.0004), (0.0018, 0.0014), (0.0008, 0.0024), (0.0, 0.0028)], 12)
     m = Mesh(m.v @ _ry(-math.pi / 2 + 0.35).T, m.f)  # lean up a little, as buds do
-    return m.moved((-(R0 - 0.0015), 0.0, 0.0))
+    return m.moved((-(R0 - 0.0008), 0.0, 0.0))
 
 
 def _lean() -> tuple[np.ndarray, tuple[float, float, float, float]]:
@@ -545,7 +567,7 @@ def write_bush() -> str:
     pot_hull = lathe([(0.0, 0.0), (POT_R_BOTTOM, 0.0), (POT_R_TOP + 0.001, POT_H), (0.0, POT_H)], 24)
     pot_colliders = hull("pot_c", pot_hull, root)
     for k, (base, top, r) in enumerate(GREEN_CANES):
-        pot_colliders += segment_box(f"cane{k}_c", (base[0], base[1], SOIL_Z), top, r, root)
+        pot_colliders += segment_collider(f"cane{k}_c", (base[0], base[1], SOIL_Z), top, r, root)
     used = {p[2] for p in pot_parts}
 
     # The stub: two sleeves and the bud, each sliding along the cane's axis.
@@ -554,9 +576,7 @@ def write_bush() -> str:
           ("dark_band", rod(0.0, 0.004, R1 + 0.00008), "dead_dark")]
     bud = [("bud", bud_mesh(), "bud")]
     # The cutting: its top piece, two sleeves inside it, and its own bud.
-    top = [("side", rod(0.0, L_T, R0), "dead"), ("old_cut", cap(L_T, R0, True), "old_cut"), ("cut_face", cap(0.0, R0, False), "pith_dead"),
-           ("thorns", join(thorn((R0 * 0.8, 0.0, 0.012), (1.0, 0.0, 0.0), size=1.1), thorn((-0.002, R0 * 0.8, 0.031), (-0.3, 1.0, 0.0), size=1.0),
-                           thorn((-R0 * 0.75, -0.0015, 0.047), (-1.0, -0.3, 0.0), size=0.9)), "thorn")]
+    top = [("side", rod(0.0, L_T, R0), "dead"), ("old_cut", cap(L_T, R0, True), "old_cut"), ("cut_face", cap(0.0, R0, False), "pith_dead")]
     cb = [("side", rod(0.0, L_CB, R1), "dead"), ("cut_face", cap(0.0, R1, False), "pith_dead")]
     cg = [("side", rod(0.0, L_CG, R2), "cane"), ("cut_face", cap(0.0, R2, False), "pith")]
     cbud = [("bud", bud_mesh().moved(BUD_HIDDEN), "bud")]
@@ -571,19 +591,22 @@ def write_bush() -> str:
                        "\n        int physxArticulation:solverVelocityIterationCount = 4")
 
     def cane_box(length: float, r: float, z0: float = 0.0) -> str:
-        return obox("c", (2 * r, 2 * r, length), (0.0, 0.0, z0 + length / 2), root)
+        return cylinder_collider("c", length, r, (0.0, 0.0, z0 + length / 2), root)
 
     def apart(*names: str) -> tuple[str, str]:
         targets = ", ".join(f"</{root}/{n}>" for n in names)
         return ', "PhysicsFilteredPairsAPI"', f"\n        rel physics:filteredPairs = [{targets}]"
 
     cutting = ("cut_top", "cut_brown", "cut_green")
-    api, rel = apart("stub_brown", *cutting)
-    text += link("stub_green", 0.003, _rod_inertia(0.003, R0, L_SG), cane_box(L_SG, R0) + visuals(sg, root), extra_api=api, extra=rel,
+    # The stub's sleeves are visual: its collider is a separate sleeve (stub_col) that can stop short of the visible cut
+    # face while the closed blade sits in the cut.
+    text += link("stub_green", 0.003, _rod_inertia(0.003, R0, L_SG), visuals(sg, root),
                  at=on_cane(SG_BOTTOM_S), orient=q_lean, gravity=False, com=(0, 0, L_SG / 2))
-    api, rel = apart(*cutting)
-    text += link("stub_brown", 0.002, _rod_inertia(0.002, R1, L_SB), cane_box(L_SB, R1) + visuals(sb, root), extra_api=api, extra=rel,
+    text += link("stub_brown", 0.002, _rod_inertia(0.002, R1, L_SB), visuals(sb, root),
                  at=on_cane(BROWN_S), orient=q_lean, gravity=False, com=(0, 0, L_SB / 2))
+    api, rel = apart(*cutting)
+    text += link("stub_col", 0.002, _rod_inertia(0.002, R0, L_STUB_COL), cane_box(L_STUB_COL, R0), extra_api=api, extra=rel,
+                 at=on_cane(SG_BOTTOM_S), orient=q_lean, gravity=False, com=(0, 0, L_STUB_COL / 2))
     text += link("stub_bud", 0.0002, (1e-9, 1e-9, 1e-9), visuals(bud, root), at=on_cane(BUD_S), orient=q_lean, gravity=False)
     o_c = tuple(on_cane(T_LOW_S))
     for name in ("c_px", "c_py", "c_pz", "c_rx", "c_ry"):
@@ -603,8 +626,9 @@ def write_bush() -> str:
     z_axis /= np.linalg.norm(z_axis)
     bud_rot = _q_wxyz_from_matrix(np.stack([x_axis, np.cross(z_axis, x_axis), z_axis], axis=1))
     j = ""
-    j += joint("Prismatic", "stub_green_slide", root, "pot", "stub_green", "Z", on_cane(SG_BOTTOM_S), q_lean, limits=(-0.09, 0.001))
-    j += joint("Prismatic", "stub_brown_slide", root, "pot", "stub_brown", "Z", on_cane(BROWN_S), q_lean, limits=(-0.20, 0.001))
+    j += joint("Prismatic", "stub_green_slide", root, "pot", "stub_green", "Z", on_cane(SG_BOTTOM_S), q_lean, limits=(-BROWN_S - 0.011, 0.001))
+    j += joint("Prismatic", "stub_brown_slide", root, "pot", "stub_brown", "Z", on_cane(BROWN_S), q_lean, limits=(min(-0.20,-BROWN_S-L_SB-0.010), 0.001))
+    j += joint("Prismatic", "stub_col_slide", root, "pot", "stub_col", "Z", on_cane(SG_BOTTOM_S), q_lean, limits=(min(-0.20,-SG_BOTTOM_S-L_STUB_COL-0.010), 0.001))
     j += joint("Prismatic", "stub_bud_slide", root, "pot", "stub_bud", "Z", on_cane(BUD_S), (1.0, 0.0, 0.0, 0.0), (0.0, 0.0, 0.0), q_back,
                limits=(BUD_SINK - 0.005, 0.001))
     j += joint("Prismatic", "c_px_joint", root, "pot", "c_px", "X", o_c, limits=(-0.9, 0.9))
@@ -614,7 +638,7 @@ def write_bush() -> str:
     j += joint("Revolute", "c_ry_joint", root, "c_rx", "c_ry", "Y")
     j += joint("Revolute", "c_rz_joint", root, "c_ry", "cut_top", "Z", (0.0, 0.0, 0.0), q_lean)
     j += joint("Prismatic", "cut_brown_slide", root, "cut_top", "cut_brown", "Z", (0.0, 0.0, CB_HIDE), limits=(-0.09, 0.001))
-    j += joint("Prismatic", "cut_green_slide", root, "cut_top", "cut_green", "Z", (0.0, 0.0, CG_HIDE), limits=(-0.12, 0.001))
+    j += joint("Prismatic", "cut_green_slide", root, "cut_top", "cut_green", "Z", (0.0, 0.0, CG_HIDE), limits=(min(-0.12,H_MIN_S-T_LOW_S-CG_HIDE-0.010), 0.001))
     j += joint("Prismatic", "cut_bud_slide", root, "cut_top", "cut_bud", "X", (0.0, 0.0, 0.0), bud_rot, (0.0, 0.0, 0.0), bud_rot,
                limits=(-0.001, BUD_TRAVEL + 0.002))
     text += j + "\n}\n"
@@ -636,14 +660,14 @@ def _closed_half(side: int) -> tuple[list[tuple[str, Mesh, str]], list[tuple[str
     # the grip: a red, rounded, slightly swelling sleeve
     y0, y1 = GRIP_Y
     grip = lathe([(0.0, 0.0), (0.0062, 0.0), (0.0080, 0.006), (0.0084, 0.045), (0.0088, 0.075), (0.0080, 0.090), (0.0050, 0.094), (0.0, 0.094)], 16)
-    grip = grip.scaled((HANDLE_W / 0.0168, HANDLE_T / 0.0168, 1.0))
+    grip = grip.scaled((HANDLE_W / 0.0168, HANDLE_T / 0.0168, abs(y1-y0)/0.094))
     grip = Mesh(grip.v @ _rx(math.pi / 2).T, grip.f).moved((hx, y0, 0.0))  # along -y from y0
     parts.append(("grip", grip, "grip"))
     # the bare steel neck from the pivot to the grip
-    neck = box((0.011, abs(y0) - 0.006, 0.010), center=(hx * 0.62, (y0 - 0.006) / 2 - 0.003, 0.0), bevel=0.0015, round_xy=0.002)
+    neck = box((0.011, abs(y0) - 0.006, 0.003), center=(hx * 0.62, (y0 - 0.006) / 2 - 0.003, 0.0), bevel=0.0005, round_xy=0.002)
     parts.append(("neck", neck, "steel_dark"))
     colliders = [("grip_c", (HANDLE_W, abs(y1 - y0), HANDLE_T), (hx, (y0 + y1) / 2, 0.0)),
-                 ("neck_c", (0.011, abs(y0) - 0.006, 0.010), (hx * 0.62, (y0 - 0.006) / 2 - 0.003, 0.0))]
+                 ("neck_c", (0.011, abs(y0) - 0.006, 0.003), (hx * 0.62, (y0 - 0.006) / 2 - 0.003, 0.0))]
     edge_a = s * OVERLAP / 2  # the edge's angle from +y, turned toward -x for the blade (side +1) when closed
     e = np.array([-math.sin(edge_a), math.cos(edge_a)])
     n = np.array([math.cos(edge_a), math.sin(edge_a)]) * s  # from the edge into the jaw's metal
@@ -664,7 +688,7 @@ def _closed_half(side: int) -> tuple[list[tuple[str, Mesh, str]], list[tuple[str
         parts.append(("edge", join(*(box((0.0012, 0.0062, 0.0004)).turned(math.degrees(edge_a), "z").moved((p[0], p[1], BLADE_Z + 0.0015))
                                      for p in bevel_line)), "steel_dark"))
     else:
-        # the hook (anvil): a thicker dark jaw with a curled tip, below the middle
+        # the hook (counterblade): a thicker dark jaw with a curled tip, below the middle
         pts = []
         for k in range(13):
             u = k / 12
@@ -681,8 +705,8 @@ def _closed_half(side: int) -> tuple[list[tuple[str, Mesh, str]], list[tuple[str
         parts.append(("bolt", join(lathe([(0.0, -0.0075), (0.0068, -0.0075), (0.0068, -0.0058), (0.0, -0.0058)], 20),
                                    lathe([(0.0, 0.0034), (0.0062, 0.0034), (0.0062, 0.0062), (0.0, 0.0062)], 6)), "brass"))
         parts.append(("boss", lathe([(0.0, -0.0058), (0.0105, -0.0058), (0.0105, 0.0034), (0.0, 0.0034)], 24), "steel_dark"))
+        parts.append(("boss_hull", lathe([(0.0, -0.0077), (0.0105, -0.0077), (0.0105, 0.0053), (0.0, 0.0053)], 16), "steel_dark"))
         parts.append(("catch", box((0.007, 0.012, 0.004), center=(0.0, -0.016, 0.0072), bevel=0.001, round_xy=0.002), "grip"))
-        colliders.append(("boss_c", (0.021, 0.021, 0.013), (0.0, 0.0, -0.0012)))
     return parts, colliders
 
 
@@ -694,24 +718,140 @@ def _turned(parts, colliders, angle: float):
     return out_parts, out_cols
 
 
+FUSE_K = 60.0   # N m/rad: the blade sits on its handle through this stiff spring, which measures the cane's resistance
+FUSE_D = 0.05   # N m s/rad
+
+
+
+def secateurs_mass_properties():
+    """195 mm / 49 mm / 160 g reference class, not a measured internal ARS CAD."""
+    from tool_mass import material_properties, SPINE_WIDTH, SPINE_FRONT, SPINE_BACK
+    parts = []
+    for side, angle in ((-1, HALF), (1, -HALF)):
+        turned, _ = _turned(*_closed_half(side), angle)
+        for name, mesh, _ in turned:
+            if name in ('edge', 'boss_hull'):
+                continue  # cosmetic bevel and duplicate collision envelope are not extra material
+            body = 'hook_half' if side == -1 else 'blade' if name == 'blade' else 'blade_half'
+            parts.append((body, name, mesh))
+    def spine(side, thickness):
+        return spun(box((SPINE_WIDTH, SPINE_FRONT-SPINE_BACK, thickness),
+                        center=(-side*HANDLE_X, (SPINE_FRONT+SPINE_BACK)/2, 0)), -side*HALF)
+    return material_properties(parts, spine)
+
+
+def pivot_collision_sections(parts):
+    """The actual shoulder, bolt head and nut are three finite convex solids."""
+    shoulder=next(m for n,m,_ in parts if n=='boss')
+    bolt=next(m for n,m,_ in parts if n=='bolt')
+    parent=np.arange(len(bolt.v))
+    def root(i):
+        while parent[i]!=i:
+            parent[i]=parent[parent[i]];i=parent[i]
+        return i
+    for face in bolt.f:
+        for j in face[1:]:parent[root(int(j))]=root(int(face[0]))
+    groups={}
+    for i in range(len(bolt.v)):groups.setdefault(root(i),[]).append(i)
+    if len(groups)!=2:raise ValueError('The visible bolt must contain its head and nut')
+    components=[]
+    for ids in groups.values():
+        ids=np.asarray(ids);mapping=np.full(len(bolt.v),-1);mapping[ids]=np.arange(len(ids))
+        faces=bolt.f[np.all(np.isin(bolt.f,ids),axis=1)]
+        components.append(Mesh(bolt.v[ids],mapping[faces]))
+    components.sort(key=lambda m:float(m.v[:,2].min()))
+    return [('shoulder',shoulder),('bolt_head',components[0]),('nut',components[1])]
+
+
+def convex_jaw_sections(mesh: Mesh, side: int) -> list[Mesh]:
+    """Four finite slices retaining the visible steel rather than filling the throat."""
+    from scipy.spatial import ConvexHull
+    edge_a = side*OVERLAP/2
+    longitudinal = np.array([-math.sin(edge_a), math.cos(edge_a), 0.])
+    d = mesh.v @ longitudinal
+    edges = np.unique(np.sort(np.concatenate([mesh.f[:,[0,1]], mesh.f[:,[1,2]], mesh.f[:,[2,0]]]),axis=1),axis=0)
+    step = .014 if side == -1 else .018
+    bounds = [float(d.min())-1e-9, 0., step, 2*step, float(d.max())+1e-9]
+    pieces=[]
+    for lo,hi in zip(bounds[:-1],bounds[1:]):
+        points=[v for v,t in zip(mesh.v,d) if lo-1e-12<=t<=hi+1e-12]
+        for i,j in edges:
+            if abs(d[j]-d[i])<1e-15:
+                continue
+            for plane in (lo,hi):
+                t=(plane-d[i])/(d[j]-d[i])
+                if 0<=t<=1:
+                    points.append(mesh.v[i]+t*(mesh.v[j]-mesh.v[i]))
+        points=np.unique(np.round(points,12),axis=0)
+        hull=ConvexHull(points)
+        faces=hull.simplices.copy()
+        # Orient faces outward, for valid closed visual/physical geometry.
+        for k,face in enumerate(faces):
+            u,v,w=points[face]
+            if np.cross(v-u,w-u) @ hull.equations[k,:3]<0:
+                faces[k,[1,2]]=faces[k,[2,1]]
+        pieces.append(Mesh(points,faces))
+    return pieces
+
+
+def convex_hook_sections(mesh: Mesh) -> list[Mesh]:
+    return convex_jaw_sections(mesh,-1)
+
+
+def convex_blade_sections(mesh: Mesh) -> list[Mesh]:
+    return convex_jaw_sections(mesh,1)
+
+
 def write_secateurs() -> str:
+    """Three links: the hook half (handle, hook, pivot boss: the articulation's root), the blade half's handle on the pivot,
+    and the blade on that handle through a stiff spring (``fuse``) about the same axis. The blade lags its handle when a
+    cane resists the closing jaws, so the spring's deflection is the force the blade puts on the cane. The hook and the
+    blade collide with the canes, like the handles and the pivot."""
     root = "Secateurs"
     blade_parts, blade_cols = _turned(*_closed_half(+1), -HALF)  # at rest, open: the blade half turned clockwise
     hook_parts, hook_cols = _turned(*_closed_half(-1), +HALF)
+    jaw = {"blade", "edge"}
+    blade_jaw = [p for p in blade_parts if p[0] in jaw]
+    blade_handle = [p for p in blade_parts if p[0] not in jaw]
+    hook_visual = [p for p in hook_parts if p[0] != "boss_hull"]
     used = {p[2] for p in blade_parts + hook_parts}
     text = header(root, used, (1.0, 0.9))
 
     def body(parts, cols, tag):
-        return "".join(obox(f"{tag}_{n}", size, ctr, root, q, patch=0.012 if n.startswith("grip") else 0.0) for n, size, ctr, q in cols) + \
+        return "".join(hull(f"{tag}_{n}", mesh_of(parts, "grip"), root, patch=0.012) if n.startswith("grip") else
+                       obox(f"{tag}_{n}", size, ctr, root, q) for n, size, ctr, q in cols) + \
             visuals([(f"{tag}_{n}", m, look) for n, m, look in parts], root)
 
-    inertia = (2.7e-4, 1.2e-5, 2.8e-4)
-    text += link("hook_half", 0.11, inertia, body(hook_parts, hook_cols, "h"), com=(0.0, -0.025, 0.0),
+    def mesh_of(parts, name):
+        return next(m for n, m, _ in parts if n == name)
+
+    import json
+    properties = secateurs_mass_properties()
+    (ASSETS / "secateurs-physical-properties.json").write_text(json.dumps(properties, indent=2) + "\n")
+    def mass_args(name):
+        p = properties['bodies'][name]
+        return dict(mass=p['mass_kg'], inertia=p['diagonal_inertia_kg_m2'], com=p['com_m'],
+                    principal_axes=_q_wxyz_from_matrix(np.asarray(p['principal_matrix'])))
+    # Slice before the open-angle rotation so the finite pieces follow the true throat.
+    closed_hook = next(m for n,m,_ in _closed_half(-1)[0] if n == "hook")
+    hook_colliders = "".join(hull(f"h_hook_c{k}", spun(m, HALF), root)
+                             for k,m in enumerate(convex_hook_sections(closed_hook)))
+    hook_body = body(hook_visual, hook_cols, "h") + hook_colliders + \
+        "".join(hull(f"h_{name}_c",spun(mesh,HALF),root)
+                for name,mesh in pivot_collision_sections(_closed_half(-1)[0]))
+    text += link("hook_half", body=hook_body, **mass_args("hook_half"),
                  extra_api=', "PhysicsArticulationRootAPI", "PhysxArticulationAPI"',
                  extra="\n        bool physxArticulation:enabledSelfCollisions = 0\n        int physxArticulation:solverPositionIterationCount = 32"
                        "\n        int physxArticulation:solverVelocityIterationCount = 4")
-    text += link("blade_half", 0.09, inertia, body(blade_parts, blade_cols, "b"), com=(0.0, -0.025, 0.0))
+    text += link("blade_half", body=body(blade_handle, blade_cols, "b"), **mass_args("blade_half"))
+    closed_blade = next(m for n,m,_ in _closed_half(1)[0] if n == "blade")
+    blade_colliders = "".join(hull(f"b_blade_c{k}", spun(m,-HALF),root)
+                              for k,m in enumerate(convex_blade_sections(closed_blade)))
+    blade_body = blade_colliders + visuals([(f"b_{n}", m, look) for n,m,look in blade_jaw],root)
+    text += link("blade", body=blade_body, **mass_args("blade"),
+                 extra_api=', "PhysxContactReportAPI"', extra='\n        float physxContactReport:threshold = 0')
     text += joint("Revolute", "pivot", root, "hook_half", "blade_half", "Z", limits=(0.0, math.degrees(CLOSE)))
+    text += joint("Revolute", "fuse", root, "blade_half", "blade", "Z", limits=(-17.0, 17.0))
     text += "\n}\n"
     path = ASSETS / "secateurs.usda"
     path.write_text(text)
@@ -762,21 +902,28 @@ def write_all() -> None:
 # -- the cut, in joint positions ----------------------------------------------------------------------------------------
 
 
-def cut_joint_positions(h: float) -> dict[str, float]:
-    """Each slide's position once the dead cane is cut h along it from the soil (clamped to what the parts can show)."""
+def kerf(cos_angle: float, radius: float = R0, half_thickness: float = 0.0014) -> float:
+    """Along the cane, how far the closed blade reaches into each side of a cut whose plane meets the cane's axis at
+    `cos_angle` (|cos| of the angle between the cane and the blade plane's normal), plus 1 mm."""
+    c = max(abs(cos_angle), 0.3)
+    return (half_thickness + radius * math.sqrt(max(0.0, 1.0 - c * c))) / c + 0.001
+
+
+def cut_joint_positions(h: float, gap: float = 0.0) -> dict[str, float]:
+    """Each slide's position once the dead cane is cut h along it from the soil (clamped to what the parts can show).
+    The cutting's sleeves start `gap` beyond the cut, where the closed blade no longer reaches; the stub's are set by
+    `stub_joint_positions`."""
     h = min(max(h, H_MIN_S), T_LOW_S - 0.003)
-    q = {"stub_green_slide": min(h, BROWN_S) - BROWN_S}
-    q["stub_brown_slide"] = (h if h >= BROWN_S else h - 0.001) - (BROWN_S + L_SB)
-    q["stub_bud_slide"] = 0.0 if h >= BUD_TOP_S else BUD_SINK
-    q["cut_brown_slide"] = (max(h, BROWN_S) - T_LOW_S) - CB_HIDE
-    q["cut_green_slide"] = (h - T_LOW_S) - CG_HIDE if h < BROWN_S else 0.0
-    q["cut_bud_slide"] = BUD_TRAVEL if h < BUD_TOP_S else 0.0
-    return q
+    hc = min(h + gap, T_LOW_S - 0.003)
+    return {"cut_brown_slide": (max(hc, BROWN_S) - T_LOW_S) - CB_HIDE,
+            "cut_green_slide": (hc - T_LOW_S) - CG_HIDE if hc < BROWN_S else 0.0,
+            "cut_bud_slide": BUD_TRAVEL if h < BUD_TOP_S else 0.0}
 
 
-def stub_joint_positions(h: float, bud_present: bool) -> dict[str, float]:
-    """Shorten only the retained stub; the first cutting keeps its own shape."""
+def stub_joint_positions(h: float, bud_present: bool, collider_gap: float = 0.0) -> dict[str, float]:
+    """The retained stub's visible sleeves end at h; its collider ends `collider_gap` lower (clear of a closed blade)."""
     h = max(h, 0.006)
     return {"stub_green_slide": min(h, BROWN_S) - BROWN_S,
             "stub_brown_slide": (h if h >= BROWN_S else h - 0.001) - (BROWN_S + L_SB),
+            "stub_col_slide": max(h - collider_gap, 0.0) - (SG_BOTTOM_S + L_STUB_COL),
             "stub_bud_slide": 0.0 if bud_present else BUD_SINK}

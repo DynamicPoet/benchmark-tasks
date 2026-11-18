@@ -45,7 +45,7 @@ def Xform "Bin" (
         rel material:binding:physics = </Bin/PhysicsMaterial>
         uniform token purpose = "guide"
         double size = 1
-        float physxCollision:contactOffset = 0.003
+        float physxCollision:contactOffset = 0.0002
         float physxCollision:restOffset = 0
         double3 xformOp:translate = (0.0000000, 0.0000000, 0.0020000)
         quatd xformOp:orient = (1.0000000, 0.0000000, 0.0000000, 0.0000000)
@@ -59,7 +59,7 @@ def Xform "Bin" (
         rel material:binding:physics = </Bin/PhysicsMaterial>
         uniform token purpose = "guide"
         double size = 1
-        float physxCollision:contactOffset = 0.003
+        float physxCollision:contactOffset = 0.0002
         float physxCollision:restOffset = 0
         double3 xformOp:translate = (0.1157327, 0.0230207, 0.0600000)
         quatd xformOp:orient = (0.9917938, -0.0080845, 0.0820834, 0.0976832)
@@ -73,7 +73,7 @@ def Xform "Bin" (
         rel material:binding:physics = </Bin/PhysicsMaterial>
         uniform token purpose = "guide"
         double size = 1
-        float physxCollision:contactOffset = 0.003
+        float physxCollision:contactOffset = 0.0002
         float physxCollision:restOffset = 0
         double3 xformOp:translate = (0.0981134, 0.0655573, 0.0600000)
         quatd xformOp:orient = (0.9536797, -0.0239428, 0.0789289, 0.2892956)
@@ -87,7 +87,7 @@ def Xform "Bin" (
         rel material:binding:physics = </Bin/PhysicsMaterial>
         uniform token purpose = "guide"
         double size = 1
-        float physxCollision:contactOffset = 0.003
+        float physxCollision:contactOffset = 0.0002
         float physxCollision:restOffset = 0
         double3 xformOp:translate = (0.0655573, 0.0981134, 0.0600000)
         quatd xformOp:orient = (0.8789163, -0.0388811, 0.0727413, 0.4697905)
@@ -101,7 +101,7 @@ def Xform "Bin" (
         rel material:binding:physics = </Bin/PhysicsMaterial>
         uniform token purpose = "guide"
         double size = 1
-        float physxCollision:contactOffset = 0.003
+        float physxCollision:contactOffset = 0.0002
         float physxCollision:restOffset = 0
         double3 xformOp:translate = (0.0230207, 0.1157327, 0.0600000)
         quatd xformOp:orient = (0.7703766, -0.0523251, 0.0637583, 0.6322317)
@@ -115,7 +115,7 @@ def Xform "Bin" (
         rel material:binding:physics = </Bin/PhysicsMaterial>
         uniform token purpose = "guide"
         double size = 1
-        float physxCollision:contactOffset = 0.003
+        float physxCollision:contactOffset = 0.0002
         float physxCollision:restOffset = 0
         double3 xformOp:translate = (-0.0230207, 0.1157327, 0.0600000)
         quatd xformOp:orient = (0.6322317, -0.0637583, 0.0523251, 0.7703766)
@@ -129,7 +129,7 @@ def Xform "Bin" (
         rel material:binding:physics = </Bin/PhysicsMaterial>
         uniform token purpose = "guide"
         double size = 1
-        float physxCollision:contactOffset = 0.003
+        float physxCollision:contactOffset = 0.0002
         float physxCollision:restOffset = 0
         double3 xformOp:translate = (-0.0655573, 0.0981134, 0.0600000)
         quatd xformOp:orient = (0.4697905, -0.0727413, 0.0388811, 0.8789163)
@@ -143,7 +143,7 @@ def Xform "Bin" (
         rel material:binding:physics = </Bin/PhysicsMaterial>
         uniform token purpose = "guide"
         double size = 1
-        float physxCollision:contactOffset = 0.003
+        float physxCollision:contactOffset = 0.0002
         float physxCollision:restOffset = 0
         double3 xformOp:translate = (-0.0981134, 0.0655573, 0.0600000)
         quatd xformOp:orient = (0.2892956, -0.0789289, 0.0239428, 0.9536797)
@@ -157,7 +157,7 @@ def Xform "Bin" (
         rel material:binding:physics = </Bin/PhysicsMaterial>
         uniform token purpose = "guide"
         double size = 1
-        float physxCollision:contactOffset = 0.003
+        float physxCollision:contactOffset = 0.0002
         float physxCollision:restOffset = 0
         double3 xformOp:translate = (-0.1157327, 0.0230207, 0.0600000)
         quatd xformOp:orient = (0.0976832, -0.0820834, 0.0080845, 0.9917938)
@@ -171,7 +171,7 @@ def Xform "Bin" (
         rel material:binding:physics = </Bin/PhysicsMaterial>
         uniform token purpose = "guide"
         double size = 1
-        float physxCollision:contactOffset = 0.003
+        float physxCollision:contactOffset = 0.0002
         float physxCollision:restOffset = 0
         double3 xformOp:translate = (-0.1157327, -0.0230207, 0.0600000)
         quatd xformOp:orient = (0.0976832, 0.0820834, 0.0080845, -0.9917938)
@@ -185,7 +185,7 @@ def Xform "Bin" (
         rel material:binding:physics = </Bin/PhysicsMaterial>
         uniform token purpose = "guide"
         double size = 1
-        float physxCollision:contactOffset = 0.003
+        float physxCollision:contactOffset = 0.0002
         float physxCollision:restOffset = 0
         double3 xformOp:translate = (-0.0981134, -0.0655573, 0.0600000)
         quatd xformOp:orient = (0.2892956, 0.0789289, 0.0239428, -0.9536797)
@@ -199,7 +199,7 @@ def Xform "Bin" (
         rel material:binding:physics = </Bin/PhysicsMaterial>
         uniform token purpose = "guide"
         double size = 1
-        float physxCollision:contactOffset = 0.003
+        float physxCollision:contactOffset = 0.0002
         float physxCollision:restOffset = 0
         double3 xformOp:translate = (-0.0655573, -0.0981134, 0.0600000)
         quatd xformOp:orient = (0.4697905, 0.0727413, 0.0388811, -0.8789163)
@@ -213,7 +213,7 @@ def Xform "Bin" (
         rel material:binding:physics = </Bin/PhysicsMaterial>
         uniform token purpose = "guide"
         double size = 1
-        float physxCollision:contactOffset = 0.003
+        float physxCollision:contactOffset = 0.0002
         float physxCollision:restOffset = 0
         double3 xformOp:translate = (-0.0230207, -0.1157327, 0.0600000)
         quatd xformOp:orient = (0.6322317, 0.0637583, 0.0523251, -0.7703766)
@@ -227,7 +227,7 @@ def Xform "Bin" (
         rel material:binding:physics = </Bin/PhysicsMaterial>
         uniform token purpose = "guide"
         double size = 1
-        float physxCollision:contactOffset = 0.003
+        float physxCollision:contactOffset = 0.0002
         float physxCollision:restOffset = 0
         double3 xformOp:translate = (0.0230207, -0.1157327, 0.0600000)
         quatd xformOp:orient = (0.7703766, 0.0523251, 0.0637583, -0.6322317)
@@ -241,7 +241,7 @@ def Xform "Bin" (
         rel material:binding:physics = </Bin/PhysicsMaterial>
         uniform token purpose = "guide"
         double size = 1
-        float physxCollision:contactOffset = 0.003
+        float physxCollision:contactOffset = 0.0002
         float physxCollision:restOffset = 0
         double3 xformOp:translate = (0.0655573, -0.0981134, 0.0600000)
         quatd xformOp:orient = (0.8789163, 0.0388811, 0.0727413, -0.4697905)
@@ -255,7 +255,7 @@ def Xform "Bin" (
         rel material:binding:physics = </Bin/PhysicsMaterial>
         uniform token purpose = "guide"
         double size = 1
-        float physxCollision:contactOffset = 0.003
+        float physxCollision:contactOffset = 0.0002
         float physxCollision:restOffset = 0
         double3 xformOp:translate = (0.0981134, -0.0655573, 0.0600000)
         quatd xformOp:orient = (0.9536797, 0.0239428, 0.0789289, -0.2892956)
@@ -269,7 +269,7 @@ def Xform "Bin" (
         rel material:binding:physics = </Bin/PhysicsMaterial>
         uniform token purpose = "guide"
         double size = 1
-        float physxCollision:contactOffset = 0.003
+        float physxCollision:contactOffset = 0.0002
         float physxCollision:restOffset = 0
         double3 xformOp:translate = (0.1157327, -0.0230207, 0.0600000)
         quatd xformOp:orient = (0.9917938, 0.0080845, 0.0820834, -0.0976832)
