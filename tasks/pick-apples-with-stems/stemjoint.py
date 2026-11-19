@@ -9,7 +9,7 @@ the cap (the seat) by a joint spring that the task file applies every physics st
 - in twist, only up to the friction torque of the cap on the magnet; beyond it the apple turns on the seat.
 
 The spring's force and moment are the loads on the seat. Every physics step they are checked against two limits, and
-the one passed further decides what gives way; the spring is then released and the apple is free:
+the first threshold crossing releases the spring and the apple is free:
 
 - the cap parts from the magnet when the tension along the stem plus the bending moment divided by the magnet's radius
   reaches ``SEAT_PULL`` (it tips over the magnet's edge): a clean pick, stem on the apple;
@@ -69,12 +69,23 @@ def rot_x(a: float) -> np.ndarray:
     return np.array([[1.0, 0.0, 0.0], [0.0, c, -s], [0.0, s, c]])
 
 
+def load_ratios(loads: dict) -> tuple[float, float]:
+    tension = loads["tension"]
+    return (max(tension, 0.0) + loads["bending"] / SEAT_RADIUS) / SEAT_PULL, tension / PEG_PULL
+
+
+def first_crossing(previous, current) -> str | None:
+    """Interpolate both overload ratios across the physics sample; an exact tie is a peg pull."""
+    fractions = [(1.0 - old) / (new - old) if new >= 1.0 and old < 1.0 else math.inf
+                 for old, new in zip(previous, current)]
+    if min(fractions) == math.inf:
+        return None
+    return "seat" if fractions[0] < fractions[1] - 1e-12 else "stem"
+
+
 def part_of(loads: dict) -> str | None:
-    """Which part gives way under these loads, if any: the one loaded further past its limit."""
-    ratio = {"seat": (max(loads["tension"], 0.0) + loads["bending"] / SEAT_RADIUS) / SEAT_PULL,
-             "stem": loads["tension"] / PEG_PULL}
-    part = max(ratio, key=ratio.get)
-    return part if ratio[part] >= 1.0 else None
+    """First threshold on a proportional ramp from zero to these loads."""
+    return first_crossing((0.0, 0.0), load_ratios(loads))
 
 
 @dataclass
@@ -91,12 +102,14 @@ class Joint:
     preload: np.ndarray = field(default_factory=lambda: np.zeros(3))  # tree frame: the moment that holds the apple up
     broken: str | None = None      # None, "seat" (clean pick) or "stem" (stem pull)
     peak: dict = field(default_factory=dict)
+    previous_ratios: tuple[float, float] = (0.0, 0.0)
 
     def settle(self, gravity: np.ndarray, tree_rot: np.ndarray) -> None:
         """Hold the apple still where it was placed: the seat carries its weight's moment from the start."""
         r = tree_rot @ self.rot0 @ self.anchor
         self.preload = tree_rot.T @ np.cross(r, self.mass * gravity)
         self.broken = None
+        self.previous_ratios = (0.0, 0.0)
         self.peak = {"tension": 0.0, "bending": 0.0, "twist": 0.0, "seat_ratio": 0.0, "stem_ratio": 0.0}
 
     def wrench(self, apple_pos, apple_rot, apple_v, apple_w, tree_pos, tree_rot, tree_com, tree_v, tree_w, dt: float):
@@ -134,4 +147,7 @@ class Joint:
         self.peak["seat_ratio"] = max(self.peak["seat_ratio"],
                                       (max(loads["tension"], 0.0) + loads["bending"] / SEAT_RADIUS) / SEAT_PULL)
         self.peak["stem_ratio"] = max(self.peak["stem_ratio"], loads["tension"] / PEG_PULL)
-        return part_of(loads)
+        current = load_ratios(loads)
+        part = first_crossing(self.previous_ratios, current)
+        self.previous_ratios = current
+        return part

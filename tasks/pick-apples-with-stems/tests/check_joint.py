@@ -15,6 +15,11 @@ assert j.part_of(dict(tension=0.,bending=j.tip_moment())) == 'seat'
 assert j.part_of(dict(tension=-100.,bending=0.,twist=10.)) is None
 assert abs(j.tip_moment()-.254)<1e-12
 assert abs(j.twist_limit(0.)-.0423333333333333)<1e-12
+# Both thresholds pass in one substep, in either order. Final overload
+# magnitude alone picks the wrong interface in each of the first two cases.
+assert j.first_crossing((.99, .75), (1.05, 1.15)) == "seat"
+assert j.first_crossing((.75, .99), (1.15, 1.05)) == "stem"
+assert j.first_crossing((.9, .8), (1.1, 1.2)) == "stem"
 # A rigid rotation of the whole rig preserves the spring wrench and loads.
 from yam_arena.urdf import axis_angle_matrix as R
 axis=np.array([.2,.6,.7]);axis/=np.linalg.norm(axis);A=R(axis,.9)

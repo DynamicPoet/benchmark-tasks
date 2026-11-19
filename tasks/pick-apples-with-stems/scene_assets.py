@@ -96,7 +96,7 @@ LOOKS = {
     "foam": Look(texture="foam.png", roughness=0.95, tile=0.10),
 }
 
-FRICTION = {"apple": (0.70, 0.60), "bark": (0.70, 0.60), "pot": (0.60, 0.50), "bucket": (0.40, 0.35), "foam": (0.90, 0.80)}
+FRICTION = {"apple": (1.20, 1.00), "bark": (0.70, 0.60), "pot": (0.60, 0.50), "bucket": (0.40, 0.35), "foam": (0.90, 0.80)}
 
 
 # -- textures ------------------------------------------------------------------------------------------------------------
@@ -500,10 +500,19 @@ def _ring(r: float, z: float, n: int, phase: float = 0.0) -> np.ndarray:
 
 
 def tree_colliders(root: str) -> list[str]:
-    pot = np.vstack([_ring(POT_R_BOT, 0.0, 20), _ring(POT_R_TOP, POT_H, 20)])
+    # The filled body ends at soil level. Separate convex rim sectors keep
+    # the opening above the soil hollow and support apples on the real lip.
+    pot = np.vstack([_ring(POT_R_BOT, 0.0, 24), _ring(POT_R_TOP - .004, SOIL_Z, 24)])
     out = [_hull("c_pot", pot, root, "PotMaterial")]
+    segments = 24
+    for i in range(segments):
+        pts = [(r * math.cos(a), r * math.sin(a), z)
+               for a in (2 * math.pi * i / segments, 2 * math.pi * (i + 1) / segments)
+               for r, z in ((POT_R_TOP - .010, SOIL_Z), (POT_R_TOP - .004, SOIL_Z),
+                            (POT_R_TOP - .006, POT_H), (POT_R_TOP, POT_H))]
+        out.append(_hull(f"c_rim_{i:02}", np.asarray(pts), root, "PotMaterial"))
     h = TRUNK_D * 0.42
-    out.append(_cube("c_trunk", (-h, -h, POT_H), (h, h, TRUNK_TOP - 0.02), root, "BarkMaterial"))
+    out.append(_cube("c_trunk", (-h, -h, SOIL_Z), (h, h, TRUNK_TOP - 0.02), root, "BarkMaterial"))
     for k in SPURS:
         base,d=spur_frame(k);R=_rz(SPURS[k][0]);start=base+d*(TRUNK_D/2)
         rings=np.vstack([_ring(.0095,-.004,16),_ring(SPUR_D/2,SPUR_L,16)])

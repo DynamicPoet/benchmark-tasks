@@ -1,7 +1,7 @@
-"""Apple-picking practice station: two180g imitation apples on magnetic
-breakaway spurs of a free11.5kg artificial tree, and a padded picking bucket.
-The normal technique is an upward roll and draw; straight pulling removes
-an apple's peg. Sizes and proposed hardware checks are in README.md.
+"""Apple-picking practice station: two 180 g rubber-coated imitation apples on
+magnetic breakaway spurs of a free 11.5 kg artificial tree, and a padded picking
+bucket. Each apple must come off its spur with its stem, without being squeezed
+past the bruise limit or dropped. Sizes and proposed hardware checks are in README.md.
 """
 
 from __future__ import annotations
@@ -79,6 +79,9 @@ POT_TIPPED_DEG = 20.0   # the pot leans further than this from upright: tipped o
 TOUCH_FORCE = 0.02      # N: a gripper touches an apple
 STILL_MOVE = 0.005      # 1.0: neither apple moving more than 5 mm ...
 STILL_STEPS = 20        # ... over the last 1 s (21 samples at 20 Hz)
+BRUISE_FORCE = 24.0     # N: a finger pad pressing an apple harder than this bruises it (ripe Red Fuji apples' lowest
+                        # compression damage force is 24.33 N, doi:10.3390/agriculture16020178)
+PADS = (1, 2, 4, 5)     # contact-matrix columns of the four finger pads: left arm tip_left, tip_right; right arm the same
 R_APPLE = sa.APPLE_D / 2
 
 
@@ -101,13 +104,30 @@ def bucket_inner_radius(z: float) -> float:
     return sa.BKT_R_BOT - sa.BKT_WALL + (sa.BKT_R_TOP - sa.BKT_R_BOT) * min(max(z, 0.0), sa.BKT_H) / sa.BKT_H
 
 
-def in_bucket(centre: np.ndarray, others: list[np.ndarray], bucket_pos: np.ndarray) -> bool:
+def in_bucket(centre: np.ndarray, others: list[np.ndarray], bucket_pos: np.ndarray, bucket_rot=None) -> bool:
     """The apple rests inside the bucket: its centre inside the wall and below the rim, and sitting on the pad or on the
     other apple (within 1 cm of where it would come to rest), not held up above them."""
-    local = centre - bucket_pos
+    def local_point(p):
+        v = p - bucket_pos
+        return v if bucket_rot is None else bucket_rot.T @ v
+
+    local = local_point(centre)
     z = float(local[2])
     inside = sa.PAD_TOP < z < sa.BKT_H and float(np.hypot(local[0], local[1])) <= bucket_inner_radius(z) - 0.5 * R_APPLE
-    return bool(inside and float(centre[2]) - landing_centre_z(centre, others, bucket_pos, None) < REST_GAP)
+    if not inside:
+        return False
+    if abs(z - (sa.PAD_TOP + R_APPLE)) <= REST_GAP:
+        return True
+    for other in others:
+        lower = local_point(other)
+        if abs(lower[2] - (sa.PAD_TOP + R_APPLE)) > REST_GAP or np.linalg.norm(lower[:2]) > bucket_inner_radius(lower[2]):
+            continue
+        d = np.linalg.norm(centre[:2] - other[:2])
+        if d < 2 * R_APPLE and centre[2] > other[2]:
+            rest = other[2] + math.sqrt((2 * R_APPLE) ** 2 - d ** 2)
+            if abs(centre[2] - rest) <= REST_GAP:
+                return True
+    return False
 
 
 def landing_centre_z(centre: np.ndarray, others: list[np.ndarray], bucket_pos: np.ndarray, tree_pos=None) -> float:
@@ -135,6 +155,66 @@ def apple_points(centre: np.ndarray, rot: np.ndarray) -> np.ndarray:
     return centre + np.vstack([np.zeros(3), R_APPLE * np.vstack([np.eye(3), -np.eye(3)]) @ rot.T])
 
 
+def sphere_spread(history) -> float:
+    """Maximum displacement of any material point of either 75 mm sphere between any two observations."""
+    samples = np.asarray(history).reshape(len(history), len(sa.SPURS), 7, 3)
+    centres = samples[:, :, 0]
+    axes = samples[:, :, 1:4] - centres[:, :, None]
+    i, j = np.triu_indices(len(history), 1)
+    d = centres[i] - centres[j]
+    a = axes[i] - axes[j]
+    # A rotation difference maps a sphere onto a disk. Its two equal nonzero
+    # singular values give the disk radius, and A*d gives the cross term.
+    squared = np.sum(d*d, axis=-1) + 0.5 * np.sum(a*a, axis=(-2, -1))
+    squared += 2 * np.linalg.norm(np.einsum("...ij,...j->...i", a, d), axis=-1)
+    return float(np.sqrt(np.max(squared)))
+
+
+def pad_squeeze(forces, axes) -> float:
+    """The hardest any finger pad presses the apple: each pad's contact force along its own closing axis (N)."""
+    f = np.asarray(forces, float).reshape(-1, 3)
+    a = np.asarray(axes, float).reshape(-1, 3)
+    if not len(f):
+        return 0.0
+    a = a / np.linalg.norm(a, axis=1, keepdims=True)
+    return float(np.max(np.abs(np.sum(f * a, axis=1))))
+
+
+def track_squeeze(st: dict, squeeze: float) -> None:
+    """Latch a bruise: a finger pad ever pressed the apple with more than BRUISE_FORCE."""
+    st["peak_squeeze"] = max(st.get("peak_squeeze", 0.0), float(squeeze))
+    st["bruised"] = bool(st.get("bruised", False) or squeeze > BRUISE_FORCE)
+
+
+def track_flight(st, low, touched, landing, dt):
+    """Follow a release to its first actual support. Landing is (surface, world contact height), or None."""
+    prev = st.get("low")
+    was_touched = st.get("touched", False)
+    st["low"], st["touched"] = low, touched
+    if st["broken"] is None:
+        return
+    if not touched and (was_touched or "flight_started" not in st):
+        st["flight_started"] = True
+        st["release_low"] = prev if was_touched and prev is not None else low
+        st["drop_from"] = None
+    if landing is not None:
+        name, surface_z = landing
+        if st.get("release_low") is not None:
+            st["drop_from"] = st["release_low"] - surface_z
+            st["last_landing"] = {"surface": name, "release_low": st["release_low"], "surface_z": surface_z}
+            st["dropped"] |= st["drop_from"] > DROP_HEIGHT + 1e-9
+            st["release_low"] = None
+        if name == "table" and not touched and st.get("peak") is not None:
+            st["dropped"] |= st["peak"] - surface_z > DROP_HEIGHT + 1e-9
+    if touched:
+        st["release_low"] = None
+        st["drop_from"] = None
+    if touched or st.get("peak") is None or (landing is not None and prev is not None and abs(low-prev) < REST_SPEED*dt):
+        st["peak"] = low
+    st["peak"] = max(st["peak"], low)
+    st["dropped"] |= low < TOP - OFF_TABLE
+
+
 def track_apple(st: dict, centre: np.ndarray, touched: bool, others: list[np.ndarray], bucket_pos: np.ndarray,
                 tree_pos=None) -> None:
     """One control step of an apple's record: dropped (latched), in the bucket, touched. `others`: the other apples that
@@ -143,34 +223,20 @@ def track_apple(st: dict, centre: np.ndarray, touched: bool, others: list[np.nda
     Dropped: let go (or knocked off the tree) with its lowest point more than DROP_HEIGHT above what is below it; or,
     while no gripper touches it, it came down onto the table from more than DROP_HEIGHT above it since it was last
     touched or at rest (it rolled off the rim, say); or it reached the floor."""
-    prev = st.get("prev")
-    speed = math.inf if prev is None else float(np.linalg.norm(centre - prev)) * CONTROL_HZ
-    st["prev"] = np.asarray(centre, float).copy()
-    st["touched"] = touched
+    # Offline discrete-state callers supply positions only. Infer contact at the
+    # current sample; the native path supplies measured contact points to track_flight.
     low = float(centre[2]) - R_APPLE
-    st["low"] = low
-    if st["broken"] is None:
-        return
-    if not touched and st["drop_from"] is None:
-        st["drop_from"] = float(centre[2]) - landing_centre_z(centre, others, bucket_pos, tree_pos)
-        if st["drop_from"] > DROP_HEIGHT:
-            st["dropped"] = True
-    if touched:
-        st["drop_from"] = None
-    if touched or speed < REST_SPEED or st.get("peak") is None:
-        st["peak"] = low
-    st["peak"] = max(st["peak"], low)
-    on_table = low < TOP + ON_TABLE and float(np.hypot(*(centre[:2] - bucket_pos[:2]))) > sa.BKT_R_TOP
-    if not touched and on_table and st["peak"] - low > DROP_HEIGHT:
-        st["dropped"] = True
-    if low < TOP - OFF_TABLE:
-        st["dropped"] = True
-    st["in_bucket"] = in_bucket(centre, others, bucket_pos)
+    z = landing_centre_z(centre, others, bucket_pos, tree_pos) - R_APPLE
+    name = "table" if abs(z - TOP) < 1e-6 else "support"
+    landing = (name, z) if abs(low-z) <= ON_TABLE else None
+    track_flight(st, low, touched, landing, 1 / CONTROL_HZ)
+    st["in_bucket"] = st["broken"] is not None and in_bucket(centre, others, bucket_pos)
 
 
 def apple_value(st: dict) -> float:
-    """One apple's share by the state at the end: 0.5, 0.25 or 0."""
-    if st["broken"] not in ("seat", "stem") or st["dropped"] or not st["in_bucket"]:
+    """One apple's share by the state at the end: 0.5, 0.25 or 0. A bruised apple earns nothing."""
+    if st["broken"] not in ("seat", "stem") or st["dropped"] or st.get("bruised") or not st["in_bucket"] \
+            or st.get("release_low") is not None:
         return 0.0
     return 0.25 if st["broken"] == "stem" else 0.5
 
@@ -186,7 +252,7 @@ def _clear() -> None:
     _S.clear()
     _S.update(step=0, tipped=False, history=[], view=view, cache=None, events=[],
               apple={k: dict(broken=None, dropped=False, touched=False, was_touched=False, in_bucket=False, low=0.0,
-                             centre=None, rot=None, drop_from=None) for k in sa.SPURS})
+                             centre=None, rot=None, drop_from=None, bruised=False, peak_squeeze=0.0) for k in sa.SPURS})
 
 
 _clear()
@@ -204,7 +270,7 @@ def _vel(env, name: str) -> tuple[np.ndarray, np.ndarray]:
 
 
 def _contact_view():
-    """PhysX contact view: each apple against both grippers and their fingers."""
+    """Each apple against both grippers, the bucket, tree, table and the other apple."""
     from isaaclab_physx.physics.physx_manager import PhysxManager
     from yam_arena.robot import asset_link_paths
 
@@ -212,16 +278,69 @@ def _contact_view():
     root = "/World/envs/env_0"
     fingers = [f"{root}/{arm}{links[k]}" for arm in ("LeftArm", "RightArm") for k in ("gripper", "tip_left", "tip_right")]
     sv = PhysxManager.get_physics_sim_view()
-    return sv.create_rigid_contact_view([f"{root}/{NAMES[k]}" for k in sa.SPURS], filter_patterns=[fingers] * len(sa.SPURS),
-                                        max_contact_data_count=512)
+    apples = [f"{root}/{NAMES[k]}" for k in sa.SPURS]
+    supports = [f"{root}/{name}" for name in ("bucket", "tree", "table")]
+    filters = [fingers + supports + [other] for other in reversed(apples)]
+    return sv.create_rigid_contact_view(apples, filter_patterns=filters, max_contact_data_count=1024)
 
 
-def _touching() -> dict:
+def _pad_axes(env) -> np.ndarray:
+    """Each finger pad's closing axis in the world, in PADS order (the finger joints slide along the tip's own y)."""
+    axes = []
+    for side in ("left", "right"):
+        robot = env.unwrapped.scene[f"{side}_robot"]
+        quats = _np(robot.data.body_quat_w)[0]
+        for tip in ("tip_left", "tip_right"):
+            axes.append(_rotation(quats[robot.body_names.index(tip)])[:, 1])
+    return np.array(axes)
+
+
+def _contact_sample(env, positions, tree_pose):
+    """Read the completed physics interval and track actual landings, including oblique flights."""
     if _S["view"] is None:
         _S["view"] = _contact_view()
-    f = _np(_S["view"].get_contact_force_matrix(dt=PHYSICS_DT)).reshape(len(sa.SPURS), -1, 3)
-    _S["contact_normals_N"]={k:np.linalg.norm(f[i],axis=1).tolist()for i,k in enumerate(sa.SPURS)}
-    return {k: bool(np.linalg.norm(f[i], axis=1).max() > TOUCH_FORCE) for i, k in enumerate(sa.SPURS)}
+    view = _S["view"]
+    forces = _np(view.get_contact_force_matrix(dt=PHYSICS_DT)).reshape(len(sa.SPURS), 10, 3)
+    fingers = np.linalg.norm(forces[:, :6], axis=2)
+    _S["contact_normals_N"] = {k: fingers[i].tolist() for i, k in enumerate(sa.SPURS)}
+    axes = _pad_axes(env)
+    for i, k in enumerate(sa.SPURS):
+        track_squeeze(_S["apple"][k], pad_squeeze(forces[i, list(PADS)], axes))
+    # A contact on a wall or a brush against the trunk cannot end a flight.
+    # Read detailed PhysX points only when a free apple may have hit a support.
+    detail = None
+    bucket_pose = None
+    for i, k in enumerate(sa.SPURS):
+        st = _S["apple"][k]
+        touched = bool(np.max(fingers[i]) > TOUCH_FORCE)
+        centre = positions[k]
+        landing = None
+        candidates = np.flatnonzero(np.abs(forces[i, 6:, 2]) > TOUCH_FORCE)
+        if st["broken"] is not None and candidates.size and (not touched or st.get("release_low") is not None):
+            if detail is None:
+                detail = tuple(_np(v) for v in view.get_contact_data(dt=PHYSICS_DT))
+                origin = _np(env.unwrapped.scene.env_origins[0])
+            impulse, points, normals, _, counts, starts = detail
+            for col in candidates:
+                name = ("bucket", "tree", "table", "apple")[col]
+                if name == "apple" and not all(j.broken for key, j in _J.items() if key in sa.SPURS and key != k):
+                    continue
+                start = int(starts[i, 6+col])
+                for index in range(start, start + int(counts[i, 6+col])):
+                    point = points[index] - origin
+                    if abs(impulse[index, 0]) <= TOUCH_FORCE or point[2] >= centre[2] or abs(normals[index, 2]) < 0.10:
+                        continue
+                    if name in ("bucket", "tree"):
+                        if name == "bucket" and bucket_pose is None:
+                            bucket_pose = _pose(env, "bucket")
+                        pos, rot = bucket_pose if name == "bucket" else tree_pose
+                        local = rot.T @ (point - pos)
+                        heights = (sa.PAD_TOP, sa.BKT_H) if name == "bucket" else (sa.SOIL_Z, sa.POT_H)
+                        if min(abs(local[2] - z) for z in heights) > ON_TABLE:
+                            continue
+                    if landing is None or point[2] > landing[1]:
+                        landing = (name, float(point[2]))
+        track_flight(st, float(centre[2]) - R_APPLE, touched, landing, PHYSICS_DT)
 
 
 def _show(path: str, visible: bool) -> None:
@@ -310,23 +429,31 @@ def _substep(env) -> None:
     if not _J:
         _new_joints(env)
     tree_pos, tree_rot = _pose(env, "tree")
+    if _tilt_deg(tree_rot) > POT_TIPPED_DEG:
+        _S["tipped"] = True
     tree_v, tree_w = _vel(env, "tree")
     tree_com = tree_pos + tree_rot @ np.array([0.0, 0.0, sa.TREE_COM_Z])
     total_f, total_t = np.zeros(3), np.zeros(3)
+    positions = {}
+    released = False
     for k in sa.SPURS:
         j: sj.Joint = _J[k]
+        pos, rot = _pose(env, NAMES[k])
+        positions[k] = pos
         if j.broken is not None:
             if k not in _J["_zeroed"]:
                 _set_wrench(env, NAMES[k], np.zeros(3), np.zeros(3))
                 _J["_zeroed"].add(k)
             continue
-        pos, rot = _pose(env, NAMES[k])
         v, w = _vel(env, NAMES[k])
         force, moment, p_tree, loads = j.wrench(pos, rot, v, w, tree_pos, tree_rot, tree_com, tree_v, tree_w, PHYSICS_DT)
         loads["uproll_deg"] = float(np.degrees(np.arctan2(-rot[2, 0], np.hypot(rot[0, 0], rot[1, 0]))))
         part = j.check(loads)
         if part is not None:
             j.broken = part
+            released = True
+            _S["apple"][k]["broken"] = part
+            _show_state(k, part)
             _S["events"].append((round(_S["step"] / 20.0, 3), k, part, {n: round(x, 3) for n, x in loads.items()}))
             _set_wrench(env, NAMES[k], np.zeros(3), np.zeros(3))
             _J["_zeroed"].add(k)
@@ -335,6 +462,11 @@ def _substep(env) -> None:
         total_f -= force
         total_t += np.cross(p_tree - tree_com, -force) - moment
     _set_wrench(env, "tree", total_f, total_t)
+    # The final interval of a control has already been read by _step. A new
+    # break still needs the contact state at its own release instant.
+    previous_read = _S.pop("control_contact_read", False)
+    if released or (not previous_read and any(_J[k].broken is not None for k in sa.SPURS)):
+        _contact_sample(env, positions, (tree_pos, tree_rot))
 
 
 def _tilt_deg(rot: np.ndarray) -> float:
@@ -347,9 +479,10 @@ def _step(env) -> None:
     tree_pos, tree_rot = _pose(env, "tree")
     if _tilt_deg(tree_rot) > POT_TIPPED_DEG:
         _S["tipped"] = True
-    bucket_pos, _ = _pose(env, "bucket")
-    touching = _touching()
+    bucket_pos, bucket_rot = _pose(env, "bucket")
     poses = {k: _pose(env, NAMES[k]) for k in sa.SPURS}
+    _contact_sample(env, {k: p[0] for k, p in poses.items()}, (tree_pos, tree_rot))
+    _S["control_contact_read"] = True
     for k in sa.SPURS:
         st = _S["apple"][k]
         j: sj.Joint = _J[k]
@@ -359,7 +492,7 @@ def _step(env) -> None:
             st["broken"] = j.broken
             _show_state(k, j.broken)
         others = [poses[o][0] for o in sa.SPURS if o != k and _S["apple"][o]["broken"] is not None]
-        track_apple(st, centre, touching[k], others, bucket_pos, tree_pos)
+        st["in_bucket"] = j.broken is not None and in_bucket(centre, others, bucket_pos, bucket_rot)
     _S["history"].append(np.vstack([apple_points(*poses[k]) for k in sa.SPURS]))
     del _S["history"][:-(STILL_STEPS + 1)]
     if os.environ.get("TASK_DEBUG") and os.environ.get("TASK_SCORE_DIR"):
@@ -388,7 +521,9 @@ def _log(env, poses) -> None:
         c, r = poses[k]
         row[k] = {"c": np.round(c, 4).tolist(), "x": np.round(r[:, 0], 3).tolist(), "broken": st["broken"],
                   "touch": bool(st["touched"]), "dropped": bool(st["dropped"]), "in": bool(st["in_bucket"]),
+                  "bruised": bool(st["bruised"]), "peak_squeeze_N": round(float(st["peak_squeeze"]), 3),
                   "drop_from": None if st["drop_from"] is None else round(float(st["drop_from"]), 4),
+                  "last_landing": st.get("last_landing"),
                   "peak": {n: round(x, 3) for n, x in _J[k].peak.items()},
                   "actual_uproll_deg":round(math.degrees(math.atan2(-r[2,0],math.hypot(r[0,0],r[1,0]))),3),
                   "contact_normal_N_by_left_gripper_tips_right_gripper_tips":_S.get("contact_normals_N",{}).get(k)}
@@ -407,8 +542,7 @@ def _evaluate() -> dict:
     total = 0.0 if _S["tipped"] else sum(values.values())
     hist = _S["history"]
     if len(hist) >= STILL_STEPS + 1:
-        h = np.array(hist)
-        spread = float(np.linalg.norm(h[:, None] - h[None, :], axis=3).max())
+        spread = sphere_spread(hist)
     else:
         spread = math.inf
     touched = any(_S["apple"][k]["touched"] for k in sa.SPURS)
@@ -418,8 +552,8 @@ def _evaluate() -> dict:
 
 
 def score(objects) -> float:
-    """0 if the pot ever tips over. Otherwise each apple earns 0.5 (in the bucket, stem on, not dropped) or
-    0.25 (the same with its stem pulled out), and the sum is capped at 0.75: 1.0 comes only from success(), held 1 s."""
+    """0 if the pot ever tips over. Otherwise each apple earns 0.5 (in the bucket, stem on, neither dropped nor bruised)
+    or 0.25 (the same with its stem pulled out), and the sum is capped at 0.75: 1.0 comes only from success(), held 1 s."""
     return min(_evaluate()["total"], 0.75)
 
 
@@ -431,7 +565,8 @@ def success(objects) -> bool:
     if os.environ.get("TASK_DEBUG") and _S["step"] % 20 == 0:
         a = _S["apple"]
         print(f"[task] t={_S['step'] / 20:.1f} total={e['total']} " + " ".join(
-            f"{k}:{a[k]['broken']}/drop={a[k]['dropped']}/in={a[k]['in_bucket']}/touch={a[k]['touched']}" for k in sa.SPURS)
+            f"{k}:{a[k]['broken']}/drop={a[k]['dropped']}/in={a[k]['in_bucket']}/touch={a[k]['touched']}"
+            f"/squeeze={a[k]['peak_squeeze']:.1f}" for k in sa.SPURS)
             + f" spread={e['spread']:.4f} tipped={_S['tipped']} events={_S['events']}", flush=True)
     return e["total"] == 1.0 and not e["touched"] and e["still"]
 
@@ -467,8 +602,9 @@ def approach_dir(k: str) -> np.ndarray:
 
 UPROLL = math.radians(60.0)
 GRASP_CLOCK = {"a": -math.pi/2, "b": math.pi/2}  # fingers above/below the fruit; front-facing palm
-HOLD_FINGER = -0.0295           # observed36.6mm half-opening: ~35.5N at5000N/m, native hardcap remains40N
-PULL = 0.10                     # the failure: the hand pulls this far straight away from the trunk
+HOLD_FINGER = -0.0330           # 3.6 mm inside the observed 36.6 mm half-opening: about 18 N per finger at 5000 N/m
+SQUEEZE_FINGER = FINGER_CLOSED  # the squeeze counterexample: the finger drive saturates at the native 40 N cap
+PULL = 0.10                     # TASK_DEMO=straight: the hand pulls this far straight out along the apple's stem
 PLACE_GAP = 0.010               # the apple is let go with its lowest point this far above the pad
 SLOTS = {"b": (-0.03, -0.042), "a": (-0.03, 0.042)}   # where each apple goes in the bucket, from its middle (x, y)
 DOWN_YAW = -math.pi / 2         # fingers close along x; this wrist branch remains reachable through the bucket
@@ -494,6 +630,20 @@ def _seen_apple(k: str):
 def _from_apple(k: str, back: float, up: float = 0.0):
     def target(plan):
         return np.asarray(_seen_apple(k)(plan)) - back * approach_dir(k) + np.array([0.0, 0.0, up])
+    return target
+
+
+def _along_stem(k: str, dist: float, up_deg: float = 0.0):
+    """The apple's centre moved `dist` straight out along its own stem, away from the seat, aimed `up_deg` above the
+    stem, read when the move begins (the apple's x axis points along the stem toward the seat)."""
+    def target(plan):
+        env = scenekit.env()
+        centre, rot = _pose(env, NAMES[k]) if env is not None else apple_home(k)
+        u = -rot[:, 0]
+        n = np.array([0.0, 0.0, 1.0]) - u[2] * u
+        n /= np.linalg.norm(n)
+        a = math.radians(up_deg)
+        return np.asarray(centre) + dist * (math.cos(a) * u + math.sin(a) * n)
     return target
 
 
@@ -613,10 +763,10 @@ def _axial_reference(k, grip, up_rotation, cache):
     return target
 
 
-def pick(k: str, pull: bool, last: bool = False) -> list:
-    """True upward roll and draw; the counterexample draws along the stem without rolling."""
+def pick(k: str, pull: bool, last: bool = False, grip: float = HOLD_FINGER) -> list:
+    """Upward roll and draw; with pull=True, a straight pull along the stem without rolling."""
     a = np.array([1.,0.,0.])
-    o, cl = FINGER_OPEN, HOLD_FINGER
+    o, cl = FINGER_OPEN, grip
     level = level_grip(a,GRASP_CLOCK[k])
     down = grip_rotation(DOWN_YAW)
     tilted = _ry(-math.radians(45.0)) @ down    # pointing forward and down: the arm cannot hold it straight down this high
@@ -631,7 +781,7 @@ def pick(k: str, pull: bool, last: bool = False) -> list:
         Pose(0.8, front(0.), cl, f"hold apple {k}", rot=level),
     ]
     if pull:
-        w += [Pose(3.0, _from_apple(k, PULL), cl, f"pull apple {k} straight off", rot=level)]
+        w += [Pose(3.0, _along_stem(k, PULL), cl, f"pull apple {k} straight off along its stem", rot=level)]
     else:
         position,rotation=_uproll_targets(k,level)
         for index in range(1,25):
@@ -681,9 +831,12 @@ def pick(k: str, pull: bool, last: bool = False) -> list:
 
 
 def demo():
-    """The right arm picks both apples, the upper one first, and lays each on the bucket's pad. TASK_DEMO=failure pulls
-    each apple straight away from the trunk instead (the stem tears out of the apple), then lays it in the same way."""
-    pull = os.environ.get("TASK_DEMO") == "failure"
-    w = pick("b", pull) + pick("a", pull, last=True)
+    """The right arm picks both apples, the upper one first, and lays each on the bucket's pad. TASK_DEMO=straight pulls
+    each apple straight out along its stem instead of rolling it, then lays it in the same way. TASK_DEMO=squeeze picks
+    as normal but holds the first apple with the fingers fully closed (40 N each): that apple is bruised."""
+    mode = os.environ.get("TASK_DEMO")
+    pull = mode == "straight"
+    first = SQUEEZE_FINGER if mode == "squeeze" else HOLD_FINGER
+    w = pick("b", pull, grip=first) + pick("a", pull, last=True)
     w += [Joints(4.0, (0.0, 0.0, 0.0), FINGER_OPEN, "wait", q=tuple(READY))]
     return {"right": w}
