@@ -1,0 +1,93 @@
+#usda 1.0
+(
+    defaultPrim = "doorway"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "doorway" (
+    prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
+)
+{
+    float physics:mass = 0.1000
+    int physxRigidBody:solverPositionIterationCount = 32
+    int physxRigidBody:solverVelocityIterationCount = 4
+    float physxRigidBody:maxDepenetrationVelocity = 1
+
+    def Material "PhysicsMaterial" (
+        prepend apiSchemas = ["PhysicsMaterialAPI"]
+    )
+    {
+        float physics:staticFriction = 0.6000
+        float physics:dynamicFriction = 0.5000
+        float physics:restitution = 0
+    }
+
+    def Cube "c0" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </doorway/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.004
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.025000, 0.000000, 0.000300)
+        float3 xformOp:scale = (0.050000, 1.200000, 0.000600)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Scope "Looks"
+    {
+        def Material "tape"
+        {
+            token outputs:surface.connect = </doorway/Looks/tape/surface.outputs:surface>
+            def Shader "surface"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                float inputs:metallic = 0.0
+                color3f inputs:diffuseColor.connect = </doorway/Looks/tape/color_tex.outputs:rgb>
+                float inputs:roughness = 0.6
+                token outputs:surface
+            }
+            def Shader "uv"
+            {
+                uniform token info:id = "UsdPrimvarReader_float2"
+                token inputs:varname = "st"
+                float2 outputs:result
+            }
+            def Shader "color_tex"
+            {
+                uniform token info:id = "UsdUVTexture"
+                asset inputs:file = @../textures/tape.png@
+                float2 inputs:st.connect = </doorway/Looks/tape/uv.outputs:result>
+                token inputs:wrapS = "repeat"
+                token inputs:wrapT = "repeat"
+                token inputs:sourceColorSpace = "sRGB"
+                float4 inputs:scale = (1.0, 1.0, 1.0, 1)
+                float3 outputs:rgb
+            }
+        }
+    }
+
+    def Xform "visual"
+    {
+        def Mesh "tape" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </doorway/Looks/tape>
+            uniform bool doubleSided = 0
+            int[] faceVertexCounts = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+            int[] faceVertexIndices = [0, 1, 5, 0, 5, 4, 1, 2, 6, 1, 6, 5, 2, 3, 7, 2, 7, 6, 3, 0, 4, 3, 4, 7, 8, 1, 0, 9, 4, 5, 8, 2, 1, 9, 5, 6, 8, 3, 2, 9, 6, 7, 8, 0, 3, 9, 7, 4]
+            point3f[] points = [(0.05000, -0.60000, 0.00000), (0.05000, 0.60000, 0.00000), (0.00000, 0.60000, 0.00000), (0.00000, -0.60000, 0.00000), (0.05000, -0.60000, 0.00060), (0.05000, 0.60000, 0.00060), (0.00000, 0.60000, 0.00060), (0.00000, -0.60000, 0.00060), (0.02500, 0.00000, 0.00000), (0.02500, 0.00000, 0.00060)]
+            normal3f[] normals = [(1.0000, 0.0000, 0.0000), (1.0000, 0.0000, 0.0000), (1.0000, 0.0000, 0.0000), (1.0000, 0.0000, 0.0000), (1.0000, 0.0000, 0.0000), (1.0000, 0.0000, 0.0000), (0.0000, 1.0000, 0.0000), (0.0000, 1.0000, 0.0000), (0.0000, 1.0000, 0.0000), (0.0000, 1.0000, 0.0000), (0.0000, 1.0000, 0.0000), (0.0000, 1.0000, 0.0000), (-1.0000, 0.0000, 0.0000), (-1.0000, 0.0000, 0.0000), (-1.0000, 0.0000, 0.0000), (-1.0000, 0.0000, 0.0000), (-1.0000, 0.0000, 0.0000), (-1.0000, 0.0000, 0.0000), (0.0000, -1.0000, 0.0000), (0.0000, -1.0000, 0.0000), (0.0000, -1.0000, 0.0000), (0.0000, -1.0000, 0.0000), (0.0000, -1.0000, 0.0000), (0.0000, -1.0000, 0.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000)] (
+                interpolation = "faceVarying"
+            )
+            texCoord2f[] primvars:st = [(-12.0000, 0.0000), (12.0000, 0.0000), (12.0000, 0.0120), (-12.0000, 0.0000), (12.0000, 0.0120), (-12.0000, 0.0120), (1.0000, 0.0000), (0.0000, 0.0000), (0.0000, 0.0120), (1.0000, 0.0000), (0.0000, 0.0120), (1.0000, 0.0120), (12.0000, 0.0000), (-12.0000, 0.0000), (-12.0000, 0.0120), (12.0000, 0.0000), (-12.0000, 0.0120), (12.0000, 0.0120), (0.0000, 0.0000), (1.0000, 0.0000), (1.0000, 0.0120), (0.0000, 0.0000), (1.0000, 0.0120), (0.0000, 0.0120), (0.5000, 0.0000), (1.0000, 12.0000), (1.0000, -12.0000), (0.5000, 0.0000), (1.0000, -12.0000), (1.0000, 12.0000), (0.5000, 0.0000), (0.0000, 12.0000), (1.0000, 12.0000), (0.5000, 0.0000), (1.0000, 12.0000), (0.0000, 12.0000), (0.5000, 0.0000), (0.0000, -12.0000), (0.0000, 12.0000), (0.5000, 0.0000), (0.0000, 12.0000), (0.0000, -12.0000), (0.5000, 0.0000), (1.0000, -12.0000), (0.0000, -12.0000), (0.5000, 0.0000), (0.0000, -12.0000), (1.0000, -12.0000)] (
+                interpolation = "faceVarying"
+            )
+            uniform token subdivisionScheme = "none"
+        }
+    }
+}
