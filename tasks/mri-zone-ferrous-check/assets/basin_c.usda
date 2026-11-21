@@ -1,0 +1,903 @@
+#usda 1.0
+(
+    defaultPrim = "basin_c"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "basin_c" (
+    prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
+)
+{
+    float physics:mass = 0.1600
+    int physxRigidBody:solverPositionIterationCount = 32
+    int physxRigidBody:solverVelocityIterationCount = 4
+    float physxRigidBody:maxDepenetrationVelocity = 1
+
+    def Material "PhysicsMaterial" (
+        prepend apiSchemas = ["PhysicsMaterialAPI"]
+    )
+    {
+        float physics:staticFriction = 0.3000
+        float physics:dynamicFriction = 0.2500
+        float physics:restitution = 0
+    }
+
+    def Cube "c0" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.042982, 0.012518, 0.017214)
+        quatf xformOp:orient = (0.674977, 0.089317, 0.096080, 0.726083)
+        float3 xformOp:scale = (0.028948, 0.003000, 0.036248)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c1" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.039917, 0.033495, 0.017200)
+        quatf xformOp:orient = (0.608049, 0.084395, 0.108526, 0.781905)
+        float3 xformOp:scale = (0.021236, 0.003000, 0.036375)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c2" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.034654, 0.048715, 0.017184)
+        quatf xformOp:orient = (0.533982, 0.078412, 0.122309, 0.832920)
+        float3 xformOp:scale = (0.018721, 0.003000, 0.036543)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c3" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.027637, 0.060810, 0.017167)
+        quatf xformOp:orient = (0.446651, 0.069233, 0.136636, 0.881499)
+        float3 xformOp:scale = (0.016961, 0.003000, 0.036723)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c4" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.019181, 0.069983, 0.017153)
+        quatf xformOp:orient = (0.339738, 0.055003, 0.150054, 0.926842)
+        float3 xformOp:scale = (0.015668, 0.003000, 0.036884)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c5" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.009415, 0.076188, 0.017145)
+        quatf xformOp:orient = (0.207211, 0.034343, 0.159863, 0.964535)
+        float3 xformOp:scale = (0.015114, 0.003000, 0.036977)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c6" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.002884, 0.079321, 0.017147)
+        quatf xformOp:orient = (0.054260, 0.008949, 0.162483, 0.985178)
+        float3 xformOp:scale = (0.017923, 0.003000, 0.036957)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c7" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.016575, 0.079320, 0.017146)
+        quatf xformOp:orient = (0.057406, 0.009484, -0.162728, -0.984954)
+        float3 xformOp:scale = (0.017162, 0.003000, 0.036964)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c8" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.027478, 0.076142, 0.017147)
+        quatf xformOp:orient = (0.254623, 0.041952, -0.157063, -0.953278)
+        float3 xformOp:scale = (0.013154, 0.003000, 0.036953)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c9" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.034553, 0.069809, 0.017172)
+        quatf xformOp:orient = (0.445543, 0.067928, -0.134544, -0.882483)
+        float3 xformOp:scale = (0.013372, 0.003000, 0.036666)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c10" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.039309, 0.060538, 0.017201)
+        quatf xformOp:orient = (0.573820, 0.079572, -0.111959, -0.807381)
+        float3 xformOp:scale = (0.015067, 0.003000, 0.036372)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c11" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.042185, 0.048433, 0.017215)
+        quatf xformOp:orient = (0.646829, 0.085291, -0.099072, -0.751347)
+        float3 xformOp:scale = (0.017527, 0.003000, 0.036239)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c12" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.043548, 0.033278, 0.017217)
+        quatf xformOp:orient = (0.686460, 0.089953, -0.093754, -0.715466)
+        float3 xformOp:scale = (0.020720, 0.003000, 0.036223)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c13" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.043812, 0.012434, 0.017212)
+        quatf xformOp:orient = (0.703226, 0.093623, -0.093008, -0.698611)
+        float3 xformOp:scale = (0.028882, 0.003000, 0.036263)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c14" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.043812, -0.012434, 0.017212)
+        quatf xformOp:orient = (0.698611, 0.093008, -0.093623, -0.703226)
+        float3 xformOp:scale = (0.028882, 0.003000, 0.036263)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c15" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.043548, -0.033278, 0.017217)
+        quatf xformOp:orient = (0.715466, 0.093754, -0.089953, -0.686460)
+        float3 xformOp:scale = (0.020720, 0.003000, 0.036223)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c16" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.042185, -0.048433, 0.017215)
+        quatf xformOp:orient = (0.751347, 0.099072, -0.085291, -0.646829)
+        float3 xformOp:scale = (0.017527, 0.003000, 0.036239)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c17" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.039309, -0.060538, 0.017201)
+        quatf xformOp:orient = (0.807381, 0.111959, -0.079572, -0.573820)
+        float3 xformOp:scale = (0.015067, 0.003000, 0.036372)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c18" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.034553, -0.069809, 0.017172)
+        quatf xformOp:orient = (0.882483, 0.134544, -0.067928, -0.445543)
+        float3 xformOp:scale = (0.013372, 0.003000, 0.036666)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c19" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.027478, -0.076142, 0.017147)
+        quatf xformOp:orient = (0.953278, 0.157063, -0.041952, -0.254623)
+        float3 xformOp:scale = (0.013154, 0.003000, 0.036953)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c20" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.016575, -0.079320, 0.017146)
+        quatf xformOp:orient = (0.984954, 0.162728, -0.009484, -0.057406)
+        float3 xformOp:scale = (0.017162, 0.003000, 0.036964)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c21" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.002884, -0.079321, 0.017147)
+        quatf xformOp:orient = (0.985178, 0.162483, 0.008949, 0.054260)
+        float3 xformOp:scale = (0.017923, 0.003000, 0.036957)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c22" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.009415, -0.076188, 0.017145)
+        quatf xformOp:orient = (0.964535, 0.159863, 0.034343, 0.207211)
+        float3 xformOp:scale = (0.015114, 0.003000, 0.036977)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c23" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.019181, -0.069983, 0.017153)
+        quatf xformOp:orient = (0.926842, 0.150054, 0.055003, 0.339738)
+        float3 xformOp:scale = (0.015668, 0.003000, 0.036884)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c24" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.027637, -0.060810, 0.017167)
+        quatf xformOp:orient = (0.881499, 0.136636, 0.069233, 0.446651)
+        float3 xformOp:scale = (0.016961, 0.003000, 0.036723)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c25" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.034654, -0.048715, 0.017184)
+        quatf xformOp:orient = (0.832920, 0.122309, 0.078412, 0.533982)
+        float3 xformOp:scale = (0.018721, 0.003000, 0.036543)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c26" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.039917, -0.033495, 0.017200)
+        quatf xformOp:orient = (0.781905, 0.108526, 0.084395, 0.608049)
+        float3 xformOp:scale = (0.021236, 0.003000, 0.036375)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c27" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.042982, -0.012518, 0.017214)
+        quatf xformOp:orient = (0.726083, 0.096080, 0.089317, 0.674977)
+        float3 xformOp:scale = (0.028948, 0.003000, 0.036248)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c28" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.049271, 0.013569, 0.032750)
+        quatf xformOp:orient = (0.681472, 0.000000, 0.000000, 0.731844)
+        float3 xformOp:scale = (0.030994, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c29" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.045983, 0.036382, 0.032750)
+        quatf xformOp:orient = (0.614858, 0.000000, 0.000000, 0.788638)
+        float3 xformOp:scale = (0.022748, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c30" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.040257, 0.053031, 0.032750)
+        quatf xformOp:orient = (0.539944, 0.000000, 0.000000, 0.841701)
+        float3 xformOp:scale = (0.020059, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c31" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.032527, 0.066321, 0.032750)
+        quatf xformOp:orient = (0.450652, 0.000000, 0.000000, 0.892700)
+        float3 xformOp:scale = (0.018234, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c32" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.023080, 0.076463, 0.032750)
+        quatf xformOp:orient = (0.340886, 0.000000, 0.000000, 0.940105)
+        float3 xformOp:scale = (0.016964, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c33" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.012005, 0.083366, 0.032750)
+        quatf xformOp:orient = (0.205844, 0.000000, 0.000000, 0.978585)
+        float3 xformOp:scale = (0.016548, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c34" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.001992, 0.086852, 0.032750)
+        quatf xformOp:orient = (0.053514, 0.000000, 0.000000, 0.998567)
+        float3 xformOp:scale = (0.019712, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c35" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.017578, 0.086846, 0.032750)
+        quatf xformOp:orient = (0.056417, 0.000000, 0.000000, -0.998407)
+        float3 xformOp:scale = (0.018986, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c36" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.030272, 0.083252, 0.032750)
+        quatf xformOp:orient = (0.248117, 0.000000, 0.000000, -0.968730)
+        float3 xformOp:scale = (0.014713, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c37" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.038748, 0.076067, 0.032750)
+        quatf xformOp:orient = (0.436891, 0.000000, 0.000000, -0.899514)
+        float3 xformOp:scale = (0.014744, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c38" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.044481, 0.065695, 0.032750)
+        quatf xformOp:orient = (0.567748, 0.000000, 0.000000, -0.823202)
+        float3 xformOp:scale = (0.016315, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c39" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.047993, 0.052378, 0.032750)
+        quatf xformOp:orient = (0.644591, 0.000000, 0.000000, -0.764528)
+        float3 xformOp:scale = (0.018775, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c40" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.049747, 0.035892, 0.032750)
+        quatf xformOp:orient = (0.687843, 0.000000, 0.000000, -0.725860)
+        float3 xformOp:scale = (0.022092, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c41" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.050200, 0.013385, 0.032750)
+        quatf xformOp:orient = (0.708053, -0.000000, 0.000000, -0.706159)
+        float3 xformOp:scale = (0.030779, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c42" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.050200, -0.013385, 0.032750)
+        quatf xformOp:orient = (0.706159, 0.000000, 0.000000, -0.708053)
+        float3 xformOp:scale = (0.030779, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c43" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.049747, -0.035892, 0.032750)
+        quatf xformOp:orient = (0.725860, -0.000000, 0.000000, -0.687843)
+        float3 xformOp:scale = (0.022092, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c44" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.047993, -0.052378, 0.032750)
+        quatf xformOp:orient = (0.764528, -0.000000, 0.000000, -0.644591)
+        float3 xformOp:scale = (0.018775, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c45" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.044481, -0.065695, 0.032750)
+        quatf xformOp:orient = (0.823202, -0.000000, 0.000000, -0.567748)
+        float3 xformOp:scale = (0.016315, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c46" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.038748, -0.076067, 0.032750)
+        quatf xformOp:orient = (0.899514, -0.000000, 0.000000, -0.436891)
+        float3 xformOp:scale = (0.014744, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c47" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.030272, -0.083252, 0.032750)
+        quatf xformOp:orient = (0.968730, -0.000000, 0.000000, -0.248117)
+        float3 xformOp:scale = (0.014713, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c48" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.017578, -0.086846, 0.032750)
+        quatf xformOp:orient = (0.998407, -0.000000, 0.000000, -0.056417)
+        float3 xformOp:scale = (0.018986, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c49" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.001992, -0.086852, 0.032750)
+        quatf xformOp:orient = (0.998567, 0.000000, 0.000000, 0.053514)
+        float3 xformOp:scale = (0.019712, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c50" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.012005, -0.083366, 0.032750)
+        quatf xformOp:orient = (0.978585, 0.000000, 0.000000, 0.205844)
+        float3 xformOp:scale = (0.016548, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c51" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.023080, -0.076463, 0.032750)
+        quatf xformOp:orient = (0.940105, 0.000000, 0.000000, 0.340886)
+        float3 xformOp:scale = (0.016964, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c52" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.032527, -0.066321, 0.032750)
+        quatf xformOp:orient = (0.892700, 0.000000, 0.000000, 0.450652)
+        float3 xformOp:scale = (0.018234, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c53" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.040257, -0.053031, 0.032750)
+        quatf xformOp:orient = (0.841701, 0.000000, 0.000000, 0.539944)
+        float3 xformOp:scale = (0.020059, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c54" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.045983, -0.036382, 0.032750)
+        quatf xformOp:orient = (0.788638, 0.000000, 0.000000, 0.614858)
+        float3 xformOp:scale = (0.022748, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c55" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (0.049271, -0.013569, 0.032750)
+        quatf xformOp:orient = (0.731844, 0.000000, 0.000000, 0.681472)
+        float3 xformOp:scale = (0.030994, 0.003000, 0.004500)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c56" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.004225, -0.035550, 0.001500)
+        quatf xformOp:orient = (1.000000, 0.000000, 0.000000, 0.000000)
+        float3 xformOp:scale = (0.060698, 0.025700, 0.003000)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c57" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.000851, -0.011850, 0.001500)
+        quatf xformOp:orient = (1.000000, 0.000000, 0.000000, 0.000000)
+        float3 xformOp:scale = (0.070043, 0.025700, 0.003000)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c58" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.000851, 0.011850, 0.001500)
+        quatf xformOp:orient = (1.000000, 0.000000, 0.000000, 0.000000)
+        float3 xformOp:scale = (0.070043, 0.025700, 0.003000)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+    def Cube "c59" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </basin_c/PhysicsMaterial>
+        uniform token purpose = "guide"
+        double size = 1
+        float physxCollision:contactOffset = 0.003
+        float physxCollision:restOffset = 0
+        double3 xformOp:translate = (-0.004225, 0.035550, 0.001500)
+        quatf xformOp:orient = (1.000000, 0.000000, 0.000000, 0.000000)
+        float3 xformOp:scale = (0.060698, 0.025700, 0.003000)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+
+    def Scope "Looks"
+    {
+        def Material "body"
+        {
+            token outputs:surface.connect = </basin_c/Looks/body/surface.outputs:surface>
+            def Shader "surface"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                float inputs:metallic = 1.0
+                color3f inputs:diffuseColor = (0.78, 0.78, 0.8)
+                float inputs:roughness = 0.34
+                token outputs:surface
+            }
+        }
+    }
+
+    def Xform "visual"
+    {
+        def Mesh "shell" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </basin_c/Looks/body>
+            uniform bool doubleSided = 0
+            int[] faceVertexCounts = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+            int[] faceVertexIndices = [0, 1, 65, 0, 65, 64, 1, 2, 66, 1, 66, 65, 2, 3, 67, 2, 67, 66, 3, 4, 68, 3, 68, 67, 4, 5, 69, 4, 69, 68, 5, 6, 70, 5, 70, 69, 6, 7, 71, 6, 71, 70, 7, 8, 72, 7, 72, 71, 8, 9, 73, 8, 73, 72, 9, 10, 74, 9, 74, 73, 10, 11, 75, 10, 75, 74, 11, 12, 76, 11, 76, 75, 12, 13, 77, 12, 77, 76, 13, 14, 78, 13, 78, 77, 14, 15, 79, 14, 79, 78, 15, 16, 80, 15, 80, 79, 16, 17, 81, 16, 81, 80, 17, 18, 82, 17, 82, 81, 18, 19, 83, 18, 83, 82, 19, 20, 84, 19, 84, 83, 20, 21, 85, 20, 85, 84, 21, 22, 86, 21, 86, 85, 22, 23, 87, 22, 87, 86, 23, 24, 88, 23, 88, 87, 24, 25, 89, 24, 89, 88, 25, 26, 90, 25, 90, 89, 26, 27, 91, 26, 91, 90, 27, 28, 92, 27, 92, 91, 28, 29, 93, 28, 93, 92, 29, 30, 94, 29, 94, 93, 30, 31, 95, 30, 95, 94, 31, 32, 96, 31, 96, 95, 32, 33, 97, 32, 97, 96, 33, 34, 98, 33, 98, 97, 34, 35, 99, 34, 99, 98, 35, 36, 100, 35, 100, 99, 36, 37, 101, 36, 101, 100, 37, 38, 102, 37, 102, 101, 38, 39, 103, 38, 103, 102, 39, 40, 104, 39, 104, 103, 40, 41, 105, 40, 105, 104, 41, 42, 106, 41, 106, 105, 42, 43, 107, 42, 107, 106, 43, 44, 108, 43, 108, 107, 44, 45, 109, 44, 109, 108, 45, 46, 110, 45, 110, 109, 46, 47, 111, 46, 111, 110, 47, 48, 112, 47, 112, 111, 48, 49, 113, 48, 113, 112, 49, 50, 114, 49, 114, 113, 50, 51, 115, 50, 115, 114, 51, 52, 116, 51, 116, 115, 52, 53, 117, 52, 117, 116, 53, 54, 118, 53, 118, 117, 54, 55, 119, 54, 119, 118, 55, 56, 120, 55, 120, 119, 56, 57, 121, 56, 121, 120, 57, 58, 122, 57, 122, 121, 58, 59, 123, 58, 123, 122, 59, 60, 124, 59, 124, 123, 60, 61, 125, 60, 125, 124, 61, 62, 126, 61, 126, 125, 62, 63, 127, 62, 127, 126, 63, 0, 64, 63, 64, 127, 64, 65, 129, 64, 129, 128, 65, 66, 130, 65, 130, 129, 66, 67, 131, 66, 131, 130, 67, 68, 132, 67, 132, 131, 68, 69, 133, 68, 133, 132, 69, 70, 134, 69, 134, 133, 70, 71, 135, 70, 135, 134, 71, 72, 136, 71, 136, 135, 72, 73, 137, 72, 137, 136, 73, 74, 138, 73, 138, 137, 74, 75, 139, 74, 139, 138, 75, 76, 140, 75, 140, 139, 76, 77, 141, 76, 141, 140, 77, 78, 142, 77, 142, 141, 78, 79, 143, 78, 143, 142, 79, 80, 144, 79, 144, 143, 80, 81, 145, 80, 145, 144, 81, 82, 146, 81, 146, 145, 82, 83, 147, 82, 147, 146, 83, 84, 148, 83, 148, 147, 84, 85, 149, 84, 149, 148, 85, 86, 150, 85, 150, 149, 86, 87, 151, 86, 151, 150, 87, 88, 152, 87, 152, 151, 88, 89, 153, 88, 153, 152, 89, 90, 154, 89, 154, 153, 90, 91, 155, 90, 155, 154, 91, 92, 156, 91, 156, 155, 92, 93, 157, 92, 157, 156, 93, 94, 158, 93, 158, 157, 94, 95, 159, 94, 159, 158, 95, 96, 160, 95, 160, 159, 96, 97, 161, 96, 161, 160, 97, 98, 162, 97, 162, 161, 98, 99, 163, 98, 163, 162, 99, 100, 164, 99, 164, 163, 100, 101, 165, 100, 165, 164, 101, 102, 166, 101, 166, 165, 102, 103, 167, 102, 167, 166, 103, 104, 168, 103, 168, 167, 104, 105, 169, 104, 169, 168, 105, 106, 170, 105, 170, 169, 106, 107, 171, 106, 171, 170, 107, 108, 172, 107, 172, 171, 108, 109, 173, 108, 173, 172, 109, 110, 174, 109, 174, 173, 110, 111, 175, 110, 175, 174, 111, 112, 176, 111, 176, 175, 112, 113, 177, 112, 177, 176, 113, 114, 178, 113, 178, 177, 114, 115, 179, 114, 179, 178, 115, 116, 180, 115, 180, 179, 116, 117, 181, 116, 181, 180, 117, 118, 182, 117, 182, 181, 118, 119, 183, 118, 183, 182, 119, 120, 184, 119, 184, 183, 120, 121, 185, 120, 185, 184, 121, 122, 186, 121, 186, 185, 122, 123, 187, 122, 187, 186, 123, 124, 188, 123, 188, 187, 124, 125, 189, 124, 189, 188, 125, 126, 190, 125, 190, 189, 126, 127, 191, 126, 191, 190, 127, 64, 128, 127, 128, 191, 128, 129, 193, 128, 193, 192, 129, 130, 194, 129, 194, 193, 130, 131, 195, 130, 195, 194, 131, 132, 196, 131, 196, 195, 132, 133, 197, 132, 197, 196, 133, 134, 198, 133, 198, 197, 134, 135, 199, 134, 199, 198, 135, 136, 200, 135, 200, 199, 136, 137, 201, 136, 201, 200, 137, 138, 202, 137, 202, 201, 138, 139, 203, 138, 203, 202, 139, 140, 204, 139, 204, 203, 140, 141, 205, 140, 205, 204, 141, 142, 206, 141, 206, 205, 142, 143, 207, 142, 207, 206, 143, 144, 208, 143, 208, 207, 144, 145, 209, 144, 209, 208, 145, 146, 210, 145, 210, 209, 146, 147, 211, 146, 211, 210, 147, 148, 212, 147, 212, 211, 148, 149, 213, 148, 213, 212, 149, 150, 214, 149, 214, 213, 150, 151, 215, 150, 215, 214, 151, 152, 216, 151, 216, 215, 152, 153, 217, 152, 217, 216, 153, 154, 218, 153, 218, 217, 154, 155, 219, 154, 219, 218, 155, 156, 220, 155, 220, 219, 156, 157, 221, 156, 221, 220, 157, 158, 222, 157, 222, 221, 158, 159, 223, 158, 223, 222, 159, 160, 224, 159, 224, 223, 160, 161, 225, 160, 225, 224, 161, 162, 226, 161, 226, 225, 162, 163, 227, 162, 227, 226, 163, 164, 228, 163, 228, 227, 164, 165, 229, 164, 229, 228, 165, 166, 230, 165, 230, 229, 166, 167, 231, 166, 231, 230, 167, 168, 232, 167, 232, 231, 168, 169, 233, 168, 233, 232, 169, 170, 234, 169, 234, 233, 170, 171, 235, 170, 235, 234, 171, 172, 236, 171, 236, 235, 172, 173, 237, 172, 237, 236, 173, 174, 238, 173, 238, 237, 174, 175, 239, 174, 239, 238, 175, 176, 240, 175, 240, 239, 176, 177, 241, 176, 241, 240, 177, 178, 242, 177, 242, 241, 178, 179, 243, 178, 243, 242, 179, 180, 244, 179, 244, 243, 180, 181, 245, 180, 245, 244, 181, 182, 246, 181, 246, 245, 182, 183, 247, 182, 247, 246, 183, 184, 248, 183, 248, 247, 184, 185, 249, 184, 249, 248, 185, 186, 250, 185, 250, 249, 186, 187, 251, 186, 251, 250, 187, 188, 252, 187, 252, 251, 188, 189, 253, 188, 253, 252, 189, 190, 254, 189, 254, 253, 190, 191, 255, 190, 255, 254, 191, 128, 192, 191, 192, 255, 192, 193, 257, 192, 257, 256, 193, 194, 258, 193, 258, 257, 194, 195, 259, 194, 259, 258, 195, 196, 260, 195, 260, 259, 196, 197, 261, 196, 261, 260, 197, 198, 262, 197, 262, 261, 198, 199, 263, 198, 263, 262, 199, 200, 264, 199, 264, 263, 200, 201, 265, 200, 265, 264, 201, 202, 266, 201, 266, 265, 202, 203, 267, 202, 267, 266, 203, 204, 268, 203, 268, 267, 204, 205, 269, 204, 269, 268, 205, 206, 270, 205, 270, 269, 206, 207, 271, 206, 271, 270, 207, 208, 272, 207, 272, 271, 208, 209, 273, 208, 273, 272, 209, 210, 274, 209, 274, 273, 210, 211, 275, 210, 275, 274, 211, 212, 276, 211, 276, 275, 212, 213, 277, 212, 277, 276, 213, 214, 278, 213, 278, 277, 214, 215, 279, 214, 279, 278, 215, 216, 280, 215, 280, 279, 216, 217, 281, 216, 281, 280, 217, 218, 282, 217, 282, 281, 218, 219, 283, 218, 283, 282, 219, 220, 284, 219, 284, 283, 220, 221, 285, 220, 285, 284, 221, 222, 286, 221, 286, 285, 222, 223, 287, 222, 287, 286, 223, 224, 288, 223, 288, 287, 224, 225, 289, 224, 289, 288, 225, 226, 290, 225, 290, 289, 226, 227, 291, 226, 291, 290, 227, 228, 292, 227, 292, 291, 228, 229, 293, 228, 293, 292, 229, 230, 294, 229, 294, 293, 230, 231, 295, 230, 295, 294, 231, 232, 296, 231, 296, 295, 232, 233, 297, 232, 297, 296, 233, 234, 298, 233, 298, 297, 234, 235, 299, 234, 299, 298, 235, 236, 300, 235, 300, 299, 236, 237, 301, 236, 301, 300, 237, 238, 302, 237, 302, 301, 238, 239, 303, 238, 303, 302, 239, 240, 304, 239, 304, 303, 240, 241, 305, 240, 305, 304, 241, 242, 306, 241, 306, 305, 242, 243, 307, 242, 307, 306, 243, 244, 308, 243, 308, 307, 244, 245, 309, 244, 309, 308, 245, 246, 310, 245, 310, 309, 246, 247, 311, 246, 311, 310, 247, 248, 312, 247, 312, 311, 248, 249, 313, 248, 313, 312, 249, 250, 314, 249, 314, 313, 250, 251, 315, 250, 315, 314, 251, 252, 316, 251, 316, 315, 252, 253, 317, 252, 317, 316, 253, 254, 318, 253, 318, 317, 254, 255, 319, 254, 319, 318, 255, 192, 256, 255, 256, 319, 256, 257, 321, 256, 321, 320, 257, 258, 322, 257, 322, 321, 258, 259, 323, 258, 323, 322, 259, 260, 324, 259, 324, 323, 260, 261, 325, 260, 325, 324, 261, 262, 326, 261, 326, 325, 262, 263, 327, 262, 327, 326, 263, 264, 328, 263, 328, 327, 264, 265, 329, 264, 329, 328, 265, 266, 330, 265, 330, 329, 266, 267, 331, 266, 331, 330, 267, 268, 332, 267, 332, 331, 268, 269, 333, 268, 333, 332, 269, 270, 334, 269, 334, 333, 270, 271, 335, 270, 335, 334, 271, 272, 336, 271, 336, 335, 272, 273, 337, 272, 337, 336, 273, 274, 338, 273, 338, 337, 274, 275, 339, 274, 339, 338, 275, 276, 340, 275, 340, 339, 276, 277, 341, 276, 341, 340, 277, 278, 342, 277, 342, 341, 278, 279, 343, 278, 343, 342, 279, 280, 344, 279, 344, 343, 280, 281, 345, 280, 345, 344, 281, 282, 346, 281, 346, 345, 282, 283, 347, 282, 347, 346, 283, 284, 348, 283, 348, 347, 284, 285, 349, 284, 349, 348, 285, 286, 350, 285, 350, 349, 286, 287, 351, 286, 351, 350, 287, 288, 352, 287, 352, 351, 288, 289, 353, 288, 353, 352, 289, 290, 354, 289, 354, 353, 290, 291, 355, 290, 355, 354, 291, 292, 356, 291, 356, 355, 292, 293, 357, 292, 357, 356, 293, 294, 358, 293, 358, 357, 294, 295, 359, 294, 359, 358, 295, 296, 360, 295, 360, 359, 296, 297, 361, 296, 361, 360, 297, 298, 362, 297, 362, 361, 298, 299, 363, 298, 363, 362, 299, 300, 364, 299, 364, 363, 300, 301, 365, 300, 365, 364, 301, 302, 366, 301, 366, 365, 302, 303, 367, 302, 367, 366, 303, 304, 368, 303, 368, 367, 304, 305, 369, 304, 369, 368, 305, 306, 370, 305, 370, 369, 306, 307, 371, 306, 371, 370, 307, 308, 372, 307, 372, 371, 308, 309, 373, 308, 373, 372, 309, 310, 374, 309, 374, 373, 310, 311, 375, 310, 375, 374, 311, 312, 376, 311, 376, 375, 312, 313, 377, 312, 377, 376, 313, 314, 378, 313, 378, 377, 314, 315, 379, 314, 379, 378, 315, 316, 380, 315, 380, 379, 316, 317, 381, 316, 381, 380, 317, 318, 382, 317, 382, 381, 318, 319, 383, 318, 383, 382, 319, 256, 320, 319, 320, 383, 384, 321, 320, 385, 0, 1, 384, 322, 321, 385, 1, 2, 384, 323, 322, 385, 2, 3, 384, 324, 323, 385, 3, 4, 384, 325, 324, 385, 4, 5, 384, 326, 325, 385, 5, 6, 384, 327, 326, 385, 6, 7, 384, 328, 327, 385, 7, 8, 384, 329, 328, 385, 8, 9, 384, 330, 329, 385, 9, 10, 384, 331, 330, 385, 10, 11, 384, 332, 331, 385, 11, 12, 384, 333, 332, 385, 12, 13, 384, 334, 333, 385, 13, 14, 384, 335, 334, 385, 14, 15, 384, 336, 335, 385, 15, 16, 384, 337, 336, 385, 16, 17, 384, 338, 337, 385, 17, 18, 384, 339, 338, 385, 18, 19, 384, 340, 339, 385, 19, 20, 384, 341, 340, 385, 20, 21, 384, 342, 341, 385, 21, 22, 384, 343, 342, 385, 22, 23, 384, 344, 343, 385, 23, 24, 384, 345, 344, 385, 24, 25, 384, 346, 345, 385, 25, 26, 384, 347, 346, 385, 26, 27, 384, 348, 347, 385, 27, 28, 384, 349, 348, 385, 28, 29, 384, 350, 349, 385, 29, 30, 384, 351, 350, 385, 30, 31, 384, 352, 351, 385, 31, 32, 384, 353, 352, 385, 32, 33, 384, 354, 353, 385, 33, 34, 384, 355, 354, 385, 34, 35, 384, 356, 355, 385, 35, 36, 384, 357, 356, 385, 36, 37, 384, 358, 357, 385, 37, 38, 384, 359, 358, 385, 38, 39, 384, 360, 359, 385, 39, 40, 384, 361, 360, 385, 40, 41, 384, 362, 361, 385, 41, 42, 384, 363, 362, 385, 42, 43, 384, 364, 363, 385, 43, 44, 384, 365, 364, 385, 44, 45, 384, 366, 365, 385, 45, 46, 384, 367, 366, 385, 46, 47, 384, 368, 367, 385, 47, 48, 384, 369, 368, 385, 48, 49, 384, 370, 369, 385, 49, 50, 384, 371, 370, 385, 50, 51, 384, 372, 371, 385, 51, 52, 384, 373, 372, 385, 52, 53, 384, 374, 373, 385, 53, 54, 384, 375, 374, 385, 54, 55, 384, 376, 375, 385, 55, 56, 384, 377, 376, 385, 56, 57, 384, 378, 377, 385, 57, 58, 384, 379, 378, 385, 58, 59, 384, 380, 379, 385, 59, 60, 384, 381, 380, 385, 60, 61, 384, 382, 381, 385, 61, 62, 384, 383, 382, 385, 62, 63, 384, 320, 383, 385, 63, 0]
+            point3f[] points = [(0.03812, 0.00000, 0.00000), (0.03770, 0.01225, 0.00000), (0.03675, 0.02079, 0.00000), (0.03537, 0.02823, 0.00000), (0.03360, 0.03492, 0.00000), (0.03148, 0.04099, 0.00000), (0.02905, 0.04651, 0.00000), (0.02633, 0.05151, 0.00000), (0.02336, 0.05599, 0.00000), (0.02017, 0.05997, 0.00000), (0.01677, 0.06343, 0.00000), (0.01319, 0.06637, 0.00000), (0.00942, 0.06878, 0.00000), (0.00545, 0.07067, 0.00000), (0.00123, 0.07202, 0.00000), (-0.00344, 0.07283, 0.00000), (-0.00988, 0.07310, 0.00000), (-0.01617, 0.07283, 0.00000), (-0.02039, 0.07202, 0.00000), (-0.02390, 0.07067, 0.00000), (-0.02688, 0.06878, 0.00000), (-0.02943, 0.06637, 0.00000), (-0.03158, 0.06343, 0.00000), (-0.03338, 0.05997, 0.00000), (-0.03485, 0.05599, 0.00000), (-0.03601, 0.05151, 0.00000), (-0.03690, 0.04651, 0.00000), (-0.03752, 0.04099, 0.00000), (-0.03791, 0.03492, 0.00000), (-0.03810, 0.02823, 0.00000), (-0.03812, 0.02079, 0.00000), (-0.03802, 0.01225, 0.00000), (-0.03788, 0.00000, 0.00000), (-0.03802, -0.01225, 0.00000), (-0.03812, -0.02079, 0.00000), (-0.03810, -0.02823, 0.00000), (-0.03791, -0.03492, 0.00000), (-0.03752, -0.04099, 0.00000), (-0.03690, -0.04651, 0.00000), (-0.03601, -0.05151, 0.00000), (-0.03485, -0.05599, 0.00000), (-0.03338, -0.05997, 0.00000), (-0.03158, -0.06343, 0.00000), (-0.02943, -0.06637, 0.00000), (-0.02688, -0.06878, 0.00000), (-0.02390, -0.07067, 0.00000), (-0.02039, -0.07202, 0.00000), (-0.01617, -0.07283, 0.00000), (-0.00988, -0.07310, 0.00000), (-0.00344, -0.07283, 0.00000), (0.00123, -0.07202, 0.00000), (0.00545, -0.07067, 0.00000), (0.00942, -0.06878, 0.00000), (0.01319, -0.06637, 0.00000), (0.01677, -0.06343, 0.00000), (0.02017, -0.05997, 0.00000), (0.02336, -0.05599, 0.00000), (0.02633, -0.05151, 0.00000), (0.02905, -0.04651, 0.00000), (0.03148, -0.04099, 0.00000), (0.03360, -0.03492, 0.00000), (0.03537, -0.02823, 0.00000), (0.03675, -0.02079, 0.00000), (0.03770, -0.01225, 0.00000), (0.04795, 0.00000, 0.03320), (0.04750, 0.01426, 0.03320), (0.04644, 0.02424, 0.03320), (0.04487, 0.03291, 0.03320), (0.04285, 0.04071, 0.03320), (0.04041, 0.04781, 0.03320), (0.03758, 0.05426, 0.03320), (0.03440, 0.06010, 0.03320), (0.03089, 0.06535, 0.03320), (0.02709, 0.07000, 0.03320), (0.02301, 0.07405, 0.03320), (0.01868, 0.07750, 0.03320), (0.01408, 0.08033, 0.03320), (0.00919, 0.08254, 0.03320), (0.00395, 0.08413, 0.03320), (-0.00188, 0.08508, 0.03320), (-0.00995, 0.08540, 0.03320), (-0.01787, 0.08508, 0.03320), (-0.02326, 0.08413, 0.03320), (-0.02780, 0.08253, 0.03320), (-0.03172, 0.08031, 0.03320), (-0.03511, 0.07745, 0.03320), (-0.03802, 0.07398, 0.03320), (-0.04050, 0.06991, 0.03320), (-0.04257, 0.06525, 0.03320), (-0.04426, 0.06000, 0.03320), (-0.04560, 0.05416, 0.03320), (-0.04661, 0.04771, 0.03320), (-0.04732, 0.04063, 0.03320), (-0.04776, 0.03284, 0.03320), (-0.04795, 0.02418, 0.03320), (-0.04795, 0.01424, 0.03320), (-0.04785, 0.00000, 0.03320), (-0.04795, -0.01424, 0.03320), (-0.04795, -0.02418, 0.03320), (-0.04776, -0.03284, 0.03320), (-0.04732, -0.04063, 0.03320), (-0.04661, -0.04771, 0.03320), (-0.04560, -0.05416, 0.03320), (-0.04426, -0.06000, 0.03320), (-0.04257, -0.06525, 0.03320), (-0.04050, -0.06991, 0.03320), (-0.03802, -0.07398, 0.03320), (-0.03511, -0.07745, 0.03320), (-0.03172, -0.08031, 0.03320), (-0.02780, -0.08253, 0.03320), (-0.02326, -0.08413, 0.03320), (-0.01787, -0.08508, 0.03320), (-0.00995, -0.08540, 0.03320), (-0.00188, -0.08508, 0.03320), (0.00395, -0.08413, 0.03320), (0.00919, -0.08254, 0.03320), (0.01408, -0.08033, 0.03320), (0.01868, -0.07750, 0.03320), (0.02301, -0.07405, 0.03320), (0.02709, -0.07000, 0.03320), (0.03089, -0.06535, 0.03320), (0.03440, -0.06010, 0.03320), (0.03758, -0.05426, 0.03320), (0.04041, -0.04781, 0.03320), (0.04285, -0.04071, 0.03320), (0.04487, -0.03291, 0.03320), (0.04644, -0.02424, 0.03320), (0.04750, -0.01426, 0.03320), (0.04815, 0.00000, 0.03500), (0.04769, 0.01428, 0.03500), (0.04663, 0.02426, 0.03500), (0.04507, 0.03295, 0.03500), (0.04304, 0.04077, 0.03500), (0.04059, 0.04788, 0.03500), (0.03776, 0.05435, 0.03500), (0.03457, 0.06020, 0.03500), (0.03105, 0.06546, 0.03500), (0.02724, 0.07013, 0.03500), (0.02315, 0.07420, 0.03500), (0.01879, 0.07766, 0.03500), (0.01417, 0.08051, 0.03500), (0.00926, 0.08273, 0.03500), (0.00399, 0.08433, 0.03500), (-0.00186, 0.08528, 0.03500), (-0.00995, 0.08560, 0.03500), (-0.01789, 0.08528, 0.03500), (-0.02331, 0.08432, 0.03500), (-0.02788, 0.08272, 0.03500), (-0.03183, 0.08047, 0.03500), (-0.03525, 0.07759, 0.03500), (-0.03819, 0.07410, 0.03500), (-0.04068, 0.07001, 0.03500), (-0.04276, 0.06532, 0.03500), (-0.04446, 0.06005, 0.03500), (-0.04580, 0.05420, 0.03500), (-0.04681, 0.04774, 0.03500), (-0.04752, 0.04065, 0.03500), (-0.04796, 0.03285, 0.03500), (-0.04815, 0.02419, 0.03500), (-0.04815, 0.01424, 0.03500), (-0.04805, 0.00000, 0.03500), (-0.04815, -0.01424, 0.03500), (-0.04815, -0.02419, 0.03500), (-0.04796, -0.03285, 0.03500), (-0.04752, -0.04065, 0.03500), (-0.04681, -0.04774, 0.03500), (-0.04580, -0.05420, 0.03500), (-0.04446, -0.06005, 0.03500), (-0.04276, -0.06532, 0.03500), (-0.04068, -0.07001, 0.03500), (-0.03819, -0.07410, 0.03500), (-0.03525, -0.07759, 0.03500), (-0.03183, -0.08047, 0.03500), (-0.02788, -0.08272, 0.03500), (-0.02331, -0.08432, 0.03500), (-0.01789, -0.08528, 0.03500), (-0.00995, -0.08560, 0.03500), (-0.00186, -0.08528, 0.03500), (0.00399, -0.08433, 0.03500), (0.00926, -0.08273, 0.03500), (0.01417, -0.08051, 0.03500), (0.01879, -0.07766, 0.03500), (0.02315, -0.07420, 0.03500), (0.02724, -0.07013, 0.03500), (0.03105, -0.06546, 0.03500), (0.03457, -0.06020, 0.03500), (0.03776, -0.05435, 0.03500), (0.04059, -0.04788, 0.03500), (0.04304, -0.04077, 0.03500), (0.04507, -0.03295, 0.03500), (0.04663, -0.02426, 0.03500), (0.04769, -0.01428, 0.03500), (0.04575, 0.00000, 0.03620), (0.04530, 0.01413, 0.03620), (0.04426, 0.02393, 0.03620), (0.04272, 0.03244, 0.03620), (0.04074, 0.04008, 0.03620), (0.03835, 0.04701, 0.03620), (0.03560, 0.05329, 0.03620), (0.03251, 0.05897, 0.03620), (0.02912, 0.06404, 0.03620), (0.02546, 0.06852, 0.03620), (0.02155, 0.07241, 0.03620), (0.01741, 0.07570, 0.03620), (0.01304, 0.07839, 0.03620), (0.00842, 0.08049, 0.03620), (0.00346, 0.08199, 0.03620), (-0.00208, 0.08289, 0.03620), (-0.00995, 0.08320, 0.03620), (-0.01766, 0.08289, 0.03620), (-0.02272, 0.08200, 0.03620), (-0.02689, 0.08053, 0.03620), (-0.03046, 0.07850, 0.03620), (-0.03355, 0.07590, 0.03620), (-0.03623, 0.07270, 0.03620), (-0.03855, 0.06890, 0.03620), (-0.04052, 0.06447, 0.03620), (-0.04214, 0.05942, 0.03620), (-0.04344, 0.05375, 0.03620), (-0.04443, 0.04744, 0.03620), (-0.04513, 0.04046, 0.03620), (-0.04556, 0.03276, 0.03620), (-0.04575, 0.02416, 0.03620), (-0.04575, 0.01425, 0.03620), (-0.04565, 0.00000, 0.03620), (-0.04575, -0.01425, 0.03620), (-0.04575, -0.02416, 0.03620), (-0.04556, -0.03276, 0.03620), (-0.04513, -0.04046, 0.03620), (-0.04443, -0.04744, 0.03620), (-0.04344, -0.05375, 0.03620), (-0.04214, -0.05942, 0.03620), (-0.04052, -0.06447, 0.03620), (-0.03855, -0.06890, 0.03620), (-0.03623, -0.07270, 0.03620), (-0.03355, -0.07590, 0.03620), (-0.03046, -0.07850, 0.03620), (-0.02689, -0.08053, 0.03620), (-0.02272, -0.08200, 0.03620), (-0.01766, -0.08289, 0.03620), (-0.00995, -0.08320, 0.03620), (-0.00208, -0.08289, 0.03620), (0.00346, -0.08199, 0.03620), (0.00842, -0.08049, 0.03620), (0.01304, -0.07839, 0.03620), (0.01741, -0.07570, 0.03620), (0.02155, -0.07241, 0.03620), (0.02546, -0.06852, 0.03620), (0.02912, -0.06404, 0.03620), (0.03251, -0.05897, 0.03620), (0.03560, -0.05329, 0.03620), (0.03835, -0.04701, 0.03620), (0.04074, -0.04008, 0.03620), (0.04272, -0.03244, 0.03620), (0.04426, -0.02393, 0.03620), (0.04530, -0.01413, 0.03620), (0.04395, 0.00000, 0.03320), (0.04350, 0.01401, 0.03320), (0.04248, 0.02368, 0.03320), (0.04096, 0.03206, 0.03320), (0.03902, 0.03957, 0.03320), (0.03668, 0.04636, 0.03320), (0.03398, 0.05250, 0.03320), (0.03097, 0.05804, 0.03320), (0.02767, 0.06297, 0.03320), (0.02412, 0.06731, 0.03320), (0.02035, 0.07106, 0.03320), (0.01638, 0.07422, 0.03320), (0.01220, 0.07680, 0.03320), (0.00779, 0.07880, 0.03320), (0.00305, 0.08023, 0.03320), (-0.00224, 0.08110, 0.03320), (-0.00995, 0.08140, 0.03320), (-0.01749, 0.08110, 0.03320), (-0.02227, 0.08025, 0.03320), (-0.02615, 0.07889, 0.03320), (-0.02943, 0.07702, 0.03320), (-0.03228, 0.07463, 0.03320), (-0.03477, 0.07166, 0.03320), (-0.03695, 0.06807, 0.03320), (-0.03883, 0.06383, 0.03320), (-0.04041, 0.05895, 0.03320), (-0.04167, 0.05341, 0.03320), (-0.04264, 0.04721, 0.03320), (-0.04333, 0.04032, 0.03320), (-0.04376, 0.03269, 0.03320), (-0.04395, 0.02414, 0.03320), (-0.04395, 0.01426, 0.03320), (-0.04385, 0.00000, 0.03320), (-0.04395, -0.01426, 0.03320), (-0.04395, -0.02414, 0.03320), (-0.04376, -0.03269, 0.03320), (-0.04333, -0.04032, 0.03320), (-0.04264, -0.04721, 0.03320), (-0.04167, -0.05341, 0.03320), (-0.04041, -0.05895, 0.03320), (-0.03883, -0.06383, 0.03320), (-0.03695, -0.06807, 0.03320), (-0.03477, -0.07166, 0.03320), (-0.03228, -0.07463, 0.03320), (-0.02943, -0.07702, 0.03320), (-0.02615, -0.07889, 0.03320), (-0.02227, -0.08025, 0.03320), (-0.01749, -0.08110, 0.03320), (-0.00995, -0.08140, 0.03320), (-0.00224, -0.08110, 0.03320), (0.00305, -0.08023, 0.03320), (0.00779, -0.07880, 0.03320), (0.01220, -0.07680, 0.03320), (0.01638, -0.07422, 0.03320), (0.02035, -0.07106, 0.03320), (0.02412, -0.06731, 0.03320), (0.02767, -0.06297, 0.03320), (0.03097, -0.05804, 0.03320), (0.03398, -0.05250, 0.03320), (0.03668, -0.04636, 0.03320), (0.03902, -0.03957, 0.03320), (0.04096, -0.03206, 0.03320), (0.04248, -0.02368, 0.03320), (0.04350, -0.01401, 0.03320), (0.03692, -0.00000, 0.00090), (0.03650, 0.01217, 0.00090), (0.03556, 0.02062, 0.00090), (0.03420, 0.02797, 0.00090), (0.03245, 0.03457, 0.00090), (0.03036, 0.04055, 0.00090), (0.02797, 0.04598, 0.00090), (0.02530, 0.05089, 0.00090), (0.02239, 0.05529, 0.00090), (0.01927, 0.05917, 0.00090), (0.01596, 0.06254, 0.00090), (0.01248, 0.06540, 0.00090), (0.00884, 0.06773, 0.00090), (0.00501, 0.06955, 0.00090), (0.00094, 0.07085, 0.00090), (-0.00355, 0.07163, 0.00090), (-0.00988, 0.07190, 0.00090), (-0.01605, 0.07164, 0.00090), (-0.02007, 0.07086, 0.00090), (-0.02336, 0.06959, 0.00090), (-0.02614, 0.06783, 0.00090), (-0.02853, 0.06557, 0.00090), (-0.03056, 0.06279, 0.00090), (-0.03228, 0.05948, 0.00090), (-0.03371, 0.05564, 0.00090), (-0.03484, 0.05126, 0.00090), (-0.03571, 0.04634, 0.00090), (-0.03632, 0.04088, 0.00090), (-0.03671, 0.03486, 0.00090), (-0.03690, 0.02821, 0.00090), (-0.03692, 0.02080, 0.00090), (-0.03682, 0.01226, 0.00090), (-0.03668, 0.00000, 0.00090), (-0.03682, -0.01226, 0.00090), (-0.03692, -0.02080, 0.00090), (-0.03690, -0.02821, 0.00090), (-0.03671, -0.03486, 0.00090), (-0.03632, -0.04088, 0.00090), (-0.03571, -0.04634, 0.00090), (-0.03484, -0.05126, 0.00090), (-0.03371, -0.05564, 0.00090), (-0.03228, -0.05948, 0.00090), (-0.03056, -0.06279, 0.00090), (-0.02853, -0.06557, 0.00090), (-0.02614, -0.06783, 0.00090), (-0.02336, -0.06959, 0.00090), (-0.02007, -0.07086, 0.00090), (-0.01605, -0.07164, 0.00090), (-0.00988, -0.07190, 0.00090), (-0.00355, -0.07163, 0.00090), (0.00094, -0.07085, 0.00090), (0.00501, -0.06955, 0.00090), (0.00884, -0.06773, 0.00090), (0.01248, -0.06540, 0.00090), (0.01596, -0.06254, 0.00090), (0.01927, -0.05917, 0.00090), (0.02239, -0.05529, 0.00090), (0.02530, -0.05089, 0.00090), (0.02797, -0.04598, 0.00090), (0.03036, -0.04055, 0.00090), (0.03245, -0.03457, 0.00090), (0.03420, -0.02797, 0.00090), (0.03556, -0.02062, 0.00090), (0.03650, -0.01217, 0.00090), (0.00000, 0.00000, 0.00090), (0.00000, 0.00000, 0.00000)]
+            normal3f[] normals = [(0.9587, 0.0102, -0.2842), (0.9546, 0.0800, -0.2869), (0.9777, 0.0681, -0.1987), (0.9587, 0.0102, -0.2842), (0.9777, 0.0681, -0.1987), (0.9802, -0.0002, -0.1981), (0.9546, 0.0800, -0.2869), (0.9447, 0.1503, -0.2916), (0.9696, 0.1398, -0.2008), (0.9546, 0.0800, -0.2869), (0.9696, 0.1398, -0.2008), (0.9777, 0.0681, -0.1987), (0.9447, 0.1503, -0.2916), (0.9292, 0.2197, -0.2974), (0.9561, 0.2110, -0.2036), (0.9447, 0.1503, -0.2916), (0.9561, 0.2110, -0.2036), (0.9696, 0.1398, -0.2008), (0.9292, 0.2197, -0.2974), (0.9077, 0.2894, -0.3038), (0.9365, 0.2833, -0.2068), (0.9292, 0.2197, -0.2974), (0.9365, 0.2833, -0.2068), (0.9561, 0.2110, -0.2036), (0.9077, 0.2894, -0.3038), (0.8799, 0.3595, -0.3106), (0.9103, 0.3566, -0.2103), (0.9077, 0.2894, -0.3038), (0.9103, 0.3566, -0.2103), (0.9365, 0.2833, -0.2068), (0.8799, 0.3595, -0.3106), (0.8453, 0.4298, -0.3174), (0.8768, 0.4306, -0.2140), (0.8799, 0.3595, -0.3106), (0.8768, 0.4306, -0.2140), (0.9103, 0.3566, -0.2103), (0.8453, 0.4298, -0.3174), (0.8030, 0.5001, -0.3242), (0.8351, 0.5052, -0.2176), (0.8453, 0.4298, -0.3174), (0.8351, 0.5052, -0.2176), (0.8768, 0.4306, -0.2140), (0.8030, 0.5001, -0.3242), (0.7519, 0.5703, -0.3307), (0.7841, 0.5799, -0.2211), (0.8030, 0.5001, -0.3242), (0.7841, 0.5799, -0.2211), (0.8351, 0.5052, -0.2176), (0.7519, 0.5703, -0.3307), (0.6908, 0.6399, -0.3367), (0.7223, 0.6541, -0.2245), (0.7519, 0.5703, -0.3307), (0.7223, 0.6541, -0.2245), (0.7841, 0.5799, -0.2211), (0.6908, 0.6399, -0.3367), (0.6180, 0.7079, -0.3419), (0.6482, 0.7267, -0.2274), (0.6908, 0.6399, -0.3367), (0.6482, 0.7267, -0.2274), (0.7223, 0.6541, -0.2245), (0.6180, 0.7079, -0.3419), (0.5322, 0.7727, -0.3461), (0.5606, 0.7956, -0.2298), (0.6180, 0.7079, -0.3419), (0.5606, 0.7956, -0.2298), (0.6482, 0.7267, -0.2274), (0.5322, 0.7727, -0.3461), (0.4326, 0.8313, -0.3490), (0.4589, 0.8578, -0.2316), (0.5322, 0.7727, -0.3461), (0.4589, 0.8578, -0.2316), (0.5606, 0.7956, -0.2298), (0.4326, 0.8313, -0.3490), (0.3202, 0.8802, -0.3502), (0.3444, 0.9096, -0.2324), (0.4326, 0.8313, -0.3490), (0.3444, 0.9096, -0.2324), (0.4589, 0.8578, -0.2316), (0.3202, 0.8802, -0.3502), (0.1995, 0.9154, -0.3498), (0.2215, 0.9471, -0.2324), (0.3202, 0.8802, -0.3502), (0.2215, 0.9471, -0.2324), (0.3444, 0.9096, -0.2324), (0.1995, 0.9154, -0.3498), (0.0791, 0.9341, -0.3483), (0.0988, 0.9678, -0.2316), (0.1995, 0.9154, -0.3498), (0.0988, 0.9678, -0.2316), (0.2215, 0.9471, -0.2324), (0.0791, 0.9341, -0.3483), (-0.0128, 0.9376, -0.3476), (-0.0003, 0.9730, -0.2307), (0.0791, 0.9341, -0.3483), (-0.0003, 0.9730, -0.2307), (0.0988, 0.9678, -0.2316), (-0.0128, 0.9376, -0.3476), (-0.1271, 0.9282, -0.3498), (-0.1055, 0.9671, -0.2313), (-0.0128, 0.9376, -0.3476), (-0.1055, 0.9671, -0.2313), (-0.0003, 0.9730, -0.2307), (-0.1271, 0.9282, -0.3498), (-0.2754, 0.8947, -0.3516), (-0.2497, 0.9400, -0.2323), (-0.1271, 0.9282, -0.3498), (-0.2497, 0.9400, -0.2323), (-0.1055, 0.9671, -0.2313), (-0.2754, 0.8947, -0.3516), (-0.4352, 0.8297, -0.3497), (-0.4085, 0.8828, -0.2321), (-0.2754, 0.8947, -0.3516), (-0.4085, 0.8828, -0.2321), (-0.2497, 0.9400, -0.2323), (-0.4352, 0.8297, -0.3497), (-0.5866, 0.7338, -0.3427), (-0.5632, 0.7938, -0.2295), (-0.4352, 0.8297, -0.3497), (-0.5632, 0.7938, -0.2295), (-0.4085, 0.8828, -0.2321), (-0.5866, 0.7338, -0.3427), (-0.7129, 0.6182, -0.3312), (-0.6965, 0.6816, -0.2245), (-0.5866, 0.7338, -0.3427), (-0.6965, 0.6816, -0.2245), (-0.5632, 0.7938, -0.2295), (-0.7129, 0.6182, -0.3312), (-0.8068, 0.4980, -0.3179), (-0.7991, 0.5603, -0.2180), (-0.7129, 0.6182, -0.3312), (-0.7991, 0.5603, -0.2180), (-0.6965, 0.6816, -0.2245), (-0.8068, 0.4980, -0.3179), (-0.8706, 0.3858, -0.3054), (-0.8710, 0.4435, -0.2114), (-0.8068, 0.4980, -0.3179), (-0.8710, 0.4435, -0.2114), (-0.7991, 0.5603, -0.2180), (-0.8706, 0.3858, -0.3054), (-0.9109, 0.2882, -0.2953), (-0.9179, 0.3392, -0.2057), (-0.8706, 0.3858, -0.3054), (-0.9179, 0.3392, -0.2057), (-0.8710, 0.4435, -0.2114), (-0.9109, 0.2882, -0.2953), (-0.9350, 0.2069, -0.2882), (-0.9469, 0.2505, -0.2014), (-0.9109, 0.2882, -0.2953), (-0.9469, 0.2505, -0.2014), (-0.9179, 0.3392, -0.2057), (-0.9350, 0.2069, -0.2882), (-0.9484, 0.1409, -0.2839), (-0.9639, 0.1772, -0.1986), (-0.9350, 0.2069, -0.2882), (-0.9639, 0.1772, -0.1986), (-0.9469, 0.2505, -0.2014), (-0.9484, 0.1409, -0.2839), (-0.9553, 0.0884, -0.2819), (-0.9733, 0.1178, -0.1971), (-0.9484, 0.1409, -0.2839), (-0.9733, 0.1178, -0.1971), (-0.9639, 0.1772, -0.1986), (-0.9553, 0.0884, -0.2819), (-0.9583, 0.0476, -0.2818), (-0.9779, 0.0705, -0.1966), (-0.9553, 0.0884, -0.2819), (-0.9779, 0.0705, -0.1966), (-0.9733, 0.1178, -0.1971), (-0.9583, 0.0476, -0.2818), (-0.9590, 0.0172, -0.2829), (-0.9798, 0.0340, -0.1969), (-0.9583, 0.0476, -0.2818), (-0.9798, 0.0340, -0.1969), (-0.9779, 0.0705, -0.1966), (-0.9590, 0.0172, -0.2829), (-0.9586, -0.0031, -0.2847), (-0.9802, 0.0078, -0.1977), (-0.9590, 0.0172, -0.2829), (-0.9802, 0.0078, -0.1977), (-0.9798, 0.0340, -0.1969), (-0.9586, -0.0031, -0.2847), (-0.9580, -0.0100, -0.2866), (-0.9800, -0.0056, -0.1987), (-0.9586, -0.0031, -0.2847), (-0.9800, -0.0056, -0.1987), (-0.9802, 0.0078, -0.1977), (-0.9580, -0.0100, -0.2866), (-0.9579, 0.0023, -0.2871), (-0.9799, -0.0006, -0.1996), (-0.9580, -0.0100, -0.2866), (-0.9799, -0.0006, -0.1996), (-0.9800, -0.0056, -0.1987), (-0.9579, 0.0023, -0.2871), (-0.9584, 0.0077, -0.2852), (-0.9799, 0.0043, -0.1994), (-0.9579, 0.0023, -0.2871), (-0.9799, 0.0043, -0.1994), (-0.9799, -0.0006, -0.1996), (-0.9584, 0.0077, -0.2852), (-0.9592, -0.0041, -0.2827), (-0.9800, -0.0091, -0.1986), (-0.9584, 0.0077, -0.2852), (-0.9800, -0.0091, -0.1986), (-0.9799, 0.0043, -0.1994), (-0.9592, -0.0041, -0.2827), (-0.9594, -0.0278, -0.2808), (-0.9796, -0.0354, -0.1979), (-0.9592, -0.0041, -0.2827), (-0.9796, -0.0354, -0.1979), (-0.9800, -0.0091, -0.1986), (-0.9594, -0.0278, -0.2808), (-0.9581, -0.0616, -0.2797), (-0.9776, -0.0719, -0.1976), (-0.9594, -0.0278, -0.2808), (-0.9776, -0.0719, -0.1976), (-0.9796, -0.0354, -0.1979), (-0.9581, -0.0616, -0.2797), (-0.9541, -0.1062, -0.2801), (-0.9729, -0.1193, -0.1979), (-0.9581, -0.0616, -0.2797), (-0.9729, -0.1193, -0.1979), (-0.9776, -0.0719, -0.1976), (-0.9541, -0.1062, -0.2801), (-0.9453, -0.1629, -0.2825), (-0.9635, -0.1788, -0.1992), (-0.9541, -0.1062, -0.2801), (-0.9635, -0.1788, -0.1992), (-0.9729, -0.1193, -0.1979), (-0.9453, -0.1629, -0.2825), (-0.9288, -0.2337, -0.2875), (-0.9465, -0.2521, -0.2016), (-0.9453, -0.1629, -0.2825), (-0.9465, -0.2521, -0.2016), (-0.9635, -0.1788, -0.1992), (-0.9288, -0.2337, -0.2875), (-0.9001, -0.3202, -0.2955), (-0.9175, -0.3407, -0.2054), (-0.9288, -0.2337, -0.2875), (-0.9175, -0.3407, -0.2054), (-0.9465, -0.2521, -0.2016), (-0.9001, -0.3202, -0.2955), (-0.8530, -0.4226, -0.3064), (-0.8705, -0.4448, -0.2105), (-0.9001, -0.3202, -0.2955), (-0.8705, -0.4448, -0.2105), (-0.9175, -0.3407, -0.2054), (-0.8530, -0.4226, -0.3064), (-0.7802, -0.5378, -0.3195), (-0.7988, -0.5613, -0.2168), (-0.8530, -0.4226, -0.3064), (-0.7988, -0.5613, -0.2168), (-0.8705, -0.4448, -0.2105), (-0.7802, -0.5378, -0.3195), (-0.6760, -0.6575, -0.3327), (-0.6965, -0.6820, -0.2232), (-0.7802, -0.5378, -0.3195), (-0.6965, -0.6820, -0.2232), (-0.7988, -0.5613, -0.2168), (-0.6760, -0.6575, -0.3327), (-0.5407, -0.7679, -0.3434), (-0.5636, -0.7938, -0.2287), (-0.6760, -0.6575, -0.3327), (-0.5636, -0.7938, -0.2287), (-0.6965, -0.6820, -0.2232), (-0.5407, -0.7679, -0.3434), (-0.3847, -0.8544, -0.3493), (-0.4092, -0.8824, -0.2320), (-0.5407, -0.7679, -0.3434), (-0.4092, -0.8824, -0.2320), (-0.5636, -0.7938, -0.2287), (-0.3847, -0.8544, -0.3493), (-0.2265, -0.9088, -0.3504), (-0.2505, -0.9397, -0.2328), (-0.3847, -0.8544, -0.3493), (-0.2505, -0.9397, -0.2328), (-0.4092, -0.8824, -0.2320), (-0.2265, -0.9088, -0.3504), (-0.0851, -0.9334, -0.3486), (-0.1061, -0.9669, -0.2319), (-0.2265, -0.9088, -0.3504), (-0.1061, -0.9669, -0.2319), (-0.2505, -0.9397, -0.2328), (-0.0851, -0.9334, -0.3486), (0.0120, -0.9376, -0.3475), (-0.0005, -0.9730, -0.2307), (-0.0851, -0.9334, -0.3486), (-0.0005, -0.9730, -0.2307), (-0.1061, -0.9669, -0.2319), (0.0120, -0.9376, -0.3475), (0.1173, -0.9297, -0.3492), (0.0987, -0.9679, -0.2311), (0.0120, -0.9376, -0.3475), (0.0987, -0.9679, -0.2311), (-0.0005, -0.9730, -0.2307), (0.1173, -0.9297, -0.3492), (0.2394, -0.9053, -0.3508), (0.2219, -0.9471, -0.2320), (0.1173, -0.9297, -0.3492), (0.2219, -0.9471, -0.2320), (0.0987, -0.9679, -0.2311), (0.2394, -0.9053, -0.3508), (0.3585, -0.8651, -0.3508), (0.3452, -0.9093, -0.2322), (0.2394, -0.9053, -0.3508), (0.3452, -0.9093, -0.2322), (0.2219, -0.9471, -0.2320), (0.3585, -0.8651, -0.3508), (0.4673, -0.8123, -0.3490), (0.4600, -0.8572, -0.2317), (0.3585, -0.8651, -0.3508), (0.4600, -0.8572, -0.2317), (0.3452, -0.9093, -0.2322), (0.4673, -0.8123, -0.3490), (0.5626, -0.7511, -0.3456), (0.5617, -0.7946, -0.2302), (0.4673, -0.8123, -0.3490), (0.5617, -0.7946, -0.2302), (0.4600, -0.8572, -0.2317), (0.5626, -0.7511, -0.3456), (0.6440, -0.6849, -0.3409), (0.6493, -0.7256, -0.2280), (0.5626, -0.7511, -0.3456), (0.6493, -0.7256, -0.2280), (0.5617, -0.7946, -0.2302), (0.6440, -0.6849, -0.3409), (0.7128, -0.6161, -0.3352), (0.7232, -0.6529, -0.2252), (0.6440, -0.6849, -0.3409), (0.7232, -0.6529, -0.2252), (0.6493, -0.7256, -0.2280), (0.7128, -0.6161, -0.3352), (0.7704, -0.5463, -0.3288), (0.7848, -0.5786, -0.2221), (0.7128, -0.6161, -0.3352), (0.7848, -0.5786, -0.2221), (0.7232, -0.6529, -0.2252), (0.7704, -0.5463, -0.3288), (0.8183, -0.4761, -0.3221), (0.8356, -0.5040, -0.2187), (0.7704, -0.5463, -0.3288), (0.8356, -0.5040, -0.2187), (0.7848, -0.5786, -0.2221), (0.8183, -0.4761, -0.3221), (0.8579, -0.4058, -0.3150), (0.8771, -0.4295, -0.2152), (0.8183, -0.4761, -0.3221), (0.8771, -0.4295, -0.2152), (0.8356, -0.5040, -0.2187), (0.8579, -0.4058, -0.3150), (0.8902, -0.3358, -0.3080), (0.9104, -0.3556, -0.2116), (0.8579, -0.4058, -0.3150), (0.9104, -0.3556, -0.2116), (0.8771, -0.4295, -0.2152), (0.8902, -0.3358, -0.3080), (0.9157, -0.2659, -0.3012), (0.9364, -0.2825, -0.2081), (0.8902, -0.3358, -0.3080), (0.9364, -0.2825, -0.2081), (0.9104, -0.3556, -0.2116), (0.9157, -0.2659, -0.3012), (0.9351, -0.1965, -0.2949), (0.9559, -0.2104, -0.2048), (0.9157, -0.2659, -0.3012), (0.9559, -0.2104, -0.2048), (0.9364, -0.2825, -0.2081), (0.9351, -0.1965, -0.2949), (0.9487, -0.1274, -0.2895), (0.9694, -0.1394, -0.2018), (0.9351, -0.1965, -0.2949), (0.9694, -0.1394, -0.2018), (0.9559, -0.2104, -0.2048), (0.9487, -0.1274, -0.2895), (0.9568, -0.0566, -0.2853), (0.9775, -0.0681, -0.1995), (0.9487, -0.1274, -0.2895), (0.9775, -0.0681, -0.1995), (0.9694, -0.1394, -0.2018), (0.9568, -0.0566, -0.2853), (0.9587, 0.0102, -0.2842), (0.9802, -0.0002, -0.1981), (0.9568, -0.0566, -0.2853), (0.9802, -0.0002, -0.1981), (0.9775, -0.0681, -0.1995), (0.9802, -0.0002, -0.1981), (0.9777, 0.0681, -0.1987), (0.9923, 0.0563, -0.1104), (0.9802, -0.0002, -0.1981), (0.9923, 0.0563, -0.1104), (0.9938, -0.0106, -0.1104), (0.9777, 0.0681, -0.1987), (0.9696, 0.1398, -0.2008), (0.9855, 0.1289, -0.1104), (0.9777, 0.0681, -0.1987), (0.9855, 0.1289, -0.1104), (0.9923, 0.0563, -0.1104), (0.9696, 0.1398, -0.2008), (0.9561, 0.2110, -0.2036), (0.9734, 0.2009, -0.1104), (0.9696, 0.1398, -0.2008), (0.9734, 0.2009, -0.1104), (0.9855, 0.1289, -0.1104), (0.9561, 0.2110, -0.2036), (0.9365, 0.2833, -0.2068), (0.9553, 0.2743, -0.1104), (0.9561, 0.2110, -0.2036), (0.9553, 0.2743, -0.1104), (0.9734, 0.2009, -0.1104), (0.9365, 0.2833, -0.2068), (0.9103, 0.3566, -0.2103), (0.9306, 0.3490, -0.1104), (0.9365, 0.2833, -0.2068), (0.9306, 0.3490, -0.1104), (0.9553, 0.2743, -0.1104), (0.9103, 0.3566, -0.2103), (0.8768, 0.4306, -0.2140), (0.8985, 0.4248, -0.1104), (0.9103, 0.3566, -0.2103), (0.8985, 0.4248, -0.1104), (0.9306, 0.3490, -0.1104), (0.8768, 0.4306, -0.2140), (0.8351, 0.5052, -0.2176), (0.8582, 0.5014, -0.1104), (0.8768, 0.4306, -0.2140), (0.8582, 0.5014, -0.1104), (0.8985, 0.4248, -0.1104), (0.8351, 0.5052, -0.2176), (0.7841, 0.5799, -0.2211), (0.8083, 0.5784, -0.1104), (0.8351, 0.5052, -0.2176), (0.8083, 0.5784, -0.1104), (0.8582, 0.5014, -0.1104), (0.7841, 0.5799, -0.2211), (0.7223, 0.6541, -0.2245), (0.7475, 0.6551, -0.1104), (0.7841, 0.5799, -0.2211), (0.7475, 0.6551, -0.1104), (0.8083, 0.5784, -0.1104), (0.7223, 0.6541, -0.2245), (0.6482, 0.7267, -0.2274), (0.6741, 0.7303, -0.1104), (0.7223, 0.6541, -0.2245), (0.6741, 0.7303, -0.1104), (0.7475, 0.6551, -0.1104), (0.6482, 0.7267, -0.2274), (0.5606, 0.7956, -0.2298), (0.5870, 0.8021, -0.1104), (0.6482, 0.7267, -0.2274), (0.5870, 0.8021, -0.1104), (0.6741, 0.7303, -0.1104), (0.5606, 0.7956, -0.2298), (0.4589, 0.8578, -0.2316), (0.4853, 0.8674, -0.1104), (0.5606, 0.7956, -0.2298), (0.4853, 0.8674, -0.1104), (0.5870, 0.8021, -0.1104), (0.4589, 0.8578, -0.2316), (0.3444, 0.9096, -0.2324), (0.3702, 0.9224, -0.1104), (0.4589, 0.8578, -0.2316), (0.3702, 0.9224, -0.1104), (0.4853, 0.8674, -0.1104), (0.3444, 0.9096, -0.2324), (0.2215, 0.9471, -0.2324), (0.2457, 0.9630, -0.1104), (0.3444, 0.9096, -0.2324), (0.2457, 0.9630, -0.1104), (0.3702, 0.9224, -0.1104), (0.2215, 0.9471, -0.2324), (0.0988, 0.9678, -0.2316), (0.1201, 0.9866, -0.1104), (0.2215, 0.9471, -0.2324), (0.1201, 0.9866, -0.1104), (0.2457, 0.9630, -0.1104), (0.0988, 0.9678, -0.2316), (-0.0003, 0.9730, -0.2307), (0.0128, 0.9938, -0.1104), (0.0988, 0.9678, -0.2316), (0.0128, 0.9938, -0.1104), (0.1201, 0.9866, -0.1104), (-0.0003, 0.9730, -0.2307), (-0.1055, 0.9671, -0.2313), (-0.0844, 0.9903, -0.1105), (-0.0003, 0.9730, -0.2307), (-0.0844, 0.9903, -0.1105), (0.0128, 0.9938, -0.1104), (-0.1055, 0.9671, -0.2313), (-0.2497, 0.9400, -0.2323), (-0.2259, 0.9679, -0.1104), (-0.1055, 0.9671, -0.2313), (-0.2259, 0.9679, -0.1104), (-0.0844, 0.9903, -0.1105), (-0.2497, 0.9400, -0.2323), (-0.4085, 0.8828, -0.2321), (-0.3848, 0.9164, -0.1104), (-0.2497, 0.9400, -0.2323), (-0.3848, 0.9164, -0.1104), (-0.2259, 0.9679, -0.1104), (-0.4085, 0.8828, -0.2321), (-0.5632, 0.7938, -0.2295), (-0.5431, 0.8324, -0.1104), (-0.4085, 0.8828, -0.2321), (-0.5431, 0.8324, -0.1104), (-0.3848, 0.9164, -0.1104), (-0.5632, 0.7938, -0.2295), (-0.6965, 0.6816, -0.2245), (-0.6826, 0.7224, -0.1104), (-0.5632, 0.7938, -0.2295), (-0.6826, 0.7224, -0.1104), (-0.5431, 0.8324, -0.1104), (-0.6965, 0.6816, -0.2245), (-0.7991, 0.5603, -0.2180), (-0.7922, 0.6002, -0.1104), (-0.6965, 0.6816, -0.2245), (-0.7922, 0.6002, -0.1104), (-0.6826, 0.7224, -0.1104), (-0.7991, 0.5603, -0.2180), (-0.8710, 0.4435, -0.2114), (-0.8703, 0.4800, -0.1104), (-0.7991, 0.5603, -0.2180), (-0.8703, 0.4800, -0.1104), (-0.7922, 0.6002, -0.1104), (-0.8710, 0.4435, -0.2114), (-0.9179, 0.3392, -0.2057), (-0.9220, 0.3710, -0.1104), (-0.8710, 0.4435, -0.2114), (-0.9220, 0.3710, -0.1104), (-0.8703, 0.4800, -0.1104), (-0.9179, 0.3392, -0.2057), (-0.9469, 0.2505, -0.2014), (-0.9544, 0.2773, -0.1104), (-0.9179, 0.3392, -0.2057), (-0.9544, 0.2773, -0.1104), (-0.9220, 0.3710, -0.1104), (-0.9469, 0.2505, -0.2014), (-0.9639, 0.1772, -0.1986), (-0.9737, 0.1993, -0.1104), (-0.9469, 0.2505, -0.2014), (-0.9737, 0.1993, -0.1104), (-0.9544, 0.2773, -0.1104), (-0.9639, 0.1772, -0.1986), (-0.9733, 0.1178, -0.1971), (-0.9846, 0.1356, -0.1104), (-0.9639, 0.1772, -0.1986), (-0.9846, 0.1356, -0.1104), (-0.9737, 0.1993, -0.1104), (-0.9733, 0.1178, -0.1971), (-0.9779, 0.0705, -0.1966), (-0.9903, 0.0845, -0.1104), (-0.9733, 0.1178, -0.1971), (-0.9903, 0.0845, -0.1104), (-0.9846, 0.1356, -0.1104), (-0.9779, 0.0705, -0.1966), (-0.9798, 0.0340, -0.1969), (-0.9929, 0.0445, -0.1104), (-0.9779, 0.0705, -0.1966), (-0.9929, 0.0445, -0.1104), (-0.9903, 0.0845, -0.1104), (-0.9798, 0.0340, -0.1969), (-0.9802, 0.0078, -0.1977), (-0.9938, 0.0150, -0.1104), (-0.9798, 0.0340, -0.1969), (-0.9938, 0.0150, -0.1104), (-0.9929, 0.0445, -0.1104), (-0.9802, 0.0078, -0.1977), (-0.9800, -0.0056, -0.1987), (-0.9939, -0.0025, -0.1104), (-0.9802, 0.0078, -0.1977), (-0.9939, -0.0025, -0.1104), (-0.9938, 0.0150, -0.1104), (-0.9800, -0.0056, -0.1987), (-0.9799, -0.0006, -0.1996), (-0.9939, -0.0024, -0.1104), (-0.9800, -0.0056, -0.1987), (-0.9939, -0.0024, -0.1104), (-0.9939, -0.0025, -0.1104), (-0.9799, -0.0006, -0.1996), (-0.9799, 0.0043, -0.1994), (-0.9939, 0.0049, -0.1104), (-0.9799, -0.0006, -0.1996), (-0.9939, 0.0049, -0.1104), (-0.9939, -0.0024, -0.1104), (-0.9799, 0.0043, -0.1994), (-0.9800, -0.0091, -0.1986), (-0.9939, -0.0074, -0.1104), (-0.9799, 0.0043, -0.1994), (-0.9939, -0.0074, -0.1104), (-0.9939, 0.0049, -0.1104), (-0.9800, -0.0091, -0.1986), (-0.9796, -0.0354, -0.1979), (-0.9933, -0.0335, -0.1104), (-0.9800, -0.0091, -0.1986), (-0.9933, -0.0335, -0.1104), (-0.9939, -0.0074, -0.1104), (-0.9796, -0.0354, -0.1979), (-0.9776, -0.0719, -0.1976), (-0.9914, -0.0700, -0.1104), (-0.9796, -0.0354, -0.1979), (-0.9914, -0.0700, -0.1104), (-0.9933, -0.0335, -0.1104), (-0.9776, -0.0719, -0.1976), (-0.9729, -0.1193, -0.1979), (-0.9869, -0.1173, -0.1104), (-0.9776, -0.0719, -0.1976), (-0.9869, -0.1173, -0.1104), (-0.9914, -0.0700, -0.1104), (-0.9729, -0.1193, -0.1979), (-0.9635, -0.1788, -0.1992), (-0.9781, -0.1767, -0.1104), (-0.9729, -0.1193, -0.1979), (-0.9781, -0.1767, -0.1104), (-0.9869, -0.1173, -0.1104), (-0.9635, -0.1788, -0.1992), (-0.9465, -0.2521, -0.2016), (-0.9620, -0.2497, -0.1104), (-0.9635, -0.1788, -0.1992), (-0.9620, -0.2497, -0.1104), (-0.9781, -0.1767, -0.1104), (-0.9465, -0.2521, -0.2016), (-0.9175, -0.3407, -0.2054), (-0.9346, -0.3381, -0.1104), (-0.9465, -0.2521, -0.2016), (-0.9346, -0.3381, -0.1104), (-0.9620, -0.2497, -0.1104), (-0.9175, -0.3407, -0.2054), (-0.8705, -0.4448, -0.2105), (-0.8902, -0.4421, -0.1104), (-0.9175, -0.3407, -0.2054), (-0.8902, -0.4421, -0.1104), (-0.9346, -0.3381, -0.1104), (-0.8705, -0.4448, -0.2105), (-0.7988, -0.5613, -0.2168), (-0.8216, -0.5592, -0.1104), (-0.8705, -0.4448, -0.2105), (-0.8216, -0.5592, -0.1104), (-0.8902, -0.4421, -0.1104), (-0.7988, -0.5613, -0.2168), (-0.6965, -0.6820, -0.2232), (-0.7229, -0.6821, -0.1104), (-0.7988, -0.5613, -0.2168), (-0.7229, -0.6821, -0.1104), (-0.8216, -0.5592, -0.1104), (-0.6965, -0.6820, -0.2232), (-0.5636, -0.7938, -0.2287), (-0.5928, -0.7977, -0.1104), (-0.6965, -0.6820, -0.2232), (-0.5928, -0.7977, -0.1104), (-0.7229, -0.6821, -0.1104), (-0.5636, -0.7938, -0.2287), (-0.4092, -0.8824, -0.2320), (-0.4391, -0.8916, -0.1104), (-0.5636, -0.7938, -0.2287), (-0.4391, -0.8916, -0.1104), (-0.5928, -0.7977, -0.1104), (-0.4092, -0.8824, -0.2320), (-0.2505, -0.9397, -0.2328), (-0.2781, -0.9542, -0.1104), (-0.4092, -0.8824, -0.2320), (-0.2781, -0.9542, -0.1104), (-0.4391, -0.8916, -0.1104), (-0.2505, -0.9397, -0.2328), (-0.1061, -0.9669, -0.2319), (-0.1290, -0.9855, -0.1104), (-0.2505, -0.9397, -0.2328), (-0.1290, -0.9855, -0.1104), (-0.2781, -0.9542, -0.1104), (-0.1061, -0.9669, -0.2319), (-0.0005, -0.9730, -0.2307), (-0.0135, -0.9938, -0.1104), (-0.1061, -0.9669, -0.2319), (-0.0135, -0.9938, -0.1104), (-0.1290, -0.9855, -0.1104), (-0.0005, -0.9730, -0.2307), (0.0987, -0.9679, -0.2311), (0.0796, -0.9907, -0.1104), (-0.0005, -0.9730, -0.2307), (0.0796, -0.9907, -0.1104), (-0.0135, -0.9938, -0.1104), (0.0987, -0.9679, -0.2311), (0.2219, -0.9471, -0.2320), (0.2032, -0.9729, -0.1104), (0.0987, -0.9679, -0.2311), (0.2032, -0.9729, -0.1104), (0.0796, -0.9907, -0.1104), (0.2219, -0.9471, -0.2320), (0.3452, -0.9093, -0.2322), (0.3292, -0.9378, -0.1104), (0.2219, -0.9471, -0.2320), (0.3292, -0.9378, -0.1104), (0.2032, -0.9729, -0.1104), (0.3452, -0.9093, -0.2322), (0.4600, -0.8572, -0.2317), (0.4482, -0.8871, -0.1104), (0.3452, -0.9093, -0.2322), (0.4482, -0.8871, -0.1104), (0.3292, -0.9378, -0.1104), (0.4600, -0.8572, -0.2317), (0.5617, -0.7946, -0.2302), (0.5546, -0.8248, -0.1104), (0.4600, -0.8572, -0.2317), (0.5546, -0.8248, -0.1104), (0.4482, -0.8871, -0.1104), (0.5617, -0.7946, -0.2302), (0.6493, -0.7256, -0.2280), (0.6467, -0.7547, -0.1104), (0.5617, -0.7946, -0.2302), (0.6467, -0.7547, -0.1104), (0.5546, -0.8248, -0.1104), (0.6493, -0.7256, -0.2280), (0.7232, -0.6529, -0.2252), (0.7245, -0.6804, -0.1104), (0.6493, -0.7256, -0.2280), (0.7245, -0.6804, -0.1104), (0.6467, -0.7547, -0.1104), (0.7232, -0.6529, -0.2252), (0.7848, -0.5786, -0.2221), (0.7893, -0.6040, -0.1104), (0.7232, -0.6529, -0.2252), (0.7893, -0.6040, -0.1104), (0.7245, -0.6804, -0.1104), (0.7848, -0.5786, -0.2221), (0.8356, -0.5040, -0.2187), (0.8427, -0.5270, -0.1104), (0.7848, -0.5786, -0.2221), (0.8427, -0.5270, -0.1104), (0.7893, -0.6040, -0.1104), (0.8356, -0.5040, -0.2187), (0.8771, -0.4295, -0.2152), (0.8861, -0.4502, -0.1104), (0.8356, -0.5040, -0.2187), (0.8861, -0.4502, -0.1104), (0.8427, -0.5270, -0.1104), (0.8771, -0.4295, -0.2152), (0.9104, -0.3556, -0.2116), (0.9208, -0.3742, -0.1104), (0.8771, -0.4295, -0.2152), (0.9208, -0.3742, -0.1104), (0.8861, -0.4502, -0.1104), (0.9104, -0.3556, -0.2116), (0.9364, -0.2825, -0.2081), (0.9478, -0.2991, -0.1104), (0.9104, -0.3556, -0.2116), (0.9478, -0.2991, -0.1104), (0.9208, -0.3742, -0.1104), (0.9364, -0.2825, -0.2081), (0.9559, -0.2104, -0.2048), (0.9680, -0.2252, -0.1104), (0.9364, -0.2825, -0.2081), (0.9680, -0.2252, -0.1104), (0.9478, -0.2991, -0.1104), (0.9559, -0.2104, -0.2048), (0.9694, -0.1394, -0.2018), (0.9821, -0.1527, -0.1104), (0.9559, -0.2104, -0.2048), (0.9821, -0.1527, -0.1104), (0.9680, -0.2252, -0.1104), (0.9694, -0.1394, -0.2018), (0.9775, -0.0681, -0.1995), (0.9906, -0.0807, -0.1104), (0.9694, -0.1394, -0.2018), (0.9906, -0.0807, -0.1104), (0.9821, -0.1527, -0.1104), (0.9775, -0.0681, -0.1995), (0.9802, -0.0002, -0.1981), (0.9938, -0.0106, -0.1104), (0.9775, -0.0681, -0.1995), (0.9938, -0.0106, -0.1104), (0.9906, -0.0807, -0.1104), (0.4472, 0.0048, 0.8944), (0.4458, 0.0363, 0.8944), (0.4465, 0.0253, 0.8944), (0.4472, 0.0048, 0.8944), (0.4465, 0.0253, 0.8944), (0.4472, -0.0048, 0.8944), (0.4458, 0.0363, 0.8944), (0.4419, 0.0687, 0.8944), (0.4435, 0.0580, 0.8944), (0.4458, 0.0363, 0.8944), (0.4435, 0.0580, 0.8944), (0.4465, 0.0253, 0.8944), (0.4419, 0.0687, 0.8944), (0.4356, 0.1013, 0.8944), (0.4380, 0.0904, 0.8944), (0.4419, 0.0687, 0.8944), (0.4380, 0.0904, 0.8944), (0.4435, 0.0580, 0.8944), (0.4356, 0.1013, 0.8944), (0.4265, 0.1346, 0.8944), (0.4299, 0.1235, 0.8944), (0.4356, 0.1013, 0.8944), (0.4299, 0.1235, 0.8944), (0.4380, 0.0904, 0.8944), (0.4265, 0.1346, 0.8944), (0.4143, 0.1684, 0.8944), (0.4188, 0.1571, 0.8944), (0.4265, 0.1346, 0.8944), (0.4188, 0.1571, 0.8944), (0.4299, 0.1235, 0.8944), (0.4143, 0.1684, 0.8944), (0.3987, 0.2026, 0.8944), (0.4043, 0.1912, 0.8944), (0.4143, 0.1684, 0.8944), (0.4043, 0.1912, 0.8944), (0.4188, 0.1571, 0.8944), (0.3987, 0.2026, 0.8944), (0.3792, 0.2372, 0.8944), (0.3862, 0.2256, 0.8944), (0.3987, 0.2026, 0.8944), (0.3862, 0.2256, 0.8944), (0.4043, 0.1912, 0.8944), (0.3792, 0.2372, 0.8944), (0.3552, 0.2718, 0.8944), (0.3637, 0.2603, 0.8944), (0.3792, 0.2372, 0.8944), (0.3637, 0.2603, 0.8944), (0.3862, 0.2256, 0.8944), (0.3552, 0.2718, 0.8944), (0.3260, 0.3062, 0.8944), (0.3364, 0.2948, 0.8944), (0.3552, 0.2718, 0.8944), (0.3364, 0.2948, 0.8944), (0.3637, 0.2603, 0.8944), (0.3260, 0.3062, 0.8944), (0.2910, 0.3397, 0.8944), (0.3034, 0.3286, 0.8944), (0.3260, 0.3062, 0.8944), (0.3034, 0.3286, 0.8944), (0.3364, 0.2948, 0.8944), (0.2910, 0.3397, 0.8944), (0.2496, 0.3712, 0.8944), (0.2642, 0.3609, 0.8944), (0.2910, 0.3397, 0.8944), (0.2642, 0.3609, 0.8944), (0.3034, 0.3286, 0.8944), (0.2496, 0.3712, 0.8944), (0.2017, 0.3993, 0.8944), (0.2184, 0.3903, 0.8944), (0.2496, 0.3712, 0.8944), (0.2184, 0.3903, 0.8944), (0.2642, 0.3609, 0.8944), (0.2017, 0.3993, 0.8944), (0.1482, 0.4221, 0.8944), (0.1666, 0.4151, 0.8944), (0.2017, 0.3993, 0.8944), (0.1666, 0.4151, 0.8944), (0.2184, 0.3903, 0.8944), (0.1482, 0.4221, 0.8944), (0.0915, 0.4379, 0.8944), (0.1106, 0.4334, 0.8944), (0.1482, 0.4221, 0.8944), (0.1106, 0.4334, 0.8944), (0.1666, 0.4151, 0.8944), (0.0915, 0.4379, 0.8944), (0.0358, 0.4457, 0.8945), (0.0541, 0.4440, 0.8944), (0.0915, 0.4379, 0.8944), (0.0541, 0.4440, 0.8944), (0.1106, 0.4334, 0.8944), (0.0358, 0.4457, 0.8945), (-0.0060, 0.4473, 0.8944), (0.0058, 0.4473, 0.8944), (0.0358, 0.4457, 0.8945), (0.0058, 0.4473, 0.8944), (0.0541, 0.4440, 0.8944), (-0.0060, 0.4473, 0.8944), (-0.0581, 0.4436, 0.8943), (-0.0380, 0.4455, 0.8945), (-0.0060, 0.4473, 0.8944), (-0.0380, 0.4455, 0.8945), (0.0058, 0.4473, 0.8944), (-0.0581, 0.4436, 0.8943), (-0.1252, 0.4295, 0.8943), (-0.1017, 0.4356, 0.8944), (-0.0581, 0.4436, 0.8943), (-0.1017, 0.4356, 0.8944), (-0.0380, 0.4455, 0.8945), (-0.1252, 0.4295, 0.8943), (-0.1977, 0.4013, 0.8943), (-0.1732, 0.4124, 0.8944), (-0.1252, 0.4295, 0.8943), (-0.1732, 0.4124, 0.8944), (-0.1017, 0.4356, 0.8944), (-0.1977, 0.4013, 0.8943), (-0.2668, 0.3590, 0.8944), (-0.2445, 0.3747, 0.8943), (-0.1977, 0.4013, 0.8943), (-0.2445, 0.3747, 0.8943), (-0.1732, 0.4124, 0.8944), (-0.2668, 0.3590, 0.8944), (-0.3254, 0.3069, 0.8944), (-0.3073, 0.3252, 0.8943), (-0.2668, 0.3590, 0.8944), (-0.3073, 0.3252, 0.8943), (-0.2445, 0.3747, 0.8943), (-0.3254, 0.3069, 0.8944), (-0.3698, 0.2516, 0.8944), (-0.3567, 0.2701, 0.8943), (-0.3254, 0.3069, 0.8944), (-0.3567, 0.2701, 0.8943), (-0.3073, 0.3252, 0.8943), (-0.3698, 0.2516, 0.8944), (-0.4006, 0.1989, 0.8944), (-0.3918, 0.2160, 0.8943), (-0.3698, 0.2516, 0.8944), (-0.3918, 0.2160, 0.8943), (-0.3567, 0.2701, 0.8943), (-0.4006, 0.1989, 0.8944), (-0.4206, 0.1521, 0.8944), (-0.4150, 0.1669, 0.8944), (-0.4006, 0.1989, 0.8944), (-0.4150, 0.1669, 0.8944), (-0.3918, 0.2160, 0.8943), (-0.4206, 0.1521, 0.8944), (-0.4329, 0.1124, 0.8944), (-0.4295, 0.1248, 0.8944), (-0.4206, 0.1521, 0.8944), (-0.4295, 0.1248, 0.8944), (-0.4150, 0.1669, 0.8944), (-0.4329, 0.1124, 0.8944), (-0.4401, 0.0795, 0.8944), (-0.4382, 0.0897, 0.8944), (-0.4329, 0.1124, 0.8944), (-0.4382, 0.0897, 0.8944), (-0.4295, 0.1248, 0.8944), (-0.4401, 0.0795, 0.8944), (-0.4441, 0.0528, 0.8944), (-0.4431, 0.0610, 0.8944), (-0.4401, 0.0795, 0.8944), (-0.4431, 0.0610, 0.8944), (-0.4382, 0.0897, 0.8944), (-0.4441, 0.0528, 0.8944), (-0.4461, 0.0315, 0.8944), (-0.4456, 0.0380, 0.8944), (-0.4441, 0.0528, 0.8944), (-0.4456, 0.0380, 0.8944), (-0.4431, 0.0610, 0.8944), (-0.4461, 0.0315, 0.8944), (-0.4470, 0.0151, 0.8944), (-0.4468, 0.0200, 0.8944), (-0.4461, 0.0315, 0.8944), (-0.4468, 0.0200, 0.8944), (-0.4456, 0.0380, 0.8944), (-0.4470, 0.0151, 0.8944), (-0.4472, 0.0033, 0.8944), (-0.4472, 0.0067, 0.8944), (-0.4470, 0.0151, 0.8944), (-0.4472, 0.0067, 0.8944), (-0.4468, 0.0200, 0.8944), (-0.4472, 0.0033, 0.8944), (-0.4472, -0.0022, 0.8944), (-0.4472, -0.0011, 0.8944), (-0.4472, 0.0033, 0.8944), (-0.4472, -0.0011, 0.8944), (-0.4472, 0.0067, 0.8944), (-0.4472, -0.0022, 0.8944), (-0.4472, 0.0011, 0.8944), (-0.4472, -0.0011, 0.8944), (-0.4472, -0.0022, 0.8944), (-0.4472, -0.0011, 0.8944), (-0.4472, -0.0011, 0.8944), (-0.4472, 0.0011, 0.8944), (-0.4472, 0.0011, 0.8944), (-0.4472, 0.0022, 0.8944), (-0.4472, 0.0011, 0.8944), (-0.4472, 0.0022, 0.8944), (-0.4472, -0.0011, 0.8944), (-0.4472, 0.0011, 0.8944), (-0.4472, -0.0067, 0.8944), (-0.4472, -0.0033, 0.8944), (-0.4472, 0.0011, 0.8944), (-0.4472, -0.0033, 0.8944), (-0.4472, 0.0022, 0.8944), (-0.4472, -0.0067, 0.8944), (-0.4468, -0.0200, 0.8944), (-0.4470, -0.0151, 0.8944), (-0.4472, -0.0067, 0.8944), (-0.4470, -0.0151, 0.8944), (-0.4472, -0.0033, 0.8944), (-0.4468, -0.0200, 0.8944), (-0.4456, -0.0380, 0.8944), (-0.4461, -0.0315, 0.8944), (-0.4468, -0.0200, 0.8944), (-0.4461, -0.0315, 0.8944), (-0.4470, -0.0151, 0.8944), (-0.4456, -0.0380, 0.8944), (-0.4431, -0.0610, 0.8944), (-0.4441, -0.0528, 0.8944), (-0.4456, -0.0380, 0.8944), (-0.4441, -0.0528, 0.8944), (-0.4461, -0.0315, 0.8944), (-0.4431, -0.0610, 0.8944), (-0.4382, -0.0897, 0.8944), (-0.4401, -0.0795, 0.8944), (-0.4431, -0.0610, 0.8944), (-0.4401, -0.0795, 0.8944), (-0.4441, -0.0528, 0.8944), (-0.4382, -0.0897, 0.8944), (-0.4295, -0.1248, 0.8944), (-0.4329, -0.1123, 0.8944), (-0.4382, -0.0897, 0.8944), (-0.4329, -0.1123, 0.8944), (-0.4401, -0.0795, 0.8944), (-0.4295, -0.1248, 0.8944), (-0.4150, -0.1670, 0.8944), (-0.4206, -0.1521, 0.8944), (-0.4295, -0.1248, 0.8944), (-0.4206, -0.1521, 0.8944), (-0.4329, -0.1123, 0.8944), (-0.4150, -0.1670, 0.8944), (-0.3918, -0.2160, 0.8943), (-0.4006, -0.1989, 0.8944), (-0.4150, -0.1670, 0.8944), (-0.4006, -0.1989, 0.8944), (-0.4206, -0.1521, 0.8944), (-0.3918, -0.2160, 0.8943), (-0.3566, -0.2702, 0.8943), (-0.3698, -0.2516, 0.8944), (-0.3918, -0.2160, 0.8943), (-0.3698, -0.2516, 0.8944), (-0.4006, -0.1989, 0.8944), (-0.3566, -0.2702, 0.8943), (-0.3073, -0.3252, 0.8943), (-0.3254, -0.3069, 0.8944), (-0.3566, -0.2702, 0.8943), (-0.3254, -0.3069, 0.8944), (-0.3698, -0.2516, 0.8944), (-0.3073, -0.3252, 0.8943), (-0.2445, -0.3747, 0.8943), (-0.2669, -0.3590, 0.8944), (-0.3073, -0.3252, 0.8943), (-0.2669, -0.3590, 0.8944), (-0.3254, -0.3069, 0.8944), (-0.2445, -0.3747, 0.8943), (-0.1732, -0.4124, 0.8944), (-0.1977, -0.4013, 0.8943), (-0.2445, -0.3747, 0.8943), (-0.1977, -0.4013, 0.8943), (-0.2669, -0.3590, 0.8944), (-0.1732, -0.4124, 0.8944), (-0.1017, -0.4356, 0.8944), (-0.1252, -0.4295, 0.8943), (-0.1732, -0.4124, 0.8944), (-0.1252, -0.4295, 0.8943), (-0.1977, -0.4013, 0.8943), (-0.1017, -0.4356, 0.8944), (-0.0380, -0.4455, 0.8945), (-0.0581, -0.4436, 0.8943), (-0.1017, -0.4356, 0.8944), (-0.0581, -0.4436, 0.8943), (-0.1252, -0.4295, 0.8943), (-0.0380, -0.4455, 0.8945), (0.0057, -0.4473, 0.8944), (-0.0061, -0.4473, 0.8944), (-0.0380, -0.4455, 0.8945), (-0.0061, -0.4473, 0.8944), (-0.0581, -0.4436, 0.8943), (0.0057, -0.4473, 0.8944), (0.0541, -0.4440, 0.8944), (0.0358, -0.4457, 0.8945), (0.0057, -0.4473, 0.8944), (0.0358, -0.4457, 0.8945), (-0.0061, -0.4473, 0.8944), (0.0541, -0.4440, 0.8944), (0.1106, -0.4334, 0.8944), (0.0915, -0.4379, 0.8944), (0.0541, -0.4440, 0.8944), (0.0915, -0.4379, 0.8944), (0.0358, -0.4457, 0.8945), (0.1106, -0.4334, 0.8944), (0.1666, -0.4151, 0.8944), (0.1482, -0.4221, 0.8944), (0.1106, -0.4334, 0.8944), (0.1482, -0.4221, 0.8944), (0.0915, -0.4379, 0.8944), (0.1666, -0.4151, 0.8944), (0.2184, -0.3903, 0.8944), (0.2017, -0.3993, 0.8944), (0.1666, -0.4151, 0.8944), (0.2017, -0.3993, 0.8944), (0.1482, -0.4221, 0.8944), (0.2184, -0.3903, 0.8944), (0.2641, -0.3609, 0.8944), (0.2496, -0.3712, 0.8944), (0.2184, -0.3903, 0.8944), (0.2496, -0.3712, 0.8944), (0.2017, -0.3993, 0.8944), (0.2641, -0.3609, 0.8944), (0.3034, -0.3286, 0.8944), (0.2910, -0.3397, 0.8944), (0.2641, -0.3609, 0.8944), (0.2910, -0.3397, 0.8944), (0.2496, -0.3712, 0.8944), (0.3034, -0.3286, 0.8944), (0.3364, -0.2948, 0.8944), (0.3260, -0.3062, 0.8944), (0.3034, -0.3286, 0.8944), (0.3260, -0.3062, 0.8944), (0.2910, -0.3397, 0.8944), (0.3364, -0.2948, 0.8944), (0.3637, -0.2603, 0.8944), (0.3552, -0.2718, 0.8944), (0.3364, -0.2948, 0.8944), (0.3552, -0.2718, 0.8944), (0.3260, -0.3062, 0.8944), (0.3637, -0.2603, 0.8944), (0.3862, -0.2256, 0.8944), (0.3792, -0.2372, 0.8944), (0.3637, -0.2603, 0.8944), (0.3792, -0.2372, 0.8944), (0.3552, -0.2718, 0.8944), (0.3862, -0.2256, 0.8944), (0.4043, -0.1912, 0.8944), (0.3987, -0.2026, 0.8944), (0.3862, -0.2256, 0.8944), (0.3987, -0.2026, 0.8944), (0.3792, -0.2372, 0.8944), (0.4043, -0.1912, 0.8944), (0.4188, -0.1571, 0.8944), (0.4143, -0.1684, 0.8944), (0.4043, -0.1912, 0.8944), (0.4143, -0.1684, 0.8944), (0.3987, -0.2026, 0.8944), (0.4188, -0.1571, 0.8944), (0.4299, -0.1234, 0.8944), (0.4265, -0.1346, 0.8944), (0.4188, -0.1571, 0.8944), (0.4265, -0.1346, 0.8944), (0.4143, -0.1684, 0.8944), (0.4299, -0.1234, 0.8944), (0.4380, -0.0904, 0.8944), (0.4356, -0.1014, 0.8944), (0.4299, -0.1234, 0.8944), (0.4356, -0.1014, 0.8944), (0.4265, -0.1346, 0.8944), (0.4380, -0.0904, 0.8944), (0.4435, -0.0580, 0.8944), (0.4419, -0.0687, 0.8944), (0.4380, -0.0904, 0.8944), (0.4419, -0.0687, 0.8944), (0.4356, -0.1014, 0.8944), (0.4435, -0.0580, 0.8944), (0.4465, -0.0253, 0.8944), (0.4458, -0.0363, 0.8944), (0.4435, -0.0580, 0.8944), (0.4458, -0.0363, 0.8944), (0.4419, -0.0687, 0.8944), (0.4465, -0.0253, 0.8944), (0.4472, 0.0048, 0.8944), (0.4472, -0.0048, 0.8944), (0.4465, -0.0253, 0.8944), (0.4472, -0.0048, 0.8944), (0.4458, -0.0363, 0.8944), (-0.8575, -0.0092, 0.5145), (-0.8547, -0.0697, 0.5145), (-0.9267, -0.0656, 0.3700), (-0.8575, -0.0092, 0.5145), (-0.9267, -0.0656, 0.3700), (-0.9296, -0.0010, 0.3686), (-0.8547, -0.0697, 0.5145), (-0.8473, -0.1318, 0.5145), (-0.9185, -0.1332, 0.3724), (-0.8547, -0.0697, 0.5145), (-0.9185, -0.1332, 0.3724), (-0.9267, -0.0656, 0.3700), (-0.8473, -0.1318, 0.5145), (-0.8352, -0.1943, 0.5145), (-0.9050, -0.2003, 0.3754), (-0.8473, -0.1318, 0.5145), (-0.9050, -0.2003, 0.3754), (-0.9185, -0.1332, 0.3724), (-0.8352, -0.1943, 0.5145), (-0.8178, -0.2581, 0.5145), (-0.8858, -0.2684, 0.3787), (-0.8352, -0.1943, 0.5145), (-0.8858, -0.2684, 0.3787), (-0.9050, -0.2003, 0.3754), (-0.8178, -0.2581, 0.5145), (-0.7944, -0.3228, 0.5145), (-0.8603, -0.3372, 0.3823), (-0.8178, -0.2581, 0.5145), (-0.8603, -0.3372, 0.3823), (-0.8858, -0.2684, 0.3787), (-0.7944, -0.3228, 0.5145), (-0.7645, -0.3885, 0.5145), (-0.8280, -0.4067, 0.3859), (-0.7944, -0.3228, 0.5145), (-0.8280, -0.4067, 0.3859), (-0.8603, -0.3372, 0.3823), (-0.7645, -0.3885, 0.5145), (-0.7271, -0.4547, 0.5144), (-0.7881, -0.4766, 0.3895), (-0.7645, -0.3885, 0.5145), (-0.7881, -0.4766, 0.3895), (-0.8280, -0.4067, 0.3859), (-0.7271, -0.4547, 0.5144), (-0.6810, -0.5211, 0.5144), (-0.7395, -0.5466, 0.3929), (-0.7271, -0.4547, 0.5144), (-0.7395, -0.5466, 0.3929), (-0.7881, -0.4766, 0.3895), (-0.6810, -0.5211, 0.5144), (-0.6251, -0.5870, 0.5144), (-0.6808, -0.6162, 0.3961), (-0.6810, -0.5211, 0.5144), (-0.6808, -0.6162, 0.3961), (-0.7395, -0.5466, 0.3929), (-0.6251, -0.5870, 0.5144), (-0.5580, -0.6512, 0.5144), (-0.6106, -0.6841, 0.3989), (-0.6251, -0.5870, 0.5144), (-0.6106, -0.6841, 0.3989), (-0.6808, -0.6162, 0.3961), (-0.5580, -0.6512, 0.5144), (-0.4786, -0.7116, 0.5144), (-0.5278, -0.7487, 0.4011), (-0.5580, -0.6512, 0.5144), (-0.5278, -0.7487, 0.4011), (-0.6106, -0.6841, 0.3989), (-0.4786, -0.7116, 0.5144), (-0.3868, -0.7654, 0.5144), (-0.4317, -0.8072, 0.4026), (-0.4786, -0.7116, 0.5144), (-0.4317, -0.8072, 0.4026), (-0.5278, -0.7487, 0.4011), (-0.3868, -0.7654, 0.5144), (-0.2842, -0.8091, 0.5144), (-0.3235, -0.8560, 0.4032), (-0.3868, -0.7654, 0.5144), (-0.3235, -0.8560, 0.4032), (-0.4317, -0.8072, 0.4026), (-0.2842, -0.8091, 0.5144), (-0.1755, -0.8394, 0.5144), (-0.2075, -0.8914, 0.4029), (-0.2842, -0.8091, 0.5144), (-0.2075, -0.8914, 0.4029), (-0.3235, -0.8560, 0.4032), (-0.1755, -0.8394, 0.5144), (-0.0686, -0.8547, 0.5145), (-0.0914, -0.9110, 0.4020), (-0.1755, -0.8394, 0.5144), (-0.0914, -0.9110, 0.4020), (-0.2075, -0.8914, 0.4029), (-0.0686, -0.8547, 0.5145), (0.0115, -0.8575, 0.5144), (0.0015, -0.9158, 0.4016), (-0.0686, -0.8547, 0.5145), (0.0015, -0.9158, 0.4016), (-0.0914, -0.9110, 0.4020), (0.0115, -0.8575, 0.5144), (0.1113, -0.8503, 0.5143), (0.1017, -0.9095, 0.4030), (0.0115, -0.8575, 0.5144), (0.1017, -0.9095, 0.4030), (0.0015, -0.9158, 0.4016), (0.1113, -0.8503, 0.5143), (0.2401, -0.8233, 0.5143), (0.2382, -0.8833, 0.4039), (0.1113, -0.8503, 0.5143), (0.2382, -0.8833, 0.4039), (0.1017, -0.9095, 0.4030), (0.2401, -0.8233, 0.5143), (0.3790, -0.7693, 0.5143), (0.3877, -0.8289, 0.4031), (0.2401, -0.8233, 0.5143), (0.3877, -0.8289, 0.4031), (0.2382, -0.8833, 0.4039), (0.3790, -0.7693, 0.5143), (0.5117, -0.6882, 0.5144), (0.5334, -0.7454, 0.3998), (0.3790, -0.7693, 0.5143), (0.5334, -0.7454, 0.3998), (0.3877, -0.8289, 0.4031), (0.5117, -0.6882, 0.5144), (0.6240, -0.5883, 0.5144), (0.6590, -0.6405, 0.3943), (0.5117, -0.6882, 0.5144), (0.6590, -0.6405, 0.3943), (0.5334, -0.7454, 0.3998), (0.6240, -0.5883, 0.5144), (0.7091, -0.4823, 0.5145), (0.7560, -0.5273, 0.3877), (0.6240, -0.5883, 0.5144), (0.7560, -0.5273, 0.3877), (0.6590, -0.6405, 0.3943), (0.7091, -0.4823, 0.5145), (0.7681, -0.3812, 0.5145), (0.8244, -0.4181, 0.3814), (0.7091, -0.4823, 0.5145), (0.8244, -0.4181, 0.3814), (0.7560, -0.5273, 0.3877), (0.7681, -0.3812, 0.5145), (0.8064, -0.2915, 0.5145), (0.8694, -0.3204, 0.3761), (0.7681, -0.3812, 0.5145), (0.8694, -0.3204, 0.3761), (0.8244, -0.4181, 0.3814), (0.8064, -0.2915, 0.5145), (0.8300, -0.2153, 0.5145), (0.8974, -0.2371, 0.3722), (0.8064, -0.2915, 0.5145), (0.8974, -0.2371, 0.3722), (0.8694, -0.3204, 0.3761), (0.8300, -0.2153, 0.5145), (0.8439, -0.1524, 0.5145), (0.9138, -0.1680, 0.3698), (0.8300, -0.2153, 0.5145), (0.9138, -0.1680, 0.3698), (0.8974, -0.2371, 0.3722), (0.8439, -0.1524, 0.5145), (0.8515, -0.1012, 0.5145), (0.9229, -0.1119, 0.3685), (0.8439, -0.1524, 0.5145), (0.9229, -0.1119, 0.3685), (0.9138, -0.1680, 0.3698), (0.8515, -0.1012, 0.5145), (0.8554, -0.0604, 0.5145), (0.9273, -0.0673, 0.3681), (0.8515, -0.1012, 0.5145), (0.9273, -0.0673, 0.3681), (0.9229, -0.1119, 0.3685), (0.8554, -0.0604, 0.5145), (0.8570, -0.0289, 0.5145), (0.9291, -0.0328, 0.3684), (0.8554, -0.0604, 0.5145), (0.9291, -0.0328, 0.3684), (0.9273, -0.0673, 0.3681), (0.8570, -0.0289, 0.5145), (0.8575, -0.0064, 0.5145), (0.9294, -0.0082, 0.3691), (0.8570, -0.0289, 0.5145), (0.9294, -0.0082, 0.3691), (0.9291, -0.0328, 0.3684), (0.8575, -0.0064, 0.5145), (0.8575, 0.0042, 0.5145), (0.9290, 0.0042, 0.3700), (0.8575, -0.0064, 0.5145), (0.9290, 0.0042, 0.3700), (0.9294, -0.0082, 0.3691), (0.8575, 0.0042, 0.5145), (0.8575, -0.0021, 0.5145), (0.9290, -0.0008, 0.3702), (0.8575, 0.0042, 0.5145), (0.9290, -0.0008, 0.3702), (0.9290, 0.0042, 0.3700), (0.8575, -0.0021, 0.5145), (0.8575, -0.0022, 0.5145), (0.9293, -0.0054, 0.3692), (0.8575, -0.0021, 0.5145), (0.9293, -0.0054, 0.3692), (0.9290, -0.0008, 0.3702), (0.8575, -0.0022, 0.5145), (0.8574, 0.0129, 0.5145), (0.9297, 0.0074, 0.3682), (0.8575, -0.0022, 0.5145), (0.9297, 0.0074, 0.3682), (0.9293, -0.0054, 0.3692), (0.8574, 0.0129, 0.5145), (0.8566, 0.0384, 0.5145), (0.9295, 0.0323, 0.3674), (0.8574, 0.0129, 0.5145), (0.9295, 0.0323, 0.3674), (0.9297, 0.0074, 0.3682), (0.8566, 0.0384, 0.5145), (0.8544, 0.0729, 0.5145), (0.9278, 0.0670, 0.3671), (0.8566, 0.0384, 0.5145), (0.9278, 0.0670, 0.3671), (0.9295, 0.0323, 0.3674), (0.8544, 0.0729, 0.5145), (0.8495, 0.1170, 0.5145), (0.9232, 0.1118, 0.3676), (0.8544, 0.0729, 0.5145), (0.9232, 0.1118, 0.3676), (0.9278, 0.0670, 0.3671), (0.8495, 0.1170, 0.5145), (0.8401, 0.1719, 0.5144), (0.9140, 0.1682, 0.3691), (0.8495, 0.1170, 0.5145), (0.9140, 0.1682, 0.3691), (0.9232, 0.1118, 0.3676), (0.8401, 0.1719, 0.5144), (0.8235, 0.2392, 0.5144), (0.8973, 0.2376, 0.3720), (0.8401, 0.1719, 0.5144), (0.8973, 0.2376, 0.3720), (0.9140, 0.1682, 0.3691), (0.8235, 0.2392, 0.5144), (0.7956, 0.3199, 0.5144), (0.8689, 0.3215, 0.3763), (0.8235, 0.2392, 0.5144), (0.8689, 0.3215, 0.3763), (0.8973, 0.2376, 0.3720), (0.7956, 0.3199, 0.5144), (0.7511, 0.4139, 0.5143), (0.8233, 0.4198, 0.3821), (0.7956, 0.3199, 0.5144), (0.8233, 0.4198, 0.3821), (0.8689, 0.3215, 0.3763), (0.7511, 0.4139, 0.5143), (0.6838, 0.5177, 0.5143), (0.7540, 0.5296, 0.3887), (0.7511, 0.4139, 0.5143), (0.7540, 0.5296, 0.3887), (0.8233, 0.4198, 0.3821), (0.6838, 0.5177, 0.5143), (0.5892, 0.6232, 0.5143), (0.6558, 0.6432, 0.3953), (0.6838, 0.5177, 0.5143), (0.6558, 0.6432, 0.3953), (0.7540, 0.5296, 0.3887), (0.5892, 0.6232, 0.5143), (0.4688, 0.7182, 0.5143), (0.5290, 0.7483, 0.4004), (0.5892, 0.6232, 0.5143), (0.5290, 0.7483, 0.4004), (0.6558, 0.6432, 0.3953), (0.4688, 0.7182, 0.5143), (0.3321, 0.7907, 0.5144), (0.3826, 0.8314, 0.4030), (0.4688, 0.7182, 0.5143), (0.3826, 0.8314, 0.4030), (0.5290, 0.7483, 0.4004), (0.3321, 0.7907, 0.5144), (0.1951, 0.8351, 0.5144), (0.2332, 0.8849, 0.4032), (0.3321, 0.7907, 0.5144), (0.2332, 0.8849, 0.4032), (0.3826, 0.8314, 0.4030), (0.1951, 0.8351, 0.5144), (0.0727, 0.8544, 0.5146), (0.0976, 0.9103, 0.4022), (0.1951, 0.8351, 0.5144), (0.0976, 0.9103, 0.4022), (0.2332, 0.8849, 0.4032), (0.0727, 0.8544, 0.5146), (-0.0109, 0.8575, 0.5144), (-0.0008, 0.9158, 0.4016), (0.0727, 0.8544, 0.5146), (-0.0008, 0.9158, 0.4016), (0.0976, 0.9103, 0.4022), (-0.0109, 0.8575, 0.5144), (-0.1037, 0.8513, 0.5144), (-0.0947, 0.9105, 0.4026), (-0.0109, 0.8575, 0.5144), (-0.0947, 0.9105, 0.4026), (-0.0008, 0.9158, 0.4016), (-0.1037, 0.8513, 0.5144), (-0.2122, 0.8309, 0.5144), (-0.2104, 0.8905, 0.4034), (-0.1037, 0.8513, 0.5144), (-0.2104, 0.8905, 0.4034), (-0.0947, 0.9105, 0.4026), (-0.2122, 0.8309, 0.5144), (-0.3195, 0.7958, 0.5144), (-0.3259, 0.8550, 0.4034), (-0.2122, 0.8309, 0.5144), (-0.3259, 0.8550, 0.4034), (-0.2104, 0.8905, 0.4034), (-0.3195, 0.7958, 0.5144), (-0.4188, 0.7483, 0.5144), (-0.4335, 0.8062, 0.4026), (-0.3195, 0.7958, 0.5144), (-0.4335, 0.8062, 0.4026), (-0.3259, 0.8550, 0.4034), (-0.4188, 0.7483, 0.5144), (-0.5065, 0.6920, 0.5144), (-0.5292, 0.7479, 0.4008), (-0.4188, 0.7483, 0.5144), (-0.5292, 0.7479, 0.4008), (-0.4335, 0.8062, 0.4026), (-0.5065, 0.6920, 0.5144), (-0.5817, 0.6301, 0.5144), (-0.6118, 0.6834, 0.3983), (-0.5065, 0.6920, 0.5144), (-0.6118, 0.6834, 0.3983), (-0.5292, 0.7479, 0.4008), (-0.5817, 0.6301, 0.5144), (-0.6449, 0.5652, 0.5145), (-0.6818, 0.6155, 0.3953), (-0.5817, 0.6301, 0.5144), (-0.6818, 0.6155, 0.3953), (-0.6118, 0.6834, 0.3983), (-0.6449, 0.5652, 0.5145), (-0.6974, 0.4990, 0.5145), (-0.7405, 0.5460, 0.3920), (-0.6449, 0.5652, 0.5145), (-0.7405, 0.5460, 0.3920), (-0.6818, 0.6155, 0.3953), (-0.6974, 0.4990, 0.5145), (-0.7404, 0.4326, 0.5145), (-0.7891, 0.4759, 0.3884), (-0.6974, 0.4990, 0.5145), (-0.7891, 0.4759, 0.3884), (-0.7405, 0.5460, 0.3920), (-0.7404, 0.4326, 0.5145), (-0.7752, 0.3665, 0.5145), (-0.8290, 0.4059, 0.3847), (-0.7404, 0.4326, 0.5145), (-0.8290, 0.4059, 0.3847), (-0.7891, 0.4759, 0.3884), (-0.7752, 0.3665, 0.5145), (-0.8029, 0.3012, 0.5145), (-0.8612, 0.3363, 0.3810), (-0.7752, 0.3665, 0.5145), (-0.8612, 0.3363, 0.3810), (-0.8290, 0.4059, 0.3847), (-0.8029, 0.3012, 0.5145), (-0.8242, 0.2367, 0.5145), (-0.8866, 0.2673, 0.3774), (-0.8029, 0.3012, 0.5145), (-0.8866, 0.2673, 0.3774), (-0.8612, 0.3363, 0.3810), (-0.8242, 0.2367, 0.5145), (-0.8398, 0.1734, 0.5145), (-0.9058, 0.1990, 0.3742), (-0.8242, 0.2367, 0.5145), (-0.9058, 0.1990, 0.3742), (-0.8866, 0.2673, 0.3774), (-0.8398, 0.1734, 0.5145), (-0.8503, 0.1113, 0.5144), (-0.9191, 0.1317, 0.3714), (-0.8398, 0.1734, 0.5145), (-0.9191, 0.1317, 0.3714), (-0.9058, 0.1990, 0.3742), (-0.8503, 0.1113, 0.5144), (-0.8561, 0.0486, 0.5145), (-0.9271, 0.0637, 0.3692), (-0.8503, 0.1113, 0.5144), (-0.9271, 0.0637, 0.3692), (-0.9191, 0.1317, 0.3714), (-0.8561, 0.0486, 0.5145), (-0.8575, -0.0092, 0.5145), (-0.9296, -0.0010, 0.3686), (-0.8561, 0.0486, 0.5145), (-0.9296, -0.0010, 0.3686), (-0.9271, 0.0637, 0.3692), (-0.9296, -0.0010, 0.3686), (-0.9267, -0.0656, 0.3700), (-0.9751, -0.0577, 0.2143), (-0.9296, -0.0010, 0.3686), (-0.9751, -0.0577, 0.2143), (-0.9770, 0.0104, 0.2130), (-0.9267, -0.0656, 0.3700), (-0.9185, -0.1332, 0.3724), (-0.9671, -0.1300, 0.2188), (-0.9267, -0.0656, 0.3700), (-0.9671, -0.1300, 0.2188), (-0.9751, -0.0577, 0.2143), (-0.9185, -0.1332, 0.3724), (-0.9050, -0.2003, 0.3754), (-0.9536, -0.2004, 0.2247), (-0.9185, -0.1332, 0.3724), (-0.9536, -0.2004, 0.2247), (-0.9671, -0.1300, 0.2188), (-0.9050, -0.2003, 0.3754), (-0.8858, -0.2684, 0.3787), (-0.9342, -0.2713, 0.2316), (-0.9050, -0.2003, 0.3754), (-0.9342, -0.2713, 0.2316), (-0.9536, -0.2004, 0.2247), (-0.8858, -0.2684, 0.3787), (-0.8603, -0.3372, 0.3823), (-0.9085, -0.3427, 0.2390), (-0.8858, -0.2684, 0.3787), (-0.9085, -0.3427, 0.2390), (-0.9342, -0.2713, 0.2316), (-0.8603, -0.3372, 0.3823), (-0.8280, -0.4067, 0.3859), (-0.8760, -0.4144, 0.2467), (-0.8603, -0.3372, 0.3823), (-0.8760, -0.4144, 0.2467), (-0.9085, -0.3427, 0.2390), (-0.8280, -0.4067, 0.3859), (-0.7881, -0.4766, 0.3895), (-0.8359, -0.4863, 0.2543), (-0.8280, -0.4067, 0.3859), (-0.8359, -0.4863, 0.2543), (-0.8760, -0.4144, 0.2467), (-0.7881, -0.4766, 0.3895), (-0.7395, -0.5466, 0.3929), (-0.7873, -0.5583, 0.2618), (-0.7881, -0.4766, 0.3895), (-0.7873, -0.5583, 0.2618), (-0.8359, -0.4863, 0.2543), (-0.7395, -0.5466, 0.3929), (-0.6808, -0.6162, 0.3961), (-0.7287, -0.6299, 0.2687), (-0.7395, -0.5466, 0.3929), (-0.7287, -0.6299, 0.2687), (-0.7873, -0.5583, 0.2618), (-0.6808, -0.6162, 0.3961), (-0.6106, -0.6841, 0.3989), (-0.6587, -0.7004, 0.2749), (-0.6808, -0.6162, 0.3961), (-0.6587, -0.7004, 0.2749), (-0.7287, -0.6299, 0.2687), (-0.6106, -0.6841, 0.3989), (-0.5278, -0.7487, 0.4011), (-0.5755, -0.7683, 0.2801), (-0.6106, -0.6841, 0.3989), (-0.5755, -0.7683, 0.2801), (-0.6587, -0.7004, 0.2749), (-0.5278, -0.7487, 0.4011), (-0.4317, -0.8072, 0.4026), (-0.4782, -0.8311, 0.2839), (-0.5278, -0.7487, 0.4011), (-0.4782, -0.8311, 0.2839), (-0.5755, -0.7683, 0.2801), (-0.4317, -0.8072, 0.4026), (-0.3235, -0.8560, 0.4032), (-0.3670, -0.8852, 0.2859), (-0.4317, -0.8072, 0.4026), (-0.3670, -0.8852, 0.2859), (-0.4782, -0.8311, 0.2839), (-0.3235, -0.8560, 0.4032), (-0.2075, -0.8914, 0.4029), (-0.2451, -0.9264, 0.2858), (-0.3235, -0.8560, 0.4032), (-0.2451, -0.9264, 0.2858), (-0.3670, -0.8852, 0.2859), (-0.2075, -0.8914, 0.4029), (-0.0914, -0.9110, 0.4020), (-0.1201, -0.9512, 0.2842), (-0.2075, -0.8914, 0.4029), (-0.1201, -0.9512, 0.2842), (-0.2451, -0.9264, 0.2858), (-0.0914, -0.9110, 0.4020), (0.0015, -0.9158, 0.4016), (-0.0122, -0.9592, 0.2823), (-0.0914, -0.9110, 0.4020), (-0.0122, -0.9592, 0.2823), (-0.1201, -0.9512, 0.2842), (0.0015, -0.9158, 0.4016), (0.1017, -0.9095, 0.4030), (0.0869, -0.9550, 0.2835), (0.0015, -0.9158, 0.4016), (0.0869, -0.9550, 0.2835), (-0.0122, -0.9592, 0.2823), (0.1017, -0.9095, 0.4030), (0.2382, -0.8833, 0.4039), (0.2319, -0.9299, 0.2855), (0.1017, -0.9095, 0.4030), (0.2319, -0.9299, 0.2855), (0.0869, -0.9550, 0.2835), (0.2382, -0.8833, 0.4039), (0.3877, -0.8289, 0.4031), (0.3937, -0.8741, 0.2844), (0.2382, -0.8833, 0.4039), (0.3937, -0.8741, 0.2844), (0.2319, -0.9299, 0.2855), (0.3877, -0.8289, 0.4031), (0.5334, -0.7454, 0.3998), (0.5532, -0.7853, 0.2780), (0.3877, -0.8289, 0.4031), (0.5532, -0.7853, 0.2780), (0.3937, -0.8741, 0.2844), (0.5334, -0.7454, 0.3998), (0.6590, -0.6405, 0.3943), (0.6911, -0.6719, 0.2664), (0.5334, -0.7454, 0.3998), (0.6911, -0.6719, 0.2664), (0.5532, -0.7853, 0.2780), (0.6590, -0.6405, 0.3943), (0.7560, -0.5273, 0.3877), (0.7969, -0.5490, 0.2519), (0.6590, -0.6405, 0.3943), (0.7969, -0.5490, 0.2519), (0.6911, -0.6719, 0.2664), (0.7560, -0.5273, 0.3877), (0.8244, -0.4181, 0.3814), (0.8705, -0.4310, 0.2376), (0.7560, -0.5273, 0.3877), (0.8705, -0.4310, 0.2376), (0.7969, -0.5490, 0.2519), (0.8244, -0.4181, 0.3814), (0.8694, -0.3204, 0.3761), (0.9179, -0.3264, 0.2255), (0.8244, -0.4181, 0.3814), (0.9179, -0.3264, 0.2255), (0.8705, -0.4310, 0.2376), (0.8694, -0.3204, 0.3761), (0.8974, -0.2371, 0.3722), (0.9467, -0.2381, 0.2168), (0.8694, -0.3204, 0.3761), (0.9467, -0.2381, 0.2168), (0.9179, -0.3264, 0.2255), (0.8974, -0.2371, 0.3722), (0.9138, -0.1680, 0.3698), (0.9632, -0.1659, 0.2113), (0.8974, -0.2371, 0.3722), (0.9632, -0.1659, 0.2113), (0.9467, -0.2381, 0.2168), (0.9138, -0.1680, 0.3698), (0.9229, -0.1119, 0.3685), (0.9720, -0.1081, 0.2086), (0.9138, -0.1680, 0.3698), (0.9720, -0.1081, 0.2086), (0.9632, -0.1659, 0.2113), (0.9229, -0.1119, 0.3685), (0.9273, -0.0673, 0.3681), (0.9761, -0.0628, 0.2082), (0.9229, -0.1119, 0.3685), (0.9761, -0.0628, 0.2082), (0.9720, -0.1081, 0.2086), (0.9273, -0.0673, 0.3681), (0.9291, -0.0328, 0.3684), (0.9774, -0.0283, 0.2093), (0.9273, -0.0673, 0.3681), (0.9774, -0.0283, 0.2093), (0.9761, -0.0628, 0.2082), (0.9291, -0.0328, 0.3684), (0.9294, -0.0082, 0.3691), (0.9774, -0.0042, 0.2114), (0.9291, -0.0328, 0.3684), (0.9774, -0.0042, 0.2114), (0.9774, -0.0283, 0.2093), (0.9294, -0.0082, 0.3691), (0.9290, 0.0042, 0.3700), (0.9768, 0.0078, 0.2141), (0.9294, -0.0082, 0.3691), (0.9768, 0.0078, 0.2141), (0.9774, -0.0042, 0.2114), (0.9290, 0.0042, 0.3700), (0.9290, -0.0008, 0.3702), (0.9764, 0.0024, 0.2162), (0.9290, 0.0042, 0.3700), (0.9764, 0.0024, 0.2162), (0.9768, 0.0078, 0.2141), (0.9290, -0.0008, 0.3702), (0.9293, -0.0054, 0.3692), (0.9764, -0.0102, 0.2156), (0.9290, -0.0008, 0.3702), (0.9764, -0.0102, 0.2156), (0.9764, 0.0024, 0.2162), (0.9293, -0.0054, 0.3692), (0.9297, 0.0074, 0.3682), (0.9769, -0.0032, 0.2135), (0.9293, -0.0054, 0.3692), (0.9769, -0.0032, 0.2135), (0.9764, -0.0102, 0.2156), (0.9297, 0.0074, 0.3682), (0.9295, 0.0323, 0.3674), (0.9772, 0.0175, 0.2116), (0.9297, 0.0074, 0.3682), (0.9772, 0.0175, 0.2116), (0.9769, -0.0032, 0.2135), (0.9295, 0.0323, 0.3674), (0.9278, 0.0670, 0.3671), (0.9764, 0.0485, 0.2104), (0.9295, 0.0323, 0.3674), (0.9764, 0.0485, 0.2104), (0.9772, 0.0175, 0.2116), (0.9278, 0.0670, 0.3671), (0.9232, 0.1118, 0.3676), (0.9734, 0.0901, 0.2105), (0.9278, 0.0670, 0.3671), (0.9734, 0.0901, 0.2105), (0.9764, 0.0485, 0.2104), (0.9232, 0.1118, 0.3676), (0.9140, 0.1682, 0.3691), (0.9665, 0.1436, 0.2126), (0.9232, 0.1118, 0.3676), (0.9665, 0.1436, 0.2126), (0.9734, 0.0901, 0.2105), (0.9140, 0.1682, 0.3691), (0.8973, 0.2376, 0.3720), (0.9531, 0.2109, 0.2173), (0.9140, 0.1682, 0.3691), (0.9531, 0.2109, 0.2173), (0.9665, 0.1436, 0.2126), (0.8973, 0.2376, 0.3720), (0.8689, 0.3215, 0.3763), (0.9290, 0.2938, 0.2250), (0.8973, 0.2376, 0.3720), (0.9290, 0.2938, 0.2250), (0.9531, 0.2109, 0.2173), (0.8689, 0.3215, 0.3763), (0.8233, 0.4198, 0.3821), (0.8885, 0.3936, 0.2360), (0.8689, 0.3215, 0.3763), (0.8885, 0.3936, 0.2360), (0.9290, 0.2938, 0.2250), (0.8233, 0.4198, 0.3821), (0.7540, 0.5296, 0.3887), (0.8242, 0.5084, 0.2497), (0.8233, 0.4198, 0.3821), (0.8242, 0.5084, 0.2497), (0.8885, 0.3936, 0.2360), (0.7540, 0.5296, 0.3887), (0.6558, 0.6432, 0.3953), (0.7289, 0.6316, 0.2642), (0.7540, 0.5296, 0.3887), (0.7289, 0.6316, 0.2642), (0.8242, 0.5084, 0.2497), (0.6558, 0.6432, 0.3953), (0.5290, 0.7483, 0.4004), (0.6002, 0.7505, 0.2768), (0.6558, 0.6432, 0.3953), (0.6002, 0.7505, 0.2768), (0.7289, 0.6316, 0.2642), (0.5290, 0.7483, 0.4004), (0.3826, 0.8314, 0.4030), (0.4454, 0.8489, 0.2846), (0.5290, 0.7483, 0.4004), (0.4454, 0.8489, 0.2846), (0.6002, 0.7505, 0.2768), (0.3826, 0.8314, 0.4030), (0.2332, 0.8849, 0.4032), (0.2819, 0.9156, 0.2867), (0.3826, 0.8314, 0.4030), (0.2819, 0.9156, 0.2867), (0.4454, 0.8489, 0.2846), (0.2332, 0.8849, 0.4032), (0.0976, 0.9103, 0.4022), (0.1301, 0.9497, 0.2848), (0.2332, 0.8849, 0.4032), (0.1301, 0.9497, 0.2848), (0.2819, 0.9156, 0.2867), (0.0976, 0.9103, 0.4022), (-0.0008, 0.9158, 0.4016), (0.0130, 0.9592, 0.2824), (0.0976, 0.9103, 0.4022), (0.0130, 0.9592, 0.2824), (0.1301, 0.9497, 0.2848), (-0.0008, 0.9158, 0.4016), (-0.0947, 0.9105, 0.4026), (-0.0809, 0.9557, 0.2831), (-0.0008, 0.9158, 0.4016), (-0.0809, 0.9557, 0.2831), (0.0130, 0.9592, 0.2824), (-0.0947, 0.9105, 0.4026), (-0.2104, 0.8905, 0.4034), (-0.2043, 0.9366, 0.2848), (-0.0947, 0.9105, 0.4026), (-0.2043, 0.9366, 0.2848), (-0.0809, 0.9557, 0.2831), (-0.2104, 0.8905, 0.4034), (-0.3259, 0.8550, 0.4034), (-0.3277, 0.9007, 0.2853), (-0.2104, 0.8905, 0.4034), (-0.3277, 0.9007, 0.2853), (-0.2043, 0.9366, 0.2848), (-0.3259, 0.8550, 0.4034), (-0.4335, 0.8062, 0.4026), (-0.4427, 0.8505, 0.2840), (-0.3259, 0.8550, 0.4034), (-0.4427, 0.8505, 0.2840), (-0.3277, 0.9007, 0.2853), (-0.4335, 0.8062, 0.4026), (-0.5292, 0.7479, 0.4008), (-0.5445, 0.7904, 0.2808), (-0.4335, 0.8062, 0.4026), (-0.5445, 0.7904, 0.2808), (-0.4427, 0.8505, 0.2840), (-0.5292, 0.7479, 0.4008), (-0.6118, 0.6834, 0.3983), (-0.6321, 0.7240, 0.2762), (-0.5292, 0.7479, 0.4008), (-0.6321, 0.7240, 0.2762), (-0.5445, 0.7904, 0.2808), (-0.6118, 0.6834, 0.3983), (-0.6818, 0.6155, 0.3953), (-0.7063, 0.6543, 0.2704), (-0.6118, 0.6834, 0.3983), (-0.7063, 0.6543, 0.2704), (-0.6321, 0.7240, 0.2762), (-0.6818, 0.6155, 0.3953), (-0.7405, 0.5460, 0.3920), (-0.7685, 0.5829, 0.2638), (-0.6818, 0.6155, 0.3953), (-0.7685, 0.5829, 0.2638), (-0.7063, 0.6543, 0.2704), (-0.7405, 0.5460, 0.3920), (-0.7891, 0.4759, 0.3884), (-0.8204, 0.5110, 0.2567), (-0.7405, 0.5460, 0.3920), (-0.8204, 0.5110, 0.2567), (-0.7685, 0.5829, 0.2638), (-0.7891, 0.4759, 0.3884), (-0.8290, 0.4059, 0.3847), (-0.8633, 0.4389, 0.2493), (-0.7891, 0.4759, 0.3884), (-0.8633, 0.4389, 0.2493), (-0.8204, 0.5110, 0.2567), (-0.8290, 0.4059, 0.3847), (-0.8612, 0.3363, 0.3810), (-0.8983, 0.3670, 0.2417), (-0.8290, 0.4059, 0.3847), (-0.8983, 0.3670, 0.2417), (-0.8633, 0.4389, 0.2493), (-0.8612, 0.3363, 0.3810), (-0.8866, 0.2673, 0.3774), (-0.9262, 0.2954, 0.2343), (-0.8612, 0.3363, 0.3810), (-0.9262, 0.2954, 0.2343), (-0.8983, 0.3670, 0.2417), (-0.8866, 0.2673, 0.3774), (-0.9058, 0.1990, 0.3742), (-0.9477, 0.2241, 0.2273), (-0.8866, 0.2673, 0.3774), (-0.9477, 0.2241, 0.2273), (-0.9262, 0.2954, 0.2343), (-0.9058, 0.1990, 0.3742), (-0.9191, 0.1317, 0.3714), (-0.9631, 0.1533, 0.2211), (-0.9058, 0.1990, 0.3742), (-0.9631, 0.1533, 0.2211), (-0.9477, 0.2241, 0.2273), (-0.9191, 0.1317, 0.3714), (-0.9271, 0.0637, 0.3692), (-0.9730, 0.0817, 0.2160), (-0.9191, 0.1317, 0.3714), (-0.9730, 0.0817, 0.2160), (-0.9631, 0.1533, 0.2211), (-0.9271, 0.0637, 0.3692), (-0.9296, -0.0010, 0.3686), (-0.9770, 0.0104, 0.2130), (-0.9271, 0.0637, 0.3692), (-0.9770, 0.0104, 0.2130), (-0.9730, 0.0817, 0.2160), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, -1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000), (0.0000, 0.0000, 1.0000)] (
+                interpolation = "faceVarying"
+            )
+            texCoord2f[] primvars:st = [(0.0000, 0.0000), (0.1225, 0.0000), (0.1426, 0.3320), (0.0000, 0.0000), (0.1426, 0.3320), (0.0000, 0.3320), (0.1225, 0.0000), (0.2079, 0.0000), (0.2424, 0.3320), (0.1225, 0.0000), (0.2424, 0.3320), (0.1426, 0.3320), (0.2079, 0.0000), (0.2823, 0.0000), (0.3291, 0.3320), (0.2079, 0.0000), (0.3291, 0.3320), (0.2424, 0.3320), (0.2823, 0.0000), (0.3492, 0.0000), (0.4071, 0.3320), (0.2823, 0.0000), (0.4071, 0.3320), (0.3291, 0.3320), (0.3492, 0.0000), (0.4099, 0.0000), (0.4781, 0.3320), (0.3492, 0.0000), (0.4781, 0.3320), (0.4071, 0.3320), (0.4099, 0.0000), (0.4651, 0.0000), (0.5426, 0.3320), (0.4099, 0.0000), (0.5426, 0.3320), (0.4781, 0.3320), (0.4651, 0.0000), (0.5151, 0.0000), (0.6010, 0.3320), (0.4651, 0.0000), (0.6010, 0.3320), (0.5426, 0.3320), (0.5151, 0.0000), (0.5599, 0.0000), (0.6535, 0.3320), (0.5151, 0.0000), (0.6535, 0.3320), (0.6010, 0.3320), (0.5599, 0.0000), (0.5997, 0.0000), (0.7000, 0.3320), (0.5599, 0.0000), (0.7000, 0.3320), (0.6535, 0.3320), (0.5997, 0.0000), (0.6343, 0.0000), (0.7405, 0.3320), (0.2017, 0.0000), (0.2301, 0.3320), (0.2709, 0.3320), (0.1677, 0.0000), (0.1319, 0.0000), (0.1868, 0.3320), (0.1677, 0.0000), (0.1868, 0.3320), (0.2301, 0.3320), (0.1319, 0.0000), (0.0942, 0.0000), (0.1408, 0.3320), (0.1319, 0.0000), (0.1408, 0.3320), (0.1868, 0.3320), (0.0942, 0.0000), (0.0545, 0.0000), (0.0919, 0.3320), (0.0942, 0.0000), (0.0919, 0.3320), (0.1408, 0.3320), (0.0545, 0.0000), (0.0123, 0.0000), (0.0395, 0.3320), (0.0545, 0.0000), (0.0395, 0.3320), (0.0919, 0.3320), (0.0123, 0.0000), (-0.0344, 0.0000), (-0.0188, 0.3320), (0.0123, 0.0000), (-0.0188, 0.3320), (0.0395, 0.3320), (-0.0344, 0.0000), (-0.0988, 0.0000), (-0.0995, 0.3320), (-0.0344, 0.0000), (-0.0995, 0.3320), (-0.0188, 0.3320), (-0.0988, 0.0000), (-0.1617, 0.0000), (-0.1787, 0.3320), (-0.0988, 0.0000), (-0.1787, 0.3320), (-0.0995, 0.3320), (-0.1617, 0.0000), (-0.2039, 0.0000), (-0.2326, 0.3320), (-0.1617, 0.0000), (-0.2326, 0.3320), (-0.1787, 0.3320), (-0.2039, 0.0000), (-0.2390, 0.0000), (-0.2780, 0.3320), (-0.2039, 0.0000), (-0.2780, 0.3320), (-0.2326, 0.3320), (-0.2390, 0.0000), (-0.2688, 0.0000), (-0.3172, 0.3320), (-0.2390, 0.0000), (-0.3172, 0.3320), (-0.2780, 0.3320), (-0.2688, 0.0000), (-0.2943, 0.0000), (-0.3511, 0.3320), (-0.2688, 0.0000), (-0.3511, 0.3320), (-0.3172, 0.3320), (0.6637, 0.0000), (0.6343, 0.0000), (0.7398, 0.3320), (0.6637, 0.0000), (0.7398, 0.3320), (0.7745, 0.3320), (0.6343, 0.0000), (0.5997, 0.0000), (0.6991, 0.3320), (0.6343, 0.0000), (0.6991, 0.3320), (0.7398, 0.3320), (0.5997, 0.0000), (0.5599, 0.0000), (0.6525, 0.3320), (0.5997, 0.0000), (0.6525, 0.3320), (0.6991, 0.3320), (0.5599, 0.0000), (0.5151, 0.0000), (0.6000, 0.3320), (0.5599, 0.0000), (0.6000, 0.3320), (0.6525, 0.3320), (0.5151, 0.0000), (0.4651, 0.0000), (0.5416, 0.3320), (0.5151, 0.0000), (0.5416, 0.3320), (0.6000, 0.3320), (0.4651, 0.0000), (0.4099, 0.0000), (0.4771, 0.3320), (0.4651, 0.0000), (0.4771, 0.3320), (0.5416, 0.3320), (0.4099, 0.0000), (0.3492, 0.0000), (0.4063, 0.3320), (0.4099, 0.0000), (0.4063, 0.3320), (0.4771, 0.3320), (0.3492, 0.0000), (0.2823, 0.0000), (0.3284, 0.3320), (0.3492, 0.0000), (0.3284, 0.3320), (0.4063, 0.3320), (0.2823, 0.0000), (0.2079, 0.0000), (0.2418, 0.3320), (0.2823, 0.0000), (0.2418, 0.3320), (0.3284, 0.3320), (0.2079, 0.0000), (0.1225, 0.0000), (0.1424, 0.3320), (0.2079, 0.0000), (0.1424, 0.3320), (0.2418, 0.3320), (0.1225, 0.0000), (0.0000, 0.0000), (0.0000, 0.3320), (0.1225, 0.0000), (0.0000, 0.3320), (0.1424, 0.3320), (0.0000, 0.0000), (-0.1225, 0.0000), (-0.1424, 0.3320), (0.0000, 0.0000), (-0.1424, 0.3320), (0.0000, 0.3320), (-0.1225, 0.0000), (-0.2079, 0.0000), (-0.2418, 0.3320), (-0.1225, 0.0000), (-0.2418, 0.3320), (-0.1424, 0.3320), (-0.2079, 0.0000), (-0.2823, 0.0000), (-0.3284, 0.3320), (-0.2079, 0.0000), (-0.3284, 0.3320), (-0.2418, 0.3320), (-0.2823, 0.0000), (-0.3492, 0.0000), (-0.4063, 0.3320), (-0.2823, 0.0000), (-0.4063, 0.3320), (-0.3284, 0.3320), (-0.3492, 0.0000), (-0.4099, 0.0000), (-0.4771, 0.3320), (-0.3492, 0.0000), (-0.4771, 0.3320), (-0.4063, 0.3320), (-0.4099, 0.0000), (-0.4651, 0.0000), (-0.5416, 0.3320), (-0.4099, 0.0000), (-0.5416, 0.3320), (-0.4771, 0.3320), (-0.4651, 0.0000), (-0.5151, 0.0000), (-0.6000, 0.3320), (-0.4651, 0.0000), (-0.6000, 0.3320), (-0.5416, 0.3320), (-0.5151, 0.0000), (-0.5599, 0.0000), (-0.6525, 0.3320), (-0.5151, 0.0000), (-0.6525, 0.3320), (-0.6000, 0.3320), (-0.5599, 0.0000), (-0.5997, 0.0000), (-0.6991, 0.3320), (-0.5599, 0.0000), (-0.6991, 0.3320), (-0.6525, 0.3320), (-0.5997, 0.0000), (-0.6343, 0.0000), (-0.7398, 0.3320), (-0.5997, 0.0000), (-0.7398, 0.3320), (-0.6991, 0.3320), (-0.6343, 0.0000), (-0.6637, 0.0000), (-0.7745, 0.3320), (-0.6343, 0.0000), (-0.7745, 0.3320), (-0.7398, 0.3320), (-0.2943, 0.0000), (-0.2688, 0.0000), (-0.3172, 0.3320), (-0.2943, 0.0000), (-0.3172, 0.3320), (-0.3511, 0.3320), (-0.2688, 0.0000), (-0.2390, 0.0000), (-0.2780, 0.3320), (-0.2688, 0.0000), (-0.2780, 0.3320), (-0.3172, 0.3320), (-0.2390, 0.0000), (-0.2039, 0.0000), (-0.2326, 0.3320), (-0.2390, 0.0000), (-0.2326, 0.3320), (-0.2780, 0.3320), (-0.2039, 0.0000), (-0.1617, 0.0000), (-0.1787, 0.3320), (-0.2039, 0.0000), (-0.1787, 0.3320), (-0.2326, 0.3320), (-0.1617, 0.0000), (-0.0988, 0.0000), (-0.0995, 0.3320), (-0.1617, 0.0000), (-0.0995, 0.3320), (-0.1787, 0.3320), (-0.0988, 0.0000), (-0.0344, 0.0000), (-0.0188, 0.3320), (-0.0988, 0.0000), (-0.0188, 0.3320), (-0.0995, 0.3320), (-0.0344, 0.0000), (0.0123, 0.0000), (0.0395, 0.3320), (-0.0344, 0.0000), (0.0395, 0.3320), (-0.0188, 0.3320), (0.0123, 0.0000), (0.0545, 0.0000), (0.0919, 0.3320), (0.0123, 0.0000), (0.0919, 0.3320), (0.0395, 0.3320), (0.0545, 0.0000), (0.0942, 0.0000), (0.1408, 0.3320), (0.0545, 0.0000), (0.1408, 0.3320), (0.0919, 0.3320), (0.0942, 0.0000), (0.1319, 0.0000), (0.1868, 0.3320), (0.0942, 0.0000), (0.1868, 0.3320), (0.1408, 0.3320), (0.1319, 0.0000), (0.1677, 0.0000), (0.2301, 0.3320), (0.1319, 0.0000), (0.2301, 0.3320), (0.1868, 0.3320), (-0.6343, 0.0000), (-0.5997, 0.0000), (-0.7000, 0.3320), (0.1677, 0.0000), (0.2709, 0.3320), (0.2301, 0.3320), (-0.5997, 0.0000), (-0.5599, 0.0000), (-0.6535, 0.3320), (-0.5997, 0.0000), (-0.6535, 0.3320), (-0.7000, 0.3320), (-0.5599, 0.0000), (-0.5151, 0.0000), (-0.6010, 0.3320), (-0.5599, 0.0000), (-0.6010, 0.3320), (-0.6535, 0.3320), (-0.5151, 0.0000), (-0.4651, 0.0000), (-0.5426, 0.3320), (-0.5151, 0.0000), (-0.5426, 0.3320), (-0.6010, 0.3320), (-0.4651, 0.0000), (-0.4099, 0.0000), (-0.4781, 0.3320), (-0.4651, 0.0000), (-0.4781, 0.3320), (-0.5426, 0.3320), (-0.4099, 0.0000), (-0.3492, 0.0000), (-0.4071, 0.3320), (-0.4099, 0.0000), (-0.4071, 0.3320), (-0.4781, 0.3320), (-0.3492, 0.0000), (-0.2823, 0.0000), (-0.3291, 0.3320), (-0.3492, 0.0000), (-0.3291, 0.3320), (-0.4071, 0.3320), (-0.2823, 0.0000), (-0.2079, 0.0000), (-0.2424, 0.3320), (-0.2823, 0.0000), (-0.2424, 0.3320), (-0.3291, 0.3320), (-0.2079, 0.0000), (-0.1225, 0.0000), (-0.1426, 0.3320), (-0.2079, 0.0000), (-0.1426, 0.3320), (-0.2424, 0.3320), (-0.1225, 0.0000), (0.0000, 0.0000), (0.0000, 0.3320), (-0.1225, 0.0000), (0.0000, 0.3320), (-0.1426, 0.3320), (0.0000, 0.3320), (0.1426, 0.3320), (0.1428, 0.3500), (0.0000, 0.3320), (0.1428, 0.3500), (0.0000, 0.3500), (0.1426, 0.3320), (0.2424, 0.3320), (0.2426, 0.3500), (0.1426, 0.3320), (0.2426, 0.3500), (0.1428, 0.3500), (0.2424, 0.3320), (0.3291, 0.3320), (0.3295, 0.3500), (0.2424, 0.3320), (0.3295, 0.3500), (0.2426, 0.3500), (0.3291, 0.3320), (0.4071, 0.3320), (0.4077, 0.3500), (0.3291, 0.3320), (0.4077, 0.3500), (0.3295, 0.3500), (0.4071, 0.3320), (0.4781, 0.3320), (0.4788, 0.3500), (0.4071, 0.3320), (0.4788, 0.3500), (0.4077, 0.3500), (0.4781, 0.3320), (0.5426, 0.3320), (0.5435, 0.3500), (0.4781, 0.3320), (0.5435, 0.3500), (0.4788, 0.3500), (0.5426, 0.3320), (0.6010, 0.3320), (0.6020, 0.3500), (0.5426, 0.3320), (0.6020, 0.3500), (0.5435, 0.3500), (0.6010, 0.3320), (0.6535, 0.3320), (0.6546, 0.3500), (0.6010, 0.3320), (0.6546, 0.3500), (0.6020, 0.3500), (0.6535, 0.3320), (0.7000, 0.3320), (0.7013, 0.3500), (0.6535, 0.3320), (0.7013, 0.3500), (0.6546, 0.3500), (0.2709, 0.3320), (0.2301, 0.3320), (0.2315, 0.3500), (0.2709, 0.3320), (0.2315, 0.3500), (0.2724, 0.3500), (0.2301, 0.3320), (0.1868, 0.3320), (0.1879, 0.3500), (0.2301, 0.3320), (0.1879, 0.3500), (0.2315, 0.3500), (0.1868, 0.3320), (0.1408, 0.3320), (0.1417, 0.3500), (0.1868, 0.3320), (0.1417, 0.3500), (0.1879, 0.3500), (0.1408, 0.3320), (0.0919, 0.3320), (0.0926, 0.3500), (0.1408, 0.3320), (0.0926, 0.3500), (0.1417, 0.3500), (0.0919, 0.3320), (0.0395, 0.3320), (0.0399, 0.3500), (0.0919, 0.3320), (0.0399, 0.3500), (0.0926, 0.3500), (0.0395, 0.3320), (-0.0188, 0.3320), (-0.0186, 0.3500), (0.0395, 0.3320), (-0.0186, 0.3500), (0.0399, 0.3500), (-0.0188, 0.3320), (-0.0995, 0.3320), (-0.0995, 0.3500), (-0.0188, 0.3320), (-0.0995, 0.3500), (-0.0186, 0.3500), (-0.0995, 0.3320), (-0.1787, 0.3320), (-0.1789, 0.3500), (-0.0995, 0.3320), (-0.1789, 0.3500), (-0.0995, 0.3500), (-0.1787, 0.3320), (-0.2326, 0.3320), (-0.2331, 0.3500), (-0.1787, 0.3320), (-0.2331, 0.3500), (-0.1789, 0.3500), (-0.2326, 0.3320), (-0.2780, 0.3320), (-0.2788, 0.3500), (-0.2326, 0.3320), (-0.2788, 0.3500), (-0.2331, 0.3500), (-0.2780, 0.3320), (-0.3172, 0.3320), (-0.3183, 0.3500), (-0.2780, 0.3320), (-0.3183, 0.3500), (-0.2788, 0.3500), (-0.3172, 0.3320), (-0.3511, 0.3320), (-0.3525, 0.3500), (-0.3172, 0.3320), (-0.3525, 0.3500), (-0.3183, 0.3500), (0.7745, 0.3320), (0.7398, 0.3320), (0.7410, 0.3500), (0.7745, 0.3320), (0.7410, 0.3500), (0.7759, 0.3500), (0.7398, 0.3320), (0.6991, 0.3320), (0.7001, 0.3500), (0.7398, 0.3320), (0.7001, 0.3500), (0.7410, 0.3500), (0.6991, 0.3320), (0.6525, 0.3320), (0.6532, 0.3500), (0.6991, 0.3320), (0.6532, 0.3500), (0.7001, 0.3500), (0.6525, 0.3320), (0.6000, 0.3320), (0.6005, 0.3500), (0.6525, 0.3320), (0.6005, 0.3500), (0.6532, 0.3500), (0.6000, 0.3320), (0.5416, 0.3320), (0.5420, 0.3500), (0.6000, 0.3320), (0.5420, 0.3500), (0.6005, 0.3500), (0.5416, 0.3320), (0.4771, 0.3320), (0.4774, 0.3500), (0.5416, 0.3320), (0.4774, 0.3500), (0.5420, 0.3500), (0.4771, 0.3320), (0.4063, 0.3320), (0.4065, 0.3500), (0.4771, 0.3320), (0.4065, 0.3500), (0.4774, 0.3500), (0.4063, 0.3320), (0.3284, 0.3320), (0.3285, 0.3500), (0.4063, 0.3320), (0.3285, 0.3500), (0.4065, 0.3500), (0.3284, 0.3320), (0.2418, 0.3320), (0.2419, 0.3500), (0.3284, 0.3320), (0.2419, 0.3500), (0.3285, 0.3500), (0.2418, 0.3320), (0.1424, 0.3320), (0.1424, 0.3500), (0.2418, 0.3320), (0.1424, 0.3500), (0.2419, 0.3500), (0.1424, 0.3320), (0.0000, 0.3320), (0.0000, 0.3500), (0.1424, 0.3320), (0.0000, 0.3500), (0.1424, 0.3500), (0.0000, 0.3320), (-0.1424, 0.3320), (-0.1424, 0.3500), (0.0000, 0.3320), (-0.1424, 0.3500), (0.0000, 0.3500), (-0.1424, 0.3320), (-0.2418, 0.3320), (-0.2419, 0.3500), (-0.1424, 0.3320), (-0.2419, 0.3500), (-0.1424, 0.3500), (-0.2418, 0.3320), (-0.3284, 0.3320), (-0.3285, 0.3500), (-0.2418, 0.3320), (-0.3285, 0.3500), (-0.2419, 0.3500), (-0.3284, 0.3320), (-0.4063, 0.3320), (-0.4065, 0.3500), (-0.3284, 0.3320), (-0.4065, 0.3500), (-0.3285, 0.3500), (-0.4063, 0.3320), (-0.4771, 0.3320), (-0.4774, 0.3500), (-0.4063, 0.3320), (-0.4774, 0.3500), (-0.4065, 0.3500), (-0.4771, 0.3320), (-0.5416, 0.3320), (-0.5420, 0.3500), (-0.4771, 0.3320), (-0.5420, 0.3500), (-0.4774, 0.3500), (-0.5416, 0.3320), (-0.6000, 0.3320), (-0.6005, 0.3500), (-0.5416, 0.3320), (-0.6005, 0.3500), (-0.5420, 0.3500), (-0.6000, 0.3320), (-0.6525, 0.3320), (-0.6532, 0.3500), (-0.6000, 0.3320), (-0.6532, 0.3500), (-0.6005, 0.3500), (-0.6525, 0.3320), (-0.6991, 0.3320), (-0.7001, 0.3500), (-0.6525, 0.3320), (-0.7001, 0.3500), (-0.6532, 0.3500), (-0.6991, 0.3320), (-0.7398, 0.3320), (-0.7410, 0.3500), (-0.6991, 0.3320), (-0.7410, 0.3500), (-0.7001, 0.3500), (-0.7398, 0.3320), (-0.7745, 0.3320), (-0.7759, 0.3500), (-0.7398, 0.3320), (-0.7759, 0.3500), (-0.7410, 0.3500), (-0.3511, 0.3320), (-0.3172, 0.3320), (-0.3183, 0.3500), (-0.3511, 0.3320), (-0.3183, 0.3500), (-0.3525, 0.3500), (-0.3172, 0.3320), (-0.2780, 0.3320), (-0.2788, 0.3500), (-0.3172, 0.3320), (-0.2788, 0.3500), (-0.3183, 0.3500), (-0.2780, 0.3320), (-0.2326, 0.3320), (-0.2331, 0.3500), (-0.2780, 0.3320), (-0.2331, 0.3500), (-0.2788, 0.3500), (-0.2326, 0.3320), (-0.1787, 0.3320), (-0.1789, 0.3500), (-0.2326, 0.3320), (-0.1789, 0.3500), (-0.2331, 0.3500), (-0.1787, 0.3320), (-0.0995, 0.3320), (-0.0995, 0.3500), (-0.1787, 0.3320), (-0.0995, 0.3500), (-0.1789, 0.3500), (-0.0995, 0.3320), (-0.0188, 0.3320), (-0.0186, 0.3500), (-0.0995, 0.3320), (-0.0186, 0.3500), (-0.0995, 0.3500), (-0.0188, 0.3320), (0.0395, 0.3320), (0.0399, 0.3500), (-0.0188, 0.3320), (0.0399, 0.3500), (-0.0186, 0.3500), (0.0395, 0.3320), (0.0919, 0.3320), (0.0926, 0.3500), (0.0395, 0.3320), (0.0926, 0.3500), (0.0399, 0.3500), (0.0919, 0.3320), (0.1408, 0.3320), (0.1417, 0.3500), (0.0919, 0.3320), (0.1417, 0.3500), (0.0926, 0.3500), (0.1408, 0.3320), (0.1868, 0.3320), (0.1879, 0.3500), (0.1408, 0.3320), (0.1879, 0.3500), (0.1417, 0.3500), (0.1868, 0.3320), (0.2301, 0.3320), (0.2315, 0.3500), (0.1868, 0.3320), (0.2315, 0.3500), (0.1879, 0.3500), (0.2301, 0.3320), (0.2709, 0.3320), (0.2724, 0.3500), (0.2301, 0.3320), (0.2724, 0.3500), (0.2315, 0.3500), (-0.7000, 0.3320), (-0.6535, 0.3320), (-0.6546, 0.3500), (-0.7000, 0.3320), (-0.6546, 0.3500), (-0.7013, 0.3500), (-0.6535, 0.3320), (-0.6010, 0.3320), (-0.6020, 0.3500), (-0.6535, 0.3320), (-0.6020, 0.3500), (-0.6546, 0.3500), (-0.6010, 0.3320), (-0.5426, 0.3320), (-0.5435, 0.3500), (-0.6010, 0.3320), (-0.5435, 0.3500), (-0.6020, 0.3500), (-0.5426, 0.3320), (-0.4781, 0.3320), (-0.4788, 0.3500), (-0.5426, 0.3320), (-0.4788, 0.3500), (-0.5435, 0.3500), (-0.4781, 0.3320), (-0.4071, 0.3320), (-0.4077, 0.3500), (-0.4781, 0.3320), (-0.4077, 0.3500), (-0.4788, 0.3500), (-0.4071, 0.3320), (-0.3291, 0.3320), (-0.3295, 0.3500), (-0.4071, 0.3320), (-0.3295, 0.3500), (-0.4077, 0.3500), (-0.3291, 0.3320), (-0.2424, 0.3320), (-0.2426, 0.3500), (-0.3291, 0.3320), (-0.2426, 0.3500), (-0.3295, 0.3500), (-0.2424, 0.3320), (-0.1426, 0.3320), (-0.1428, 0.3500), (-0.2424, 0.3320), (-0.1428, 0.3500), (-0.2426, 0.3500), (-0.1426, 0.3320), (0.0000, 0.3320), (0.0000, 0.3500), (-0.1426, 0.3320), (0.0000, 0.3500), (-0.1428, 0.3500), (0.4815, 0.0000), (0.4769, 0.1428), (0.4530, 0.1413), (0.4815, 0.0000), (0.4530, 0.1413), (0.4575, 0.0000), (0.4769, 0.1428), (0.4663, 0.2426), (0.4426, 0.2393), (0.4769, 0.1428), (0.4426, 0.2393), (0.4530, 0.1413), (0.4663, 0.2426), (0.4507, 0.3295), (0.4272, 0.3244), (0.4663, 0.2426), (0.4272, 0.3244), (0.4426, 0.2393), (0.4507, 0.3295), (0.4304, 0.4077), (0.4074, 0.4008), (0.4507, 0.3295), (0.4074, 0.4008), (0.4272, 0.3244), (0.4304, 0.4077), (0.4059, 0.4788), (0.3835, 0.4701), (0.4304, 0.4077), (0.3835, 0.4701), (0.4074, 0.4008), (0.4059, 0.4788), (0.3776, 0.5435), (0.3560, 0.5329), (0.4059, 0.4788), (0.3560, 0.5329), (0.3835, 0.4701), (0.3776, 0.5435), (0.3457, 0.6020), (0.3251, 0.5897), (0.3776, 0.5435), (0.3251, 0.5897), (0.3560, 0.5329), (0.3457, 0.6020), (0.3105, 0.6546), (0.2912, 0.6404), (0.3457, 0.6020), (0.2912, 0.6404), (0.3251, 0.5897), (0.3105, 0.6546), (0.2724, 0.7013), (0.2546, 0.6852), (0.3105, 0.6546), (0.2546, 0.6852), (0.2912, 0.6404), (0.2724, 0.7013), (0.2315, 0.7420), (0.2155, 0.7241), (0.2724, 0.7013), (0.2155, 0.7241), (0.2546, 0.6852), (0.2315, 0.7420), (0.1879, 0.7766), (0.1741, 0.7570), (0.2315, 0.7420), (0.1741, 0.7570), (0.2155, 0.7241), (0.1879, 0.7766), (0.1417, 0.8051), (0.1304, 0.7839), (0.1879, 0.7766), (0.1304, 0.7839), (0.1741, 0.7570), (0.1417, 0.8051), (0.0926, 0.8273), (0.0842, 0.8049), (0.1417, 0.8051), (0.0842, 0.8049), (0.1304, 0.7839), (0.0926, 0.8273), (0.0399, 0.8433), (0.0346, 0.8199), (0.0926, 0.8273), (0.0346, 0.8199), (0.0842, 0.8049), (0.0399, 0.8433), (-0.0186, 0.8528), (-0.0208, 0.8289), (0.0399, 0.8433), (-0.0208, 0.8289), (0.0346, 0.8199), (-0.0186, 0.8528), (-0.0995, 0.8560), (-0.0995, 0.8320), (-0.0186, 0.8528), (-0.0995, 0.8320), (-0.0208, 0.8289), (-0.0995, 0.8560), (-0.1789, 0.8528), (-0.1766, 0.8289), (-0.0995, 0.8560), (-0.1766, 0.8289), (-0.0995, 0.8320), (-0.1789, 0.8528), (-0.2331, 0.8432), (-0.2272, 0.8200), (-0.1789, 0.8528), (-0.2272, 0.8200), (-0.1766, 0.8289), (-0.2331, 0.8432), (-0.2788, 0.8272), (-0.2689, 0.8053), (-0.2331, 0.8432), (-0.2689, 0.8053), (-0.2272, 0.8200), (-0.2788, 0.8272), (-0.3183, 0.8047), (-0.3046, 0.7850), (-0.2788, 0.8272), (-0.3046, 0.7850), (-0.2689, 0.8053), (-0.3183, 0.8047), (-0.3525, 0.7759), (-0.3355, 0.7590), (-0.3183, 0.8047), (-0.3355, 0.7590), (-0.3046, 0.7850), (-0.3525, 0.7759), (-0.3819, 0.7410), (-0.3623, 0.7270), (-0.3525, 0.7759), (-0.3623, 0.7270), (-0.3355, 0.7590), (-0.3819, 0.7410), (-0.4068, 0.7001), (-0.3855, 0.6890), (-0.3819, 0.7410), (-0.3855, 0.6890), (-0.3623, 0.7270), (-0.4068, 0.7001), (-0.4276, 0.6532), (-0.4052, 0.6447), (-0.4068, 0.7001), (-0.4052, 0.6447), (-0.3855, 0.6890), (-0.4276, 0.6532), (-0.4446, 0.6005), (-0.4214, 0.5942), (-0.4276, 0.6532), (-0.4214, 0.5942), (-0.4052, 0.6447), (-0.4446, 0.6005), (-0.4580, 0.5420), (-0.4344, 0.5375), (-0.4446, 0.6005), (-0.4344, 0.5375), (-0.4214, 0.5942), (-0.4580, 0.5420), (-0.4681, 0.4774), (-0.4443, 0.4744), (-0.4580, 0.5420), (-0.4443, 0.4744), (-0.4344, 0.5375), (-0.4681, 0.4774), (-0.4752, 0.4065), (-0.4513, 0.4046), (-0.4681, 0.4774), (-0.4513, 0.4046), (-0.4443, 0.4744), (-0.4752, 0.4065), (-0.4796, 0.3285), (-0.4556, 0.3276), (-0.4752, 0.4065), (-0.4556, 0.3276), (-0.4513, 0.4046), (-0.4796, 0.3285), (-0.4815, 0.2419), (-0.4575, 0.2416), (-0.4796, 0.3285), (-0.4575, 0.2416), (-0.4556, 0.3276), (-0.4815, 0.2419), (-0.4815, 0.1424), (-0.4575, 0.1425), (-0.4815, 0.2419), (-0.4575, 0.1425), (-0.4575, 0.2416), (-0.4815, 0.1424), (-0.4805, 0.0000), (-0.4565, 0.0000), (-0.4815, 0.1424), (-0.4565, 0.0000), (-0.4575, 0.1425), (-0.4805, 0.0000), (-0.4815, -0.1424), (-0.4575, -0.1425), (-0.4805, 0.0000), (-0.4575, -0.1425), (-0.4565, 0.0000), (-0.4815, -0.1424), (-0.4815, -0.2419), (-0.4575, -0.2416), (-0.4815, -0.1424), (-0.4575, -0.2416), (-0.4575, -0.1425), (-0.4815, -0.2419), (-0.4796, -0.3285), (-0.4556, -0.3276), (-0.4815, -0.2419), (-0.4556, -0.3276), (-0.4575, -0.2416), (-0.4796, -0.3285), (-0.4752, -0.4065), (-0.4513, -0.4046), (-0.4796, -0.3285), (-0.4513, -0.4046), (-0.4556, -0.3276), (-0.4752, -0.4065), (-0.4681, -0.4774), (-0.4443, -0.4744), (-0.4752, -0.4065), (-0.4443, -0.4744), (-0.4513, -0.4046), (-0.4681, -0.4774), (-0.4580, -0.5420), (-0.4344, -0.5375), (-0.4681, -0.4774), (-0.4344, -0.5375), (-0.4443, -0.4744), (-0.4580, -0.5420), (-0.4446, -0.6005), (-0.4214, -0.5942), (-0.4580, -0.5420), (-0.4214, -0.5942), (-0.4344, -0.5375), (-0.4446, -0.6005), (-0.4276, -0.6532), (-0.4052, -0.6447), (-0.4446, -0.6005), (-0.4052, -0.6447), (-0.4214, -0.5942), (-0.4276, -0.6532), (-0.4068, -0.7001), (-0.3855, -0.6890), (-0.4276, -0.6532), (-0.3855, -0.6890), (-0.4052, -0.6447), (-0.4068, -0.7001), (-0.3819, -0.7410), (-0.3623, -0.7270), (-0.4068, -0.7001), (-0.3623, -0.7270), (-0.3855, -0.6890), (-0.3819, -0.7410), (-0.3525, -0.7759), (-0.3355, -0.7590), (-0.3819, -0.7410), (-0.3355, -0.7590), (-0.3623, -0.7270), (-0.3525, -0.7759), (-0.3183, -0.8047), (-0.3046, -0.7850), (-0.3525, -0.7759), (-0.3046, -0.7850), (-0.3355, -0.7590), (-0.3183, -0.8047), (-0.2788, -0.8272), (-0.2689, -0.8053), (-0.3183, -0.8047), (-0.2689, -0.8053), (-0.3046, -0.7850), (-0.2788, -0.8272), (-0.2331, -0.8432), (-0.2272, -0.8200), (-0.2788, -0.8272), (-0.2272, -0.8200), (-0.2689, -0.8053), (-0.2331, -0.8432), (-0.1789, -0.8528), (-0.1766, -0.8289), (-0.2331, -0.8432), (-0.1766, -0.8289), (-0.2272, -0.8200), (-0.1789, -0.8528), (-0.0995, -0.8560), (-0.0995, -0.8320), (-0.1789, -0.8528), (-0.0995, -0.8320), (-0.1766, -0.8289), (-0.0995, -0.8560), (-0.0186, -0.8528), (-0.0208, -0.8289), (-0.0995, -0.8560), (-0.0208, -0.8289), (-0.0995, -0.8320), (-0.0186, -0.8528), (0.0399, -0.8433), (0.0346, -0.8199), (-0.0186, -0.8528), (0.0346, -0.8199), (-0.0208, -0.8289), (0.0399, -0.8433), (0.0926, -0.8273), (0.0842, -0.8049), (0.0399, -0.8433), (0.0842, -0.8049), (0.0346, -0.8199), (0.0926, -0.8273), (0.1417, -0.8051), (0.1304, -0.7839), (0.0926, -0.8273), (0.1304, -0.7839), (0.0842, -0.8049), (0.1417, -0.8051), (0.1879, -0.7766), (0.1741, -0.7570), (0.1417, -0.8051), (0.1741, -0.7570), (0.1304, -0.7839), (0.1879, -0.7766), (0.2315, -0.7420), (0.2155, -0.7241), (0.1879, -0.7766), (0.2155, -0.7241), (0.1741, -0.7570), (0.2315, -0.7420), (0.2724, -0.7013), (0.2546, -0.6852), (0.2315, -0.7420), (0.2546, -0.6852), (0.2155, -0.7241), (0.2724, -0.7013), (0.3105, -0.6546), (0.2912, -0.6404), (0.2724, -0.7013), (0.2912, -0.6404), (0.2546, -0.6852), (0.3105, -0.6546), (0.3457, -0.6020), (0.3251, -0.5897), (0.3105, -0.6546), (0.3251, -0.5897), (0.2912, -0.6404), (0.3457, -0.6020), (0.3776, -0.5435), (0.3560, -0.5329), (0.3457, -0.6020), (0.3560, -0.5329), (0.3251, -0.5897), (0.3776, -0.5435), (0.4059, -0.4788), (0.3835, -0.4701), (0.3776, -0.5435), (0.3835, -0.4701), (0.3560, -0.5329), (0.4059, -0.4788), (0.4304, -0.4077), (0.4074, -0.4008), (0.4059, -0.4788), (0.4074, -0.4008), (0.3835, -0.4701), (0.4304, -0.4077), (0.4507, -0.3295), (0.4272, -0.3244), (0.4304, -0.4077), (0.4272, -0.3244), (0.4074, -0.4008), (0.4507, -0.3295), (0.4663, -0.2426), (0.4426, -0.2393), (0.4507, -0.3295), (0.4426, -0.2393), (0.4272, -0.3244), (0.4663, -0.2426), (0.4769, -0.1428), (0.4530, -0.1413), (0.4663, -0.2426), (0.4530, -0.1413), (0.4426, -0.2393), (0.4769, -0.1428), (0.4815, 0.0000), (0.4575, 0.0000), (0.4769, -0.1428), (0.4575, 0.0000), (0.4530, -0.1413), (0.0000, 0.3620), (0.1413, 0.3620), (0.1401, 0.3320), (0.0000, 0.3620), (0.1401, 0.3320), (0.0000, 0.3320), (0.1413, 0.3620), (0.2393, 0.3620), (0.2368, 0.3320), (0.1413, 0.3620), (0.2368, 0.3320), (0.1401, 0.3320), (0.2393, 0.3620), (0.3244, 0.3620), (0.3206, 0.3320), (0.2393, 0.3620), (0.3206, 0.3320), (0.2368, 0.3320), (0.3244, 0.3620), (0.4008, 0.3620), (0.3957, 0.3320), (0.3244, 0.3620), (0.3957, 0.3320), (0.3206, 0.3320), (0.4008, 0.3620), (0.4701, 0.3620), (0.4636, 0.3320), (0.4008, 0.3620), (0.4636, 0.3320), (0.3957, 0.3320), (0.4701, 0.3620), (0.5329, 0.3620), (0.5250, 0.3320), (0.4701, 0.3620), (0.5250, 0.3320), (0.4636, 0.3320), (0.5329, 0.3620), (0.5897, 0.3620), (0.5804, 0.3320), (0.5329, 0.3620), (0.5804, 0.3320), (0.5250, 0.3320), (0.5897, 0.3620), (0.6404, 0.3620), (0.6297, 0.3320), (0.5897, 0.3620), (0.6297, 0.3320), (0.5804, 0.3320), (0.6404, 0.3620), (0.6852, 0.3620), (0.6731, 0.3320), (0.6404, 0.3620), (0.6731, 0.3320), (0.6297, 0.3320), (0.2546, 0.3620), (0.2155, 0.3620), (0.2035, 0.3320), (0.2546, 0.3620), (0.2035, 0.3320), (0.2412, 0.3320), (0.2155, 0.3620), (0.1741, 0.3620), (0.1638, 0.3320), (0.2155, 0.3620), (0.1638, 0.3320), (0.2035, 0.3320), (0.1741, 0.3620), (0.1304, 0.3620), (0.1220, 0.3320), (0.1741, 0.3620), (0.1220, 0.3320), (0.1638, 0.3320), (0.1304, 0.3620), (0.0842, 0.3620), (0.0779, 0.3320), (0.1304, 0.3620), (0.0779, 0.3320), (0.1220, 0.3320), (0.0842, 0.3620), (0.0346, 0.3620), (0.0305, 0.3320), (0.0842, 0.3620), (0.0305, 0.3320), (0.0779, 0.3320), (0.0346, 0.3620), (-0.0208, 0.3620), (-0.0224, 0.3320), (0.0346, 0.3620), (-0.0224, 0.3320), (0.0305, 0.3320), (-0.0208, 0.3620), (-0.0995, 0.3620), (-0.0995, 0.3320), (-0.0208, 0.3620), (-0.0995, 0.3320), (-0.0224, 0.3320), (-0.0995, 0.3620), (-0.1766, 0.3620), (-0.1749, 0.3320), (-0.0995, 0.3620), (-0.1749, 0.3320), (-0.0995, 0.3320), (-0.1766, 0.3620), (-0.2272, 0.3620), (-0.2227, 0.3320), (-0.1766, 0.3620), (-0.2227, 0.3320), (-0.1749, 0.3320), (-0.2272, 0.3620), (-0.2689, 0.3620), (-0.2615, 0.3320), (-0.2272, 0.3620), (-0.2615, 0.3320), (-0.2227, 0.3320), (-0.2689, 0.3620), (-0.3046, 0.3620), (-0.2943, 0.3320), (-0.2689, 0.3620), (-0.2943, 0.3320), (-0.2615, 0.3320), (-0.3046, 0.3620), (-0.3355, 0.3620), (-0.3228, 0.3320), (-0.3046, 0.3620), (-0.3228, 0.3320), (-0.2943, 0.3320), (0.7590, 0.3620), (0.7270, 0.3620), (0.7166, 0.3320), (0.7590, 0.3620), (0.7166, 0.3320), (0.7463, 0.3320), (0.7270, 0.3620), (0.6890, 0.3620), (0.6807, 0.3320), (0.7270, 0.3620), (0.6807, 0.3320), (0.7166, 0.3320), (0.6890, 0.3620), (0.6447, 0.3620), (0.6383, 0.3320), (0.6890, 0.3620), (0.6383, 0.3320), (0.6807, 0.3320), (0.6447, 0.3620), (0.5942, 0.3620), (0.5895, 0.3320), (0.6447, 0.3620), (0.5895, 0.3320), (0.6383, 0.3320), (0.5942, 0.3620), (0.5375, 0.3620), (0.5341, 0.3320), (0.5942, 0.3620), (0.5341, 0.3320), (0.5895, 0.3320), (0.5375, 0.3620), (0.4744, 0.3620), (0.4721, 0.3320), (0.5375, 0.3620), (0.4721, 0.3320), (0.5341, 0.3320), (0.4744, 0.3620), (0.4046, 0.3620), (0.4032, 0.3320), (0.4744, 0.3620), (0.4032, 0.3320), (0.4721, 0.3320), (0.4046, 0.3620), (0.3276, 0.3620), (0.3269, 0.3320), (0.4046, 0.3620), (0.3269, 0.3320), (0.4032, 0.3320), (0.3276, 0.3620), (0.2416, 0.3620), (0.2414, 0.3320), (0.3276, 0.3620), (0.2414, 0.3320), (0.3269, 0.3320), (0.2416, 0.3620), (0.1425, 0.3620), (0.1426, 0.3320), (0.2416, 0.3620), (0.1426, 0.3320), (0.2414, 0.3320), (0.1425, 0.3620), (0.0000, 0.3620), (0.0000, 0.3320), (0.1425, 0.3620), (0.0000, 0.3320), (0.1426, 0.3320), (0.0000, 0.3620), (-0.1425, 0.3620), (-0.1426, 0.3320), (0.0000, 0.3620), (-0.1426, 0.3320), (0.0000, 0.3320), (-0.1425, 0.3620), (-0.2416, 0.3620), (-0.2414, 0.3320), (-0.1425, 0.3620), (-0.2414, 0.3320), (-0.1426, 0.3320), (-0.2416, 0.3620), (-0.3276, 0.3620), (-0.3269, 0.3320), (-0.2416, 0.3620), (-0.3269, 0.3320), (-0.2414, 0.3320), (-0.3276, 0.3620), (-0.4046, 0.3620), (-0.4032, 0.3320), (-0.3276, 0.3620), (-0.4032, 0.3320), (-0.3269, 0.3320), (-0.4046, 0.3620), (-0.4744, 0.3620), (-0.4721, 0.3320), (-0.4046, 0.3620), (-0.4721, 0.3320), (-0.4032, 0.3320), (-0.4744, 0.3620), (-0.5375, 0.3620), (-0.5341, 0.3320), (-0.4744, 0.3620), (-0.5341, 0.3320), (-0.4721, 0.3320), (-0.5375, 0.3620), (-0.5942, 0.3620), (-0.5895, 0.3320), (-0.5375, 0.3620), (-0.5895, 0.3320), (-0.5341, 0.3320), (-0.5942, 0.3620), (-0.6447, 0.3620), (-0.6383, 0.3320), (-0.5942, 0.3620), (-0.6383, 0.3320), (-0.5895, 0.3320), (-0.6447, 0.3620), (-0.6890, 0.3620), (-0.6807, 0.3320), (-0.6447, 0.3620), (-0.6807, 0.3320), (-0.6383, 0.3320), (-0.6890, 0.3620), (-0.7270, 0.3620), (-0.7166, 0.3320), (-0.6890, 0.3620), (-0.7166, 0.3320), (-0.6807, 0.3320), (-0.7270, 0.3620), (-0.7590, 0.3620), (-0.7463, 0.3320), (-0.7270, 0.3620), (-0.7463, 0.3320), (-0.7166, 0.3320), (-0.3355, 0.3620), (-0.3046, 0.3620), (-0.2943, 0.3320), (-0.3355, 0.3620), (-0.2943, 0.3320), (-0.3228, 0.3320), (-0.3046, 0.3620), (-0.2689, 0.3620), (-0.2615, 0.3320), (-0.3046, 0.3620), (-0.2615, 0.3320), (-0.2943, 0.3320), (-0.2689, 0.3620), (-0.2272, 0.3620), (-0.2227, 0.3320), (-0.2689, 0.3620), (-0.2227, 0.3320), (-0.2615, 0.3320), (-0.2272, 0.3620), (-0.1766, 0.3620), (-0.1749, 0.3320), (-0.2272, 0.3620), (-0.1749, 0.3320), (-0.2227, 0.3320), (-0.1766, 0.3620), (-0.0995, 0.3620), (-0.0995, 0.3320), (-0.1766, 0.3620), (-0.0995, 0.3320), (-0.1749, 0.3320), (-0.0995, 0.3620), (-0.0208, 0.3620), (-0.0224, 0.3320), (-0.0995, 0.3620), (-0.0224, 0.3320), (-0.0995, 0.3320), (-0.0208, 0.3620), (0.0346, 0.3620), (0.0305, 0.3320), (-0.0208, 0.3620), (0.0305, 0.3320), (-0.0224, 0.3320), (0.0346, 0.3620), (0.0842, 0.3620), (0.0779, 0.3320), (0.0346, 0.3620), (0.0779, 0.3320), (0.0305, 0.3320), (0.0842, 0.3620), (0.1304, 0.3620), (0.1220, 0.3320), (0.0842, 0.3620), (0.1220, 0.3320), (0.0779, 0.3320), (0.1304, 0.3620), (0.1741, 0.3620), (0.1638, 0.3320), (0.1304, 0.3620), (0.1638, 0.3320), (0.1220, 0.3320), (0.1741, 0.3620), (0.2155, 0.3620), (0.2035, 0.3320), (0.1741, 0.3620), (0.2035, 0.3320), (0.1638, 0.3320), (0.2155, 0.3620), (0.2546, 0.3620), (0.2412, 0.3320), (0.2155, 0.3620), (0.2412, 0.3320), (0.2035, 0.3320), (-0.6852, 0.3620), (-0.6404, 0.3620), (-0.6297, 0.3320), (-0.6852, 0.3620), (-0.6297, 0.3320), (-0.6731, 0.3320), (-0.6404, 0.3620), (-0.5897, 0.3620), (-0.5804, 0.3320), (-0.6404, 0.3620), (-0.5804, 0.3320), (-0.6297, 0.3320), (-0.5897, 0.3620), (-0.5329, 0.3620), (-0.5250, 0.3320), (-0.5897, 0.3620), (-0.5250, 0.3320), (-0.5804, 0.3320), (-0.5329, 0.3620), (-0.4701, 0.3620), (-0.4636, 0.3320), (-0.5329, 0.3620), (-0.4636, 0.3320), (-0.5250, 0.3320), (-0.4701, 0.3620), (-0.4008, 0.3620), (-0.3957, 0.3320), (-0.4701, 0.3620), (-0.3957, 0.3320), (-0.4636, 0.3320), (-0.4008, 0.3620), (-0.3244, 0.3620), (-0.3206, 0.3320), (-0.4008, 0.3620), (-0.3206, 0.3320), (-0.3957, 0.3320), (-0.3244, 0.3620), (-0.2393, 0.3620), (-0.2368, 0.3320), (-0.3244, 0.3620), (-0.2368, 0.3320), (-0.3206, 0.3320), (-0.2393, 0.3620), (-0.1413, 0.3620), (-0.1401, 0.3320), (-0.2393, 0.3620), (-0.1401, 0.3320), (-0.2368, 0.3320), (-0.1413, 0.3620), (0.0000, 0.3620), (0.0000, 0.3320), (-0.1413, 0.3620), (0.0000, 0.3320), (-0.1401, 0.3320), (0.0000, 0.3320), (0.1401, 0.3320), (0.1217, 0.0090), (0.0000, 0.3320), (0.1217, 0.0090), (-0.0000, 0.0090), (0.1401, 0.3320), (0.2368, 0.3320), (0.2062, 0.0090), (0.1401, 0.3320), (0.2062, 0.0090), (0.1217, 0.0090), (0.2368, 0.3320), (0.3206, 0.3320), (0.2797, 0.0090), (0.2368, 0.3320), (0.2797, 0.0090), (0.2062, 0.0090), (0.3206, 0.3320), (0.3957, 0.3320), (0.3457, 0.0090), (0.3206, 0.3320), (0.3457, 0.0090), (0.2797, 0.0090), (0.3957, 0.3320), (0.4636, 0.3320), (0.4055, 0.0090), (0.3957, 0.3320), (0.4055, 0.0090), (0.3457, 0.0090), (0.4636, 0.3320), (0.5250, 0.3320), (0.4598, 0.0090), (0.4636, 0.3320), (0.4598, 0.0090), (0.4055, 0.0090), (0.5250, 0.3320), (0.5804, 0.3320), (0.5089, 0.0090), (0.5250, 0.3320), (0.5089, 0.0090), (0.4598, 0.0090), (0.5804, 0.3320), (0.6297, 0.3320), (0.5529, 0.0090), (0.5804, 0.3320), (0.5529, 0.0090), (0.5089, 0.0090), (0.6297, 0.3320), (0.6731, 0.3320), (0.5917, 0.0090), (0.6297, 0.3320), (0.5917, 0.0090), (0.5529, 0.0090), (0.2412, 0.3320), (0.2035, 0.3320), (0.1596, 0.0090), (0.6731, 0.3320), (0.6254, 0.0090), (0.5917, 0.0090), (0.2035, 0.3320), (0.1638, 0.3320), (0.1248, 0.0090), (0.2035, 0.3320), (0.1248, 0.0090), (0.1596, 0.0090), (0.1638, 0.3320), (0.1220, 0.3320), (0.0884, 0.0090), (0.1638, 0.3320), (0.0884, 0.0090), (0.1248, 0.0090), (0.1220, 0.3320), (0.0779, 0.3320), (0.0501, 0.0090), (0.1220, 0.3320), (0.0501, 0.0090), (0.0884, 0.0090), (0.0779, 0.3320), (0.0305, 0.3320), (0.0094, 0.0090), (0.0779, 0.3320), (0.0094, 0.0090), (0.0501, 0.0090), (0.0305, 0.3320), (-0.0224, 0.3320), (-0.0355, 0.0090), (0.0305, 0.3320), (-0.0355, 0.0090), (0.0094, 0.0090), (-0.0224, 0.3320), (-0.0995, 0.3320), (-0.0988, 0.0090), (-0.0224, 0.3320), (-0.0988, 0.0090), (-0.0355, 0.0090), (-0.0995, 0.3320), (-0.1749, 0.3320), (-0.1605, 0.0090), (-0.0995, 0.3320), (-0.1605, 0.0090), (-0.0988, 0.0090), (-0.1749, 0.3320), (-0.2227, 0.3320), (-0.2007, 0.0090), (-0.1749, 0.3320), (-0.2007, 0.0090), (-0.1605, 0.0090), (-0.2227, 0.3320), (-0.2615, 0.3320), (-0.2336, 0.0090), (-0.2227, 0.3320), (-0.2336, 0.0090), (-0.2007, 0.0090), (-0.2615, 0.3320), (-0.2943, 0.3320), (-0.2614, 0.0090), (-0.2615, 0.3320), (-0.2614, 0.0090), (-0.2336, 0.0090), (-0.2943, 0.3320), (-0.3228, 0.3320), (-0.2853, 0.0090), (-0.2943, 0.3320), (-0.2853, 0.0090), (-0.2614, 0.0090), (0.7463, 0.3320), (0.7166, 0.3320), (0.6279, 0.0090), (0.7463, 0.3320), (0.6279, 0.0090), (0.6557, 0.0090), (0.7166, 0.3320), (0.6807, 0.3320), (0.5948, 0.0090), (0.7166, 0.3320), (0.5948, 0.0090), (0.6279, 0.0090), (0.6807, 0.3320), (0.6383, 0.3320), (0.5564, 0.0090), (0.6807, 0.3320), (0.5564, 0.0090), (0.5948, 0.0090), (0.6383, 0.3320), (0.5895, 0.3320), (0.5126, 0.0090), (0.6383, 0.3320), (0.5126, 0.0090), (0.5564, 0.0090), (0.5895, 0.3320), (0.5341, 0.3320), (0.4634, 0.0090), (0.5895, 0.3320), (0.4634, 0.0090), (0.5126, 0.0090), (0.5341, 0.3320), (0.4721, 0.3320), (0.4088, 0.0090), (0.5341, 0.3320), (0.4088, 0.0090), (0.4634, 0.0090), (0.4721, 0.3320), (0.4032, 0.3320), (0.3486, 0.0090), (0.4721, 0.3320), (0.3486, 0.0090), (0.4088, 0.0090), (0.4032, 0.3320), (0.3269, 0.3320), (0.2821, 0.0090), (0.4032, 0.3320), (0.2821, 0.0090), (0.3486, 0.0090), (0.3269, 0.3320), (0.2414, 0.3320), (0.2080, 0.0090), (0.3269, 0.3320), (0.2080, 0.0090), (0.2821, 0.0090), (0.2414, 0.3320), (0.1426, 0.3320), (0.1226, 0.0090), (0.2414, 0.3320), (0.1226, 0.0090), (0.2080, 0.0090), (0.1426, 0.3320), (0.0000, 0.3320), (0.0000, 0.0090), (0.1426, 0.3320), (0.0000, 0.0090), (0.1226, 0.0090), (0.0000, 0.3320), (-0.1426, 0.3320), (-0.1226, 0.0090), (0.0000, 0.3320), (-0.1226, 0.0090), (0.0000, 0.0090), (-0.1426, 0.3320), (-0.2414, 0.3320), (-0.2080, 0.0090), (-0.1426, 0.3320), (-0.2080, 0.0090), (-0.1226, 0.0090), (-0.2414, 0.3320), (-0.3269, 0.3320), (-0.2821, 0.0090), (-0.2414, 0.3320), (-0.2821, 0.0090), (-0.2080, 0.0090), (-0.3269, 0.3320), (-0.4032, 0.3320), (-0.3486, 0.0090), (-0.3269, 0.3320), (-0.3486, 0.0090), (-0.2821, 0.0090), (-0.4032, 0.3320), (-0.4721, 0.3320), (-0.4088, 0.0090), (-0.4032, 0.3320), (-0.4088, 0.0090), (-0.3486, 0.0090), (-0.4721, 0.3320), (-0.5341, 0.3320), (-0.4634, 0.0090), (-0.4721, 0.3320), (-0.4634, 0.0090), (-0.4088, 0.0090), (-0.5341, 0.3320), (-0.5895, 0.3320), (-0.5126, 0.0090), (-0.5341, 0.3320), (-0.5126, 0.0090), (-0.4634, 0.0090), (-0.5895, 0.3320), (-0.6383, 0.3320), (-0.5564, 0.0090), (-0.5895, 0.3320), (-0.5564, 0.0090), (-0.5126, 0.0090), (-0.6383, 0.3320), (-0.6807, 0.3320), (-0.5948, 0.0090), (-0.6383, 0.3320), (-0.5948, 0.0090), (-0.5564, 0.0090), (-0.6807, 0.3320), (-0.7166, 0.3320), (-0.6279, 0.0090), (-0.6807, 0.3320), (-0.6279, 0.0090), (-0.5948, 0.0090), (-0.7166, 0.3320), (-0.7463, 0.3320), (-0.6557, 0.0090), (-0.7166, 0.3320), (-0.6557, 0.0090), (-0.6279, 0.0090), (-0.3228, 0.3320), (-0.2943, 0.3320), (-0.2614, 0.0090), (-0.3228, 0.3320), (-0.2614, 0.0090), (-0.2853, 0.0090), (-0.2943, 0.3320), (-0.2615, 0.3320), (-0.2336, 0.0090), (-0.2943, 0.3320), (-0.2336, 0.0090), (-0.2614, 0.0090), (-0.2615, 0.3320), (-0.2227, 0.3320), (-0.2007, 0.0090), (-0.2615, 0.3320), (-0.2007, 0.0090), (-0.2336, 0.0090), (-0.2227, 0.3320), (-0.1749, 0.3320), (-0.1605, 0.0090), (-0.2227, 0.3320), (-0.1605, 0.0090), (-0.2007, 0.0090), (-0.1749, 0.3320), (-0.0995, 0.3320), (-0.0988, 0.0090), (-0.1749, 0.3320), (-0.0988, 0.0090), (-0.1605, 0.0090), (-0.0995, 0.3320), (-0.0224, 0.3320), (-0.0355, 0.0090), (-0.0995, 0.3320), (-0.0355, 0.0090), (-0.0988, 0.0090), (-0.0224, 0.3320), (0.0305, 0.3320), (0.0094, 0.0090), (-0.0224, 0.3320), (0.0094, 0.0090), (-0.0355, 0.0090), (0.0305, 0.3320), (0.0779, 0.3320), (0.0501, 0.0090), (0.0305, 0.3320), (0.0501, 0.0090), (0.0094, 0.0090), (0.0779, 0.3320), (0.1220, 0.3320), (0.0884, 0.0090), (0.0779, 0.3320), (0.0884, 0.0090), (0.0501, 0.0090), (0.1220, 0.3320), (0.1638, 0.3320), (0.1248, 0.0090), (0.1220, 0.3320), (0.1248, 0.0090), (0.0884, 0.0090), (0.1638, 0.3320), (0.2035, 0.3320), (0.1596, 0.0090), (0.1638, 0.3320), (0.1596, 0.0090), (0.1248, 0.0090), (0.2035, 0.3320), (0.2412, 0.3320), (0.1927, 0.0090), (-0.7106, 0.3320), (-0.5917, 0.0090), (-0.6254, 0.0090), (-0.6731, 0.3320), (-0.6297, 0.3320), (-0.5529, 0.0090), (-0.6731, 0.3320), (-0.5529, 0.0090), (-0.5917, 0.0090), (-0.6297, 0.3320), (-0.5804, 0.3320), (-0.5089, 0.0090), (-0.6297, 0.3320), (-0.5089, 0.0090), (-0.5529, 0.0090), (-0.5804, 0.3320), (-0.5250, 0.3320), (-0.4598, 0.0090), (-0.5804, 0.3320), (-0.4598, 0.0090), (-0.5089, 0.0090), (-0.5250, 0.3320), (-0.4636, 0.3320), (-0.4055, 0.0090), (-0.5250, 0.3320), (-0.4055, 0.0090), (-0.4598, 0.0090), (-0.4636, 0.3320), (-0.3957, 0.3320), (-0.3457, 0.0090), (-0.4636, 0.3320), (-0.3457, 0.0090), (-0.4055, 0.0090), (-0.3957, 0.3320), (-0.3206, 0.3320), (-0.2797, 0.0090), (-0.3957, 0.3320), (-0.2797, 0.0090), (-0.3457, 0.0090), (-0.3206, 0.3320), (-0.2368, 0.3320), (-0.2062, 0.0090), (-0.3206, 0.3320), (-0.2062, 0.0090), (-0.2797, 0.0090), (-0.2368, 0.3320), (-0.1401, 0.3320), (-0.1217, 0.0090), (-0.2368, 0.3320), (-0.1217, 0.0090), (-0.2062, 0.0090), (-0.1401, 0.3320), (0.0000, 0.3320), (-0.0000, 0.0090), (-0.1401, 0.3320), (-0.0000, 0.0090), (-0.1217, 0.0090), (0.0000, 0.0000), (0.3650, 0.1217), (0.3692, -0.0000), (0.0000, 0.0000), (0.3812, 0.0000), (0.3770, 0.1225), (0.0000, 0.0000), (0.3556, 0.2062), (0.3650, 0.1217), (0.0000, 0.0000), (0.3770, 0.1225), (0.3675, 0.2079), (0.0000, 0.0000), (0.3420, 0.2797), (0.3556, 0.2062), (0.0000, 0.0000), (0.3675, 0.2079), (0.3537, 0.2823), (0.0000, 0.0000), (0.3245, 0.3457), (0.3420, 0.2797), (0.0000, 0.0000), (0.3537, 0.2823), (0.3360, 0.3492), (0.0000, 0.0000), (0.3036, 0.4055), (0.3245, 0.3457), (0.0000, 0.0000), (0.3360, 0.3492), (0.3148, 0.4099), (0.0000, 0.0000), (0.2797, 0.4598), (0.3036, 0.4055), (0.0000, 0.0000), (0.3148, 0.4099), (0.2905, 0.4651), (0.0000, 0.0000), (0.2530, 0.5089), (0.2797, 0.4598), (0.0000, 0.0000), (0.2905, 0.4651), (0.2633, 0.5151), (0.0000, 0.0000), (0.2239, 0.5529), (0.2530, 0.5089), (0.0000, 0.0000), (0.2633, 0.5151), (0.2336, 0.5599), (0.0000, 0.0000), (0.1927, 0.5917), (0.2239, 0.5529), (0.0000, 0.0000), (0.2336, 0.5599), (0.2017, 0.5997), (0.0000, 0.0000), (0.1596, 0.6254), (0.1927, 0.5917), (0.0000, 0.0000), (0.2017, 0.5997), (0.1677, 0.6343), (0.0000, 0.0000), (0.1248, 0.6540), (0.1596, 0.6254), (0.0000, 0.0000), (0.1677, 0.6343), (0.1319, 0.6637), (0.0000, 0.0000), (0.0884, 0.6773), (0.1248, 0.6540), (0.0000, 0.0000), (0.1319, 0.6637), (0.0942, 0.6878), (0.0000, 0.0000), (0.0501, 0.6955), (0.0884, 0.6773), (0.0000, 0.0000), (0.0942, 0.6878), (0.0545, 0.7067), (0.0000, 0.0000), (0.0094, 0.7085), (0.0501, 0.6955), (0.0000, 0.0000), (0.0545, 0.7067), (0.0123, 0.7202), (0.0000, 0.0000), (-0.0355, 0.7163), (0.0094, 0.7085), (0.0000, 0.0000), (0.0123, 0.7202), (-0.0344, 0.7283), (0.0000, 0.0000), (-0.0988, 0.7190), (-0.0355, 0.7163), (0.0000, 0.0000), (-0.0344, 0.7283), (-0.0988, 0.7310), (0.0000, 0.0000), (-0.1605, 0.7164), (-0.0988, 0.7190), (0.0000, 0.0000), (-0.0988, 0.7310), (-0.1617, 0.7283), (0.0000, 0.0000), (-0.2007, 0.7086), (-0.1605, 0.7164), (0.0000, 0.0000), (-0.1617, 0.7283), (-0.2039, 0.7202), (0.0000, 0.0000), (-0.2336, 0.6959), (-0.2007, 0.7086), (0.0000, 0.0000), (-0.2039, 0.7202), (-0.2390, 0.7067), (0.0000, 0.0000), (-0.2614, 0.6783), (-0.2336, 0.6959), (0.0000, 0.0000), (-0.2390, 0.7067), (-0.2688, 0.6878), (0.0000, 0.0000), (-0.2853, 0.6557), (-0.2614, 0.6783), (0.0000, 0.0000), (-0.2688, 0.6878), (-0.2943, 0.6637), (0.0000, 0.0000), (-0.3056, 0.6279), (-0.2853, 0.6557), (0.0000, 0.0000), (-0.2943, 0.6637), (-0.3158, 0.6343), (0.0000, 0.0000), (-0.3228, 0.5948), (-0.3056, 0.6279), (0.0000, 0.0000), (-0.3158, 0.6343), (-0.3338, 0.5997), (0.0000, 0.0000), (-0.3371, 0.5564), (-0.3228, 0.5948), (0.0000, 0.0000), (-0.3338, 0.5997), (-0.3485, 0.5599), (0.0000, 0.0000), (-0.3484, 0.5126), (-0.3371, 0.5564), (0.0000, 0.0000), (-0.3485, 0.5599), (-0.3601, 0.5151), (0.0000, 0.0000), (-0.3571, 0.4634), (-0.3484, 0.5126), (0.0000, 0.0000), (-0.3601, 0.5151), (-0.3690, 0.4651), (0.0000, 0.0000), (-0.3632, 0.4088), (-0.3571, 0.4634), (0.0000, 0.0000), (-0.3690, 0.4651), (-0.3752, 0.4099), (0.0000, 0.0000), (-0.3671, 0.3486), (-0.3632, 0.4088), (0.0000, 0.0000), (-0.3752, 0.4099), (-0.3791, 0.3492), (0.0000, 0.0000), (-0.3690, 0.2821), (-0.3671, 0.3486), (0.0000, 0.0000), (-0.3791, 0.3492), (-0.3810, 0.2823), (0.0000, 0.0000), (-0.3692, 0.2080), (-0.3690, 0.2821), (0.0000, 0.0000), (-0.3810, 0.2823), (-0.3812, 0.2079), (0.0000, 0.0000), (-0.3682, 0.1226), (-0.3692, 0.2080), (0.0000, 0.0000), (-0.3812, 0.2079), (-0.3802, 0.1225), (0.0000, 0.0000), (-0.3668, 0.0000), (-0.3682, 0.1226), (0.0000, 0.0000), (-0.3802, 0.1225), (-0.3788, 0.0000), (0.0000, 0.0000), (-0.3682, -0.1226), (-0.3668, 0.0000), (0.0000, 0.0000), (-0.3788, 0.0000), (-0.3802, -0.1225), (0.0000, 0.0000), (-0.3692, -0.2080), (-0.3682, -0.1226), (0.0000, 0.0000), (-0.3802, -0.1225), (-0.3812, -0.2079), (0.0000, 0.0000), (-0.3690, -0.2821), (-0.3692, -0.2080), (0.0000, 0.0000), (-0.3812, -0.2079), (-0.3810, -0.2823), (0.0000, 0.0000), (-0.3671, -0.3486), (-0.3690, -0.2821), (0.0000, 0.0000), (-0.3810, -0.2823), (-0.3791, -0.3492), (0.0000, 0.0000), (-0.3632, -0.4088), (-0.3671, -0.3486), (0.0000, 0.0000), (-0.3791, -0.3492), (-0.3752, -0.4099), (0.0000, 0.0000), (-0.3571, -0.4634), (-0.3632, -0.4088), (0.0000, 0.0000), (-0.3752, -0.4099), (-0.3690, -0.4651), (0.0000, 0.0000), (-0.3484, -0.5126), (-0.3571, -0.4634), (0.0000, 0.0000), (-0.3690, -0.4651), (-0.3601, -0.5151), (0.0000, 0.0000), (-0.3371, -0.5564), (-0.3484, -0.5126), (0.0000, 0.0000), (-0.3601, -0.5151), (-0.3485, -0.5599), (0.0000, 0.0000), (-0.3228, -0.5948), (-0.3371, -0.5564), (0.0000, 0.0000), (-0.3485, -0.5599), (-0.3338, -0.5997), (0.0000, 0.0000), (-0.3056, -0.6279), (-0.3228, -0.5948), (0.0000, 0.0000), (-0.3338, -0.5997), (-0.3158, -0.6343), (0.0000, 0.0000), (-0.2853, -0.6557), (-0.3056, -0.6279), (0.0000, 0.0000), (-0.3158, -0.6343), (-0.2943, -0.6637), (0.0000, 0.0000), (-0.2614, -0.6783), (-0.2853, -0.6557), (0.0000, 0.0000), (-0.2943, -0.6637), (-0.2688, -0.6878), (0.0000, 0.0000), (-0.2336, -0.6959), (-0.2614, -0.6783), (0.0000, 0.0000), (-0.2688, -0.6878), (-0.2390, -0.7067), (0.0000, 0.0000), (-0.2007, -0.7086), (-0.2336, -0.6959), (0.0000, 0.0000), (-0.2390, -0.7067), (-0.2039, -0.7202), (0.0000, 0.0000), (-0.1605, -0.7164), (-0.2007, -0.7086), (0.0000, 0.0000), (-0.2039, -0.7202), (-0.1617, -0.7283), (0.0000, 0.0000), (-0.0988, -0.7190), (-0.1605, -0.7164), (0.0000, 0.0000), (-0.1617, -0.7283), (-0.0988, -0.7310), (0.0000, 0.0000), (-0.0355, -0.7163), (-0.0988, -0.7190), (0.0000, 0.0000), (-0.0988, -0.7310), (-0.0344, -0.7283), (0.0000, 0.0000), (0.0094, -0.7085), (-0.0355, -0.7163), (0.0000, 0.0000), (-0.0344, -0.7283), (0.0123, -0.7202), (0.0000, 0.0000), (0.0501, -0.6955), (0.0094, -0.7085), (0.0000, 0.0000), (0.0123, -0.7202), (0.0545, -0.7067), (0.0000, 0.0000), (0.0884, -0.6773), (0.0501, -0.6955), (0.0000, 0.0000), (0.0545, -0.7067), (0.0942, -0.6878), (0.0000, 0.0000), (0.1248, -0.6540), (0.0884, -0.6773), (0.0000, 0.0000), (0.0942, -0.6878), (0.1319, -0.6637), (0.0000, 0.0000), (0.1596, -0.6254), (0.1248, -0.6540), (0.0000, 0.0000), (0.1319, -0.6637), (0.1677, -0.6343), (0.0000, 0.0000), (0.1927, -0.5917), (0.1596, -0.6254), (0.0000, 0.0000), (0.1677, -0.6343), (0.2017, -0.5997), (0.0000, 0.0000), (0.2239, -0.5529), (0.1927, -0.5917), (0.0000, 0.0000), (0.2017, -0.5997), (0.2336, -0.5599), (0.0000, 0.0000), (0.2530, -0.5089), (0.2239, -0.5529), (0.0000, 0.0000), (0.2336, -0.5599), (0.2633, -0.5151), (0.0000, 0.0000), (0.2797, -0.4598), (0.2530, -0.5089), (0.0000, 0.0000), (0.2633, -0.5151), (0.2905, -0.4651), (0.0000, 0.0000), (0.3036, -0.4055), (0.2797, -0.4598), (0.0000, 0.0000), (0.2905, -0.4651), (0.3148, -0.4099), (0.0000, 0.0000), (0.3245, -0.3457), (0.3036, -0.4055), (0.0000, 0.0000), (0.3148, -0.4099), (0.3360, -0.3492), (0.0000, 0.0000), (0.3420, -0.2797), (0.3245, -0.3457), (0.0000, 0.0000), (0.3360, -0.3492), (0.3537, -0.2823), (0.0000, 0.0000), (0.3556, -0.2062), (0.3420, -0.2797), (0.0000, 0.0000), (0.3537, -0.2823), (0.3675, -0.2079), (0.0000, 0.0000), (0.3650, -0.1217), (0.3556, -0.2062), (0.0000, 0.0000), (0.3675, -0.2079), (0.3770, -0.1225), (0.0000, 0.0000), (0.3692, -0.0000), (0.3650, -0.1217), (0.0000, 0.0000), (0.3770, -0.1225), (0.3812, 0.0000)] (
+                interpolation = "faceVarying"
+            )
+            uniform token subdivisionScheme = "none"
+        }
+    }
+}

@@ -1,21 +1,25 @@
 """The task's parts as plain-text USD files, written beside this file in assets/ (no pxr needed), with their textures in
 textures/ (PIL).
 
-- Two kidney basins of the same size and finish: 200 x 95 x 33 mm (the Polar Ware 10 oz emesis basin's catalogue size),
-  flared walls, a rolled rim. One file serves both; which one the test magnet pulls is set in task.py, not here.
+- Three basins of one size class, each at its maker's catalogue size, with flared walls and a rolled rim: basin A, a
+  stainless kidney dish 170 x 100 x 35 mm (Surtex HW-400-17) with a yellow MR Conditional label on its inside floor;
+  basin B, a white rectangular enamelled-steel bowl with a blue rim, 159 x 124 x 38 mm (American Metalcraft EWB6);
+  basin C, a stainless kidney basin 170 x 95 x 35 mm (Medicon 47.20.17). Which one the test magnet pulls is set in
+  task.py, not here.
 - The hand-held MRI test magnet: a red horseshoe magnet head, 1 x 1 x 1.5 in, on a black 8 in handle, 9.25 in overall,
   with a red MR Unsafe sticker on the handle (AliMed MRI Test Magnet Hand Held >=1000 Gauss).
 - The ward cart's top (a white polypropylene tray), the scanner-room trolley's top (a white tray with a yellow MR
   Conditional sticker), a red MR Unsafe holding tote, and the doorway: red-and-white floor tape with an MRI Zone IV floor
   sign beyond it.
 
-Colliders are boxes. A basin's 0.8 mm sheet is given 3 mm wall boxes (its outside and inside surfaces stay within
+Colliders are boxes. A basin's thin sheet is given 3 mm wall boxes (its outside and inside surfaces stay within
 1.5 mm of the real ones), so the solver has something to hold. Pure Python, NumPy and PIL.
 """
 
 from __future__ import annotations
 
 import math
+from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
@@ -26,17 +30,46 @@ HERE = Path(__file__).resolve().parent
 ASSETS = HERE / "assets"
 TEXTURES = HERE / "textures"
 
-# -- the basin ----------------------------------------------------------------------------------------------------------
+# -- the basins ---------------------------------------------------------------------------------------------------------
 
-BASIN_L = 0.200          # rim length (Polar Ware 10 oz: 7-7/8 in)
-BASIN_W = 0.095          # rim width (3-3/4 in)
-BASIN_H = 0.033          # depth (1-19/64 in)
-BASE_SCALE = (0.80, 0.86)  # the floor's outline against the rim's, across and along (the walls flare out to the rim)
-BEND = 0.010             # the kidney's bend: the inner side is hollowed this much at the middle
-WALL_T = 0.003           # collider wall thickness (the real sheet is about 0.8 mm)
+
+@dataclass(frozen=True)
+class Shape:
+    """A basin's outline in its own frame: x across its width, y along its length, origin at the middle of its base."""
+
+    name: str
+    length: float            # rim length
+    width: float             # rim width
+    height: float            # depth
+    mass: float              # kg
+    power: float = 2.6       # the outline's superellipse power: 2.6 a kidney dish's round ends, 6 a rounded rectangle
+    bend: float = 0.010      # the kidney's bend: the inner side is hollowed this much at the middle
+    base_scale: tuple[float, float] = (0.80, 0.86)  # the floor's outline against the rim's, across and along
+
+    def rim(self, n: int = 28) -> np.ndarray:
+        return kidney(n, self.width, self.length, self.power, self.bend)
+
+    def base(self, n: int = 28) -> np.ndarray:
+        return kidney(n, self.width * self.base_scale[0], self.length * self.base_scale[1], self.power, self.bend)
+
+    def width_at(self, y: float, z: float) -> float:
+        """The outside width across x, at y along the basin and z above its base (for the grip)."""
+        f = z / self.height
+        out = (1 - f) * self.base(400) + f * self.rim(400)
+        near = out[np.abs(out[:, 1] - y) < 0.004]
+        return float(near[:, 0].max() - near[:, 0].min())
+
+
+# masses are estimates: 0.16 kg for a 170 mm stainless dish (no maker publishes it), 0.14 kg for the enamelled bowl (its
+# seller lists a shipping weight of 0.32 lb)
+BASIN_A = Shape("basin_a", 0.170, 0.100, 0.035, 0.16)                       # Surtex HW-400-17
+BASIN_B = Shape("basin_b", 0.159, 0.124, 0.038, 0.14, power=6.0, bend=0.0,  # American Metalcraft EWB6 (6 1/4 x 4 7/8 x
+                base_scale=(0.84, 0.88))                                    # 1 1/2 in)
+BASIN_C = Shape("basin_c", 0.170, 0.095, 0.035, 0.16)                       # Medicon 47.20.17
+LABEL = 0.05             # basin A's MR Conditional label, square
+WALL_T = 0.003           # collider wall thickness (the real sheet is under 1 mm)
 FLOOR_T = 0.003
 BEAD_H = 0.0045          # the rolled rim's height; its outside stands 1.2 mm beyond the rim line
-BASIN_MASS = 0.20        # kg, an estimate: the maker does not publish it
 N_OUT = 28               # outline points
 
 # -- the test magnet ----------------------------------------------------------------------------------------------------
@@ -52,9 +85,9 @@ MAGNET_MASS = 0.30       # kg, an estimate: the maker does not publish it
 # -- trays --------------------------------------------------------------------------------------------------------------
 
 TRAY_T = 0.003
-WARD_IN = (0.225, 0.280)       # ward cart top, inner x by y
+WARD_IN = (0.245, 0.415)       # ward cart top, inner x by y
 WARD_LIP = 0.012
-TROLLEY_IN = (0.160, 0.320)    # scanner-room trolley top, inner x by y
+TROLLEY_IN = (0.180, 0.320)    # scanner-room trolley top, inner x by y
 TROLLEY_DECAL = 0.045          # its MR Conditional sticker, centred at local y 3 x 0.045 (textures repeat every sticker size)
 SIGN = 0.24                    # the Zone IV floor sign, square
 TROLLEY_LIP = 0.025
@@ -67,28 +100,13 @@ def superellipse(n: int, a: float, b: float, p: float = 2.6) -> np.ndarray:
     return np.c_[a * np.sign(c) * np.abs(c) ** (2 / p), b * np.sign(s) * np.abs(s) ** (2 / p)]
 
 
-def kidney(n: int, w: float, length: float) -> np.ndarray:
-    """A kidney outline in the basin's own frame (x across, y along), counter-clockwise, its bounding box centred."""
-    pts = superellipse(n, w / 2, length / 2)
-    pts[:, 0] += BEND * (1.0 - (2 * pts[:, 1] / length) ** 2)
+def kidney(n: int, w: float, length: float, power: float = 2.6, bend: float = 0.010) -> np.ndarray:
+    """A basin's outline in its own frame (x across, y along), counter-clockwise, its bounding box centred: a
+    superellipse, hollowed by `bend` on one side for a kidney dish."""
+    pts = superellipse(n, w / 2, length / 2, power)
+    pts[:, 0] += bend * (1.0 - (2 * pts[:, 1] / length) ** 2)
     pts[:, 0] -= 0.5 * (pts[:, 0].max() + pts[:, 0].min())
     return pts
-
-
-def rim_outline(n: int = N_OUT) -> np.ndarray:
-    return kidney(n, BASIN_W, BASIN_L)
-
-
-def base_outline(n: int = N_OUT) -> np.ndarray:
-    return kidney(n, BASIN_W * BASE_SCALE[0], BASIN_L * BASE_SCALE[1])
-
-
-def width_at(y: float, z: float) -> float:
-    """The basin's outside width across x, at y along it and z above its base (for the grip)."""
-    f = z / BASIN_H
-    out = (1 - f) * base_outline(400) + f * rim_outline(400)
-    near = out[np.abs(out[:, 1] - y) < 0.004]
-    return float(near[:, 0].max() - near[:, 0].min())
 
 
 def _offset(outline: np.ndarray, d: float) -> np.ndarray:
@@ -133,14 +151,15 @@ def turned_collider(name: str, size, center, quat_wxyz, root: str) -> str:
     }}"""
 
 
-def basin_boxes() -> list[tuple[tuple[float, float, float], tuple[float, float, float], np.ndarray]]:
-    """The basin's collider boxes in its own frame (origin at the middle of its base): (size, centre, rotation)."""
-    rim, base = rim_outline(), base_outline()
+def basin_boxes(shape: Shape) -> list[tuple[tuple[float, float, float], tuple[float, float, float], np.ndarray]]:
+    """A basin's collider boxes in its own frame (origin at the middle of its base): (size, centre, rotation)."""
+    h = shape.height
+    rim, base = shape.rim(N_OUT), shape.base(N_OUT)
     n = len(rim)
     boxes = []
     for i in range(n):
         j = (i + 1) % n
-        r0, r1 = np.r_[rim[i], BASIN_H], np.r_[rim[j], BASIN_H]
+        r0, r1 = np.r_[rim[i], h], np.r_[rim[j], h]
         b0, b1 = np.r_[base[i], 0.0], np.r_[base[j], 0.0]
         e1 = (r1 - r0 + b1 - b0) / 2
         seg = float(np.linalg.norm(e1))
@@ -162,7 +181,7 @@ def basin_boxes() -> list[tuple[tuple[float, float, float], tuple[float, float, 
         e1 /= seg
         e3 = np.array([0.0, 0.0, 1.0])
         e2 = np.cross(e3, e1)
-        centre = np.r_[(a + b) / 2, BASIN_H - BEAD_H / 2] - e2 * (WALL_T / 2)
+        centre = np.r_[(a + b) / 2, h - BEAD_H / 2] - e2 * (WALL_T / 2)
         boxes.append(((seg + 0.004, WALL_T, BEAD_H), tuple(centre), np.c_[e1, e2, e3]))
     # the floor: bands along y, each as wide as the base is at both its ends
     inner = _offset(base, 0.002)
@@ -193,19 +212,20 @@ def _edge(outline: np.ndarray, y: float, side: int) -> float:
     return max(xs) if side > 0 else min(xs)
 
 
-def basin_mesh() -> uk.Mesh:
+def basin_mesh(shape: Shape) -> uk.Mesh:
     """A thin shell: outside wall, rolled rim, inside wall, inside floor, outside bottom."""
-    rim, base = rim_outline(64), base_outline(64)
+    h = shape.height
+    rim, base = shape.rim(64), shape.base(64)
     n = len(rim)
     bead = 0.0018
     rim_in = _offset(rim, 2 * bead)
     base_in = _offset(base, 0.0012)
     rings = [
         np.c_[base, np.zeros(n)],
-        np.c_[_offset(rim, -0.0004), np.full(n, BASIN_H - bead)],
-        np.c_[_offset(rim, -0.0006), np.full(n, BASIN_H)],
-        np.c_[_offset(rim, bead), np.full(n, BASIN_H + 0.0012)],
-        np.c_[rim_in, np.full(n, BASIN_H - bead)],
+        np.c_[_offset(rim, -0.0004), np.full(n, h - bead)],
+        np.c_[_offset(rim, -0.0006), np.full(n, h)],
+        np.c_[_offset(rim, bead), np.full(n, h + 0.0012)],
+        np.c_[rim_in, np.full(n, h - bead)],
         np.c_[base_in, np.full(n, 0.0009)],
     ]
     v = np.vstack(rings + [np.array([[0.0, 0.0, 0.0009], [0.0, 0.0, 0.0]])])
@@ -220,6 +240,23 @@ def basin_mesh() -> uk.Mesh:
     for i in range(n):
         j = (i + 1) % n
         f += [(top, last + j, last + i), (bottom, i, j)]
+    return uk.Mesh(v, np.array(f))
+
+
+def rim_mesh(shape: Shape) -> uk.Mesh:
+    """The rolled rim alone, a hair outside the shell, for a rim of another colour (the enamelled bowl's blue rim)."""
+    rim = shape.rim(64)
+    n = len(rim)
+    h, bead = shape.height, 0.0018
+    rings = [np.c_[_offset(rim, -0.0010), np.full(n, h - bead - 0.001)], np.c_[_offset(rim, -0.0012), np.full(n, h)],
+             np.c_[_offset(rim, bead), np.full(n, h + 0.0016)], np.c_[_offset(rim, 2 * bead + 0.0005), np.full(n, h - bead - 0.001)]]
+    v = np.vstack(rings)
+    f = []
+    for k in range(len(rings) - 1):
+        for i in range(n):
+            j = (i + 1) % n
+            a, b, c, d = k * n + i, k * n + j, (k + 1) * n + j, (k + 1) * n + i
+            f += [(a, b, c), (a, c, d)]
     return uk.Mesh(v, np.array(f))
 
 
@@ -273,6 +310,14 @@ def write_textures() -> None:
     d.polygon([(128, 44), (220, 214), (36, 214)], fill=(250, 210, 0))
     _centered(d, (128, 160), "MR", _font(74), (0, 0, 0))
     _save(im, "mr_conditional.png", True)
+    # basin A's label: the same triangle over the condition it was labelled for
+    im = Image.new("RGB", (256, 256), "white")
+    d = ImageDraw.Draw(im)
+    d.polygon([(128, 6), (232, 190), (24, 190)], fill=(0, 0, 0))
+    d.polygon([(128, 32), (210, 176), (46, 176)], fill=(250, 210, 0))
+    _centered(d, (128, 132), "MR", _font(62), (0, 0, 0))
+    _centered(d, (128, 222), "1.5 T", _font(52), (0, 0, 0))
+    _save(im, "mr_conditional_label.png", True)
     # the MRI floor sign beyond the doorway (a 768 x 384 panel on a square sheet)
     im = Image.new("RGB", (768, 768), (250, 210, 0))
     d = ImageDraw.Draw(im)
@@ -281,9 +326,9 @@ def write_textures() -> None:
     d.rectangle((14, 14 + o, 754, 370 + o), outline=(0, 0, 0), width=14)
     d.rectangle((14, 14 + o, 754, 120 + o), fill=(0, 0, 0))
     _centered(d, (384, 67 + o), "DANGER  MRI  ZONE IV", _font(50), (250, 210, 0))
-    _centered(d, (384, 185 + o), "STRONG MAGNETIC FIELD", _font(46), (0, 0, 0))
-    _centered(d, (384, 255 + o), "THE MAGNET IS ALWAYS ON", _font(44), (0, 0, 0))
-    _centered(d, (384, 322 + o), "NO UNTESTED METAL PAST THIS LINE", _font(32), (0, 0, 0))
+    _centered(d, (384, 180 + o), "1.5 T MAGNET ALWAYS ON", _font(46), (0, 0, 0))
+    _centered(d, (384, 252 + o), "NO UNTESTED OR UNLABELLED", _font(40), (0, 0, 0))
+    _centered(d, (384, 318 + o), "METAL PAST THIS LINE", _font(40), (0, 0, 0))
     _save(im, "zone_sign.png", False)
     # red-and-white floor tape: diagonal stripes that tile
     im = Image.new("RGB", (128, 128), "white")
@@ -303,13 +348,23 @@ def _decal(size: float, z: float) -> uk.Mesh:
 # -- files --------------------------------------------------------------------------------------------------------------
 
 
-def write_basin() -> str:
-    looks = {"steel": uk.Look(color=(0.78, 0.78, 0.80), metallic=1.0, roughness=0.28)}
+def write_basin(shape: Shape) -> str:
+    """Basin A: satin stainless with its label; basin B: white enamel with a blue rim; basin C: satin stainless."""
+    name = shape.name
+    if shape is BASIN_B:
+        looks = {"body": uk.Look(color=(0.93, 0.93, 0.90), roughness=0.18), "rim": uk.Look(color=(0.05, 0.12, 0.45), roughness=0.2)}
+        parts = [("shell", basin_mesh(shape), "body"), ("rim", rim_mesh(shape), "rim")]
+    else:
+        looks = {"body": uk.Look(color=(0.78, 0.78, 0.80), metallic=1.0, roughness=0.34)}
+        parts = [("shell", basin_mesh(shape), "body")]
+    if shape is BASIN_A:
+        looks["label"] = uk.Look(texture="mr_conditional_label.png", color=(1.0, 1.0, 1.0), tile=LABEL)
+        parts.append(("label", _decal(LABEL, 0.0009 + 0.0004), "label"))
     cols = []
-    for k, (size, centre, R) in enumerate(basin_boxes()):
-        cols.append(turned_collider(f"c{k}", size, centre, _quat_from_axes(R[:, 0], R[:, 1], R[:, 2]), "basin"))
-    return uk.write_usda(str(ASSETS / "basin.usda"), "basin", [("shell", basin_mesh(), "steel")], looks, cols,
-                         mass=BASIN_MASS, friction=(0.3, 0.25), solver_iters=32)
+    for k, (size, centre, R) in enumerate(basin_boxes(shape)):
+        cols.append(turned_collider(f"c{k}", size, centre, _quat_from_axes(R[:, 0], R[:, 1], R[:, 2]), name))
+    return uk.write_usda(str(ASSETS / f"{name}.usda"), name, parts, looks, cols, mass=shape.mass, friction=(0.3, 0.25),
+                         solver_iters=32)
 
 
 def magnet_parts() -> tuple[list, list]:
@@ -432,7 +487,8 @@ def write_all() -> None:
 
 def _write_all() -> None:
     write_textures()
-    write_basin()
+    for shape in (BASIN_A, BASIN_B, BASIN_C):
+        write_basin(shape)
     write_magnet()
     write_tray("ward", WARD_IN, WARD_LIP, uk.Look(color=(0.86, 0.86, 0.84), roughness=0.55))
     write_tray("trolley", TROLLEY_IN, TROLLEY_LIP, uk.Look(color=(0.90, 0.90, 0.88), roughness=0.55),
@@ -444,5 +500,6 @@ def _write_all() -> None:
 
 if __name__ == "__main__":
     write_all()
-    print("basin boxes", len(basin_boxes()), "grip width 3 cm from the end at mid-height",
-          round(width_at(BASIN_L * BASE_SCALE[1] / 2 - 0.03, BASIN_H / 2) * 1000, 1), "mm")
+    for shape in (BASIN_A, BASIN_B, BASIN_C):
+        print(shape.name, "boxes", len(basin_boxes(shape)), "rim width 2.4 cm from the end",
+              round(shape.width_at(shape.length / 2 - 0.024, shape.height) * 1000, 1), "mm")
