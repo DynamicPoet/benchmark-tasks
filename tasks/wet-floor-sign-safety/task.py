@@ -13,6 +13,7 @@ from __future__ import annotations
 import math
 import os
 import pathlib
+import re
 import sys
 
 import numpy as np
@@ -66,6 +67,29 @@ W_TOP, W_BOT = 0.21, 0.318
 HOLE = (0.10, -0.0625, -0.0275)  # hand hole: width, bottom, top (below the hinge)
 SIGN_MASS = 1.2  # kg, at most 1.32 (case of 4 ships at 11.6 lb)
 
+# A 5-row block font for the sign's printed words (visual only, no colliders).
+FONT = {
+    "A": ("###", "#.#", "###", "#.#", "#.#"), "C": ("###", "#..", "#..", "#..", "###"), "E": ("###", "#..", "##.", "#..", "###"),
+    "F": ("###", "#..", "##.", "#..", "#.."), "I": ("###", ".#.", ".#.", ".#.", "###"), "L": ("#..", "#..", "#..", "#..", "###"),
+    "N": ("#..#", "##.#", "#.##", "#..#", "#..#"), "O": ("###", "#.#", "#.#", "#.#", "###"), "R": ("##.", "#.#", "##.", "#.#", "#.#"),
+    "T": ("###", ".#.", ".#.", ".#.", ".#."), "U": ("#.#", "#.#", "#.#", "#.#", "###"), "W": ("#...#", "#...#", "#.#.#", "##.##", "#...#"),
+}
+
+
+def _words(name: str, text: str, x: float, side: float, z: float, px: float, look: str):
+    """Block letters of `text`, `px` metres a pixel, centred at height `z` on the face plane `x`, reading left to right from outside."""
+    width = sum(len(FONT[c][0]) for c in text) + len(text) - 1
+    boxes, col = [], -width / 2
+    for k, c in enumerate(text):
+        rows = FONT[c]
+        for r, row in enumerate(rows):
+            for run in re.finditer(r"#+", row):
+                y = (col + (run.start() + run.end()) / 2) * px * side  # seen from outside, +y is to the right on panel A, -y on panel B
+                zc = z + (2 - r) * px
+                boxes.append(m.box((0.0012, (run.end() - run.start()) * px, px), (x, y, zc)))
+        col += len(rows[0]) + 1
+    return [(name, m.join(*boxes), look)]
+
 
 def _panel_parts(side: float, name: str):
     """Visual pieces and colliders of one panel, folded: side +1 is panel A (the frame, +x), -1 panel B (the link, -x)."""
@@ -82,12 +106,16 @@ def _panel_parts(side: float, name: str):
         (f"{name}_right", m.box((T, W_TOP / 2 - hw, -hb - 0.012), (xc, (W_TOP / 2 + hw) / 2, (hb - 0.012) / 2)), "yellow"),
         (f"{name}_bar", m.box((T, 2 * hw, -ht - 0.012), (xc, 0.0, (ht - 0.012) / 2)), "yellow"),
     ]
-    # warning marks on the outer face: a black band and a triangle
+    # printed warning on the outer face: 'CAUTION' in yellow on a black band, a black warning triangle, 'WET FLOOR' in black
     face = x1 + 0.0006 if side > 0 else x0 - 0.0006
     parts.append((f"{name}_band", m.box((0.0012, 0.17, 0.035), (face, 0.0, -0.115)), "black"))
     tri = m.prism([(-0.075, -0.33), (0.075, -0.33), (0.0, -0.20)], -0.0006, 0.0006)
     tri = m.Mesh(tri.v[:, [2, 0, 1]] + np.array([face, 0.0, 0.0]), tri.f)
     parts.append((f"{name}_tri", tri, "black"))
+    ink = face + side * 0.0012  # letters stand just proud of the band and the face
+    parts += _words(f"{name}_caution", "CAUTION", ink, side, -0.115, 0.0052, "yellow")
+    parts += _words(f"{name}_wet", "WET", ink, side, -0.385, 0.010, "black")
+    parts += _words(f"{name}_floor", "FLOOR", ink, side, -0.455, 0.010, "black")
     lever = m.box((T, 0.10, LEVER), (side * T / 2, 0.0, LEVER / 2)).turned(side * math.degrees(ALPHA), "y")
     parts.append((f"{name}_lever", lever, "black"))
     cols = [

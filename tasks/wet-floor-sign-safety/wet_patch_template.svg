@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="530" height="685" font-family="sans-serif" font-size="12">
+<rect width="100%" height="100%" fill="white"/>
+<text x="40" y="16" font-size="12">Wet-look sheet and puddle discs, seen from above (robot at the bottom).</text>
+<text x="40" y="32" font-size="12">Positions in cm: x forward from the arms' base line, y to the robot's left.</text>
+<rect x="40.0" y="40.0" width="450.0" height="515.0" fill="#dfe6ee" stroke="black" stroke-width="1.5"/>
+<text x="46.0" y="56.0">clear 1.5 mm PVC sheet, 103 x 90 cm: x 22 to 125, y -5 to +85; edges taped</text>
+<text x="46.0" y="549.0">near edge at the wall-base strip (x 22)</text>
+<text x="46.0" y="72.0">far edge at the wall (x 125)</text>
+<circle cx="184.999" cy="485.0" r="65.0" fill="#5a6470" stroke="black"/>
+<text x="184.999" y="489.0" text-anchor="middle" fill="white">26 cm disc at (36, 56)</text>
+<circle cx="375.0" cy="305.0" r="60.0" fill="#5a6470" stroke="black"/>
+<text x="375.0" y="309.0" text-anchor="middle" fill="white">24 cm disc at (72, 18)</text>
+<circle cx="155.0" cy="175.0" r="70.000" fill="#5a6470" stroke="black"/>
+<text x="155.0" y="179.0" text-anchor="middle" fill="white">28 cm disc at (98, 62)</text>
+<circle cx="75.0" cy="390.0" r="35.000" fill="#5a6470" stroke="black"/>
+<text x="75.0" y="394.0" text-anchor="middle" fill="white">14 cm disc at (55, 78)</text>
+<line x1="40" y1="615.0" x2="290.0" y2="615.0" stroke="black" stroke-width="2"/><text x="40" y="631.0">50 cm</text>
+<text x="40" y="649.0">Discs: dark grey card, laid under the clear sheet. No water is used.</text>
+</svg>
